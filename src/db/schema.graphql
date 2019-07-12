@@ -1,0 +1,18 @@
+type Query {
+  allFile: AllFile!
+}
+
+type Mutation {
+  create(absolutePath: String!, content: String!): Node!
+}
+
+type AllFile {
+  edges: [Node!]!
+  totalCount: Int!
+}
+
+type Node {
+  id: String!
+  absolutePath: String!
+  content: String!
+}

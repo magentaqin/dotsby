@@ -2,3 +2,6 @@
 
 run:
 	NODE_ENV=local ./node_modules/.bin/webpack-dev-server --config webpack.config.js --hot
+
+build:
+	node ./src/bin/server.js

@@ -21,6 +21,7 @@
     "webpack-dev-server": "^3.7.2"
   },
   "dependencies": {
+    "graphql-yoga": "^1.18.0",
     "react": "^16.8.6",
     "react-dom": "^16.8.6",
     "remark": "^10.0.1",

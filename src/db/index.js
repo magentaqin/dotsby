@@ -38,4 +38,6 @@ const server = new GraphQLServer({
   resolvers,
 })
 
-server.start(() => console.log('listen to port 4000'))
+module.exports = {
+  dbServer: server
+}

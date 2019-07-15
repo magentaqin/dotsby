@@ -3,6 +3,13 @@ const recommended = require('remark-preset-lint-recommended');
 const html = require('remark-html');
 const fs = require('fs');
 const path = require('path');
+const { dbServer } = require(path.resolve(__dirname, '../db/index.js'));
+const { createFile } = require(path.resolve(__dirname, '../db/request.js'));
+
+// bootstrap dbServer
+dbServer
+.start(() => console.log('GraphQl server started at port 4000'))
+.catch(err => console.error(err));
 
 // dead file path. TODO
 const filePath = path.resolve(__dirname, '../../example/panda.md');
@@ -14,7 +21,6 @@ fs.readFile(filePath, (err, data) => {
     .use(html)
     .process(data, function(err, file) {
       if (!err) {
-        console.log('data', file);
         // put html data to database. TODO
         storeFile(file);
 
@@ -36,5 +42,11 @@ fs.readFile(filePath, (err, data) => {
 })
 
 function storeFile(file) {
-
+  const params = {
+    absolutePath: file.cwd,
+    content: file.contents
+  }
+  createFile(params).then((resp) => {
+    console.log(resp.data)
+  }).catch(err => console.error(err));
 }

@@ -24,6 +24,7 @@ const createFile = (params) => {
   return httpRequest.post('/', { query });
 }
 
+
 module.exports = {
-  createFile
+  createFile,
 };

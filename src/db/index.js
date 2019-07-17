@@ -1,34 +1,26 @@
 const { GraphQLServer } = require('graphql-yoga');
 const path = require('path');
-
-const edges = [
-  {
-    id: 'edge-1',
-    absolutePath: '/',
-    content: '<h1>Hello World</h1>'
-  }
-]
-
-let totalCount = edges.length;
-
-const allFiles = {
-  edges,
-  totalCount
-}
+const { prisma } = require('./prisma/prisma-client');
 
 const resolvers = {
   Query: {
-    allFile: () => allFiles,
+    allFile: (root, args, context, info) => {
+      return {
+        files: context.prisma.files(),
+        filesConnection: {
+          pageInfo: context.prisma.filesConnection(args).pageInfo(),
+          aggregate: context.prisma.filesConnection(args).aggregate(),
+          edges: context.prisma.filesConnection(args).edges()
+        }
+      }
+    },
   },
   Mutation: {
-    create: (parent, args) => {
-      const node = {
-        id: `edge-${totalCount++}`,
+    create: (root, args, context) => {
+      return context.prisma.createFile({
         absolutePath: args.absolutePath,
         content: args.content
-      };
-      edges.push(node);
-      return node;
+      })
     }
   },
 }
@@ -36,6 +28,7 @@ const resolvers = {
 const server = new GraphQLServer({
   typeDefs: path.resolve(__dirname, './schema.graphql'),
   resolvers,
+  context: { prisma }
 })
 
 module.exports = {

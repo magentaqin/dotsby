@@ -3,16 +3,38 @@ type Query {
 }
 
 type Mutation {
-  create(absolutePath: String!, content: String!): Node!
+  create(absolutePath: String!, content: String!): File!
 }
 
 type AllFile {
-  edges: [Node!]!
-  totalCount: Int!
+  files: [File!]!
+  filesConnection: FileConnection!
 }
 
-type Node {
-  id: String!
+type FileConnection {
+  pageInfo: PageInfo!
+  edges: [FileEdge]!
+  aggregate: AggregateFile!
+}
+
+type PageInfo {
+  hasNextPage: Boolean!
+  hasPreviousPage: Boolean!
+  startCursor: String
+  endCursor: String
+}
+
+type FileEdge {
+  node: File!
+  cursor: String!
+}
+
+type AggregateFile {
+  count: Int!
+}
+
+type File {
+  id: ID!
   absolutePath: String!
   content: String!
 }

@@ -1,0 +1,5 @@
+type File {
+  id: ID! @id
+  absolutePath: String!
+  content: String!
+}

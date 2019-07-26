@@ -20,7 +20,7 @@
   ],
   "include": [
     "src/**/*.ts",
-    "src/**/*.tsx", "src/bin/server.js",
+    "src/**/*.tsx", "src/**/*.js", "src/index.jsx",
   ],
   "exclude": [
     "node_modules"

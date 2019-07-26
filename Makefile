@@ -1,7 +1,7 @@
-.PHONY: run
+.PHONY: bootstrap
 
-run:
-	NODE_ENV=local ./node_modules/.bin/webpack-dev-server --config webpack.config.js --hot
+package-app:
+	rm -rf ./build && NODE_ENV=prod ./node_modules/.bin/webpack --config webpack.config.js
 
-build:
-	node ./src/bin/server.js
+bootstrap:
+	./node_modules/.bin/babel-node ./src/bootstrap/bootstrap.js

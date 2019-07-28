@@ -1,29 +1,25 @@
 const path = require('path');
 const webpack = require('webpack');
-// const TerserPlugin = require('terser-webpack-plugin');
-const HtmlWebpackPlugin = require('html-webpack-plugin');
-// const CircularDependencyPlugin = require('circular-dependency-plugin');
-// const HtmlWebpackHarddiskPlugin = require('html-webpack-harddisk-plugin');
 
 const env = process.env.NODE_ENV;
 
 // production config
 const config = {
   mode: 'production',
-  target: 'web',
+  target: 'node',
   entry: {
-    app: './src/index.jsx',
+    app: './src/bootstrap/index.ts',
   },
   output: {
-    path: path.resolve(__dirname, 'build/assets'),
-    filename: '[name].bundle.js',
-    publicPath: '/assets/',
+    path: path.resolve(__dirname, 'src/bootstrap/build'),
+    filename: 'bundle.js',
+    publicPath: '/',
     globalObject: 'self',
   },
   module: {
     rules: [
       {
-        test: /\.js[x]?$/,
+        test: /(\.ts[x]?$)|(\.js[x]?$)/,
         use: ['babel-loader', 'ts-loader'],
         exclude: /node_modules/,
       },
@@ -46,13 +42,12 @@ const config = {
       },
     ],
   },
+  resolve: {
+    extensions: [".ts", ".tsx", ".js", ".json"],
+  },
   plugins: [
     new webpack.DefinePlugin({
       NODE_ENV: 'production',
-    }),
-    new HtmlWebpackPlugin({
-      template: path.resolve(__dirname, './src/template.html'),
-      filename: '../index.html',
     }),
   ],
 }

@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 
-import { render } from 'react-dom';
 // interface Props {}
 
 // interface State {
@@ -22,4 +21,3 @@ class App extends Component {
 
 export default App;
 
-// render(<App />, document.getElementById('root'));

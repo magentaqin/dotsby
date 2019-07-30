@@ -11,7 +11,7 @@ const config = {
     app: './src/bootstrap/index.ts',
   },
   output: {
-    path: path.resolve(__dirname, 'build'),
+    path: path.resolve(__dirname, 'src/bootstrap/build'),
     filename: 'bundle.js',
     publicPath: '/',
     globalObject: 'self',

@@ -26,7 +26,6 @@ class App extends Component {
         <Query query={FILE_QUERY}>
         {
           ({ loading, error, data }) => {
-            console.log('render')
             if (loading) return <div>Fetching</div>
             if (error) return <div>Error</div>
 
@@ -34,7 +33,7 @@ class App extends Component {
             return (
               <div>
                 {files.map(file => (
-                  <ul>
+                  <ul key={file.id}>
                     <li>{file.id}</li>
                     <li>{file.absolutePath}</li>
                     <li>{file.content}</li>

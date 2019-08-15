@@ -1,8 +1,7 @@
 const config = {
   port: {
-    graphqlClient: 3000,
     graphqlServer: 4000,
-    app: 8080
+    ssrServer: 8080
   }
 };
 

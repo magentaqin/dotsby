@@ -1,26 +1,23 @@
-import express from 'express';
+import { ApolloProvider, getDataFromTree } from 'react-apollo'
+import { ApolloClient } from 'apollo-client';
+import { createHttpLink } from 'apollo-link-http';
+import Express from 'express';
+import { StaticRouter } from 'react-router';
+import { InMemoryCache } from "apollo-cache-inmemory";
+import fetch from 'node-fetch'
 import React  from 'react';
 import ReactDOMServer from 'react-dom/server';
-import { ApolloProvider, getDataFromTree } from 'react-apollo'
-import { ApolloClient } from 'apollo-client'
-import { createHttpLink } from 'apollo-link-http'
-import { InMemoryCache } from 'apollo-cache-inmemory'
-import fetch from 'node-fetch'
-import App from '../index';
-import config from '../config';
+import { graphqlServer } from '../db/index';
+import { config } from '../config';
 
-const app = express();
+import Layout from '../index';
 
-const httpLink = createHttpLink({
-  uri: `http://localhost:4000/graphql`,
-  fetch
-})
+const basePort = config.port.ssrServer;
+const graphqlServerPort = config.port.graphqlServer;
 
-const client = new ApolloClient({
-  ssrMode: true,
-  link: httpLink,
-  cache: new InMemoryCache()
-})
+graphqlServer
+.start(() => console.log(`GraphQl server started at port ${graphqlServerPort}`))
+.catch(err => console.error(err));
 
 function Html({ content, state }) {
   return (
@@ -35,15 +32,37 @@ function Html({ content, state }) {
   );
 }
 
-const EnhancedApp = () => (
-  <ApolloProvider client={client}>
-    <App />
-  </ApolloProvider>
-)
+const app = new Express();
+app.use((req, res) => {
 
-const render = (req, res) => {
-  getDataFromTree(EnhancedApp).then(() => {
-    const content = ReactDOMServer.renderToString(<EnhancedApp />);
+  const client = new ApolloClient({
+    ssrMode: true,
+    // Connect SSR server to API server. Ensure it isn't firewalled.
+    link: createHttpLink({
+      uri: `http://localhost:${graphqlServerPort}`,
+      fetch,
+      credentials: 'same-origin',
+      headers: {
+        cookie: req.header('Cookie'),
+      },
+    }),
+    cache: new InMemoryCache(),
+  });
+
+  const context = {};
+
+  // The client-side App will instead use <BrowserRouter>
+  const App = (
+    <ApolloProvider client={client}>
+      <StaticRouter location={req.url} context={context}>
+        <Layout />
+      </StaticRouter>
+    </ApolloProvider>
+  );
+
+  // rendering
+  getDataFromTree(App).then(() => {
+    const content = ReactDOMServer.renderToString(App);
     const initialState = client.extract();
 
     const html = <Html content={content} state={initialState} />;
@@ -52,10 +71,8 @@ const render = (req, res) => {
     res.send(`<!doctype html>\n${ReactDOMServer.renderToStaticMarkup(html)}`);
     res.end();
   });
-}
+});
 
-app.get('*', render);
-
-app.listen(config.config.port.app,  () => console.log(
-  `Example app listening on port ${config.config.port.app}!`
+app.listen(basePort, () => console.log( // eslint-disable-line no-console
+  `app Server is now running on http://localhost:${basePort}`
 ));

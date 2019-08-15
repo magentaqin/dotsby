@@ -32,5 +32,5 @@ const server = new GraphQLServer({
 })
 
 module.exports = {
-  dbServer: server
+  graphqlServer: server
 }

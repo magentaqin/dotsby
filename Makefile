@@ -1,7 +1,7 @@
-.PHONY: bootstrap
+.PHONY: transform bootstrap
 
-package-app:
-	rm -rf ./src/bootstrap/build && NODE_ENV=prod ./node_modules/.bin/webpack --config webpack.config.js
+transform:
+	node ./src/bin/transform.js
 
 bootstrap:
 	./node_modules/.bin/nodemon --exec babel-node ./src/bootstrap/index.js

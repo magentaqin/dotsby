@@ -3,36 +3,52 @@ const recommended = require('remark-preset-lint-recommended');
 const html = require('remark-html');
 const fs = require('fs');
 const path = require('path');
-const { graphqlServer } = require(path.resolve(__dirname, '../db/index.js'));
-const { createFile } = require(path.resolve(__dirname, '../db/request.js'));
-const config = require('../config.js');
+
+const { graphqlServer } = require(path.resolve(__dirname, '../db/index'));
+const { createFile } = require(path.resolve(__dirname, '../db/request'));
+const config = require('../config');
+const { logError } = require('../utils/log');
+
+//docs config
+const docsPath = '../../docs';
+const docRootPath = path.resolve(__dirname, docsPath, 'index.js');
+const docConfig = require(docRootPath);
+const { mainRoutes } = docConfig;
 
 // bootstrap graphqlServer
 graphqlServer
 .start(() => console.log(`GraphQl server started at port ${config.config.port.graphqlServer}`))
-.catch(err => console.error(err));
+.catch(err => logError(err));
 
+for (let mainRoute of mainRoutes) {
+  const { name, dir, home, pages } = mainRoute;
+  if (pages.length) {
 
-// dead file path. TODO
-const filePath = path.resolve(__dirname, '../../example/panda.md');
-
-fs.readFile(filePath, (err, data) => {
-  if (!err) {
-    remark()
-    .use(recommended)
-    .use(html)
-    .process(data, function(err, file) {
-      if (!err) {
-        storeFile(file);
-
-      } else {
-        console.error(err);
-      }
-    });
   } else {
-    console.error(err);
+    const homePath = path.resolve(__dirname, docsPath, `./${dir}/${home}`);
+    transformMarkdown(homePath);
   }
-})
+}
+
+function transformMarkdown(filePath) {
+  fs.readFile(filePath, (err, data) => {
+    if (!err) {
+      remark()
+      .use(recommended)
+      .use(html)
+      .process(data, function(err, file) {
+        if (!err) {
+          storeFile(file);
+
+        } else {
+          logError(err);
+        }
+      });
+    } else {
+      logError(err);
+    }
+  })
+}
 
 function storeFile(file) {
   const params = {
@@ -40,6 +56,6 @@ function storeFile(file) {
     content: file.contents
   }
   createFile(params).then((resp) => {
-    console.log(resp.data)
-  }).catch(err => console.error(err));
+    console.log('successfully created file');
+  }).catch(err => logError(err));
 }

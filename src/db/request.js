@@ -3,7 +3,7 @@ const baseURL = `http://localhost:4000`;
 
 const httpRequest = axios.create({
   baseURL,
-  timeout: 3000
+  timeout: 30000
 })
 
 const createFile = (params) => {

@@ -15,47 +15,64 @@ const docRootPath = path.resolve(__dirname, docsPath, 'index.js');
 const docConfig = require(docRootPath);
 const { mainRoutes } = docConfig;
 
-// bootstrap graphqlServer
-graphqlServer
-.start(() => console.log(`GraphQl server started at port ${config.config.port.graphqlServer}`))
-.catch(err => logError(err));
-
-for (let mainRoute of mainRoutes) {
-  const { name, dir, home, pages } = mainRoute;
-  if (pages.length) {
-
-  } else {
-    const homePath = path.resolve(__dirname, docsPath, `./${dir}/${home}`);
-    transformMarkdown(homePath);
-  }
-}
-
-function transformMarkdown(filePath) {
-  fs.readFile(filePath, (err, data) => {
-    if (!err) {
-      remark()
-      .use(recommended)
-      .use(html)
-      .process(data, function(err, file) {
-        if (!err) {
-          storeFile(file);
-
-        } else {
-          logError(err);
-        }
-      });
-    } else {
-      logError(err);
-    }
+export const transform = () => {
+  return new Promise((resolve) => {
+    // bootstrap graphqlServer
+    graphqlServer
+    .start(async () => {
+      console.log(`GraphQl server started at port ${config.config.port.graphqlServer}`)
+      await loopMainRoutes();
+      resolve();
+    })
+    .catch(err => logError(err));
   })
 }
 
-function storeFile(file) {
+const loopMainRoutes = async () => {
+  try {
+    for (const mainRoute of mainRoutes) {
+      const { name, dir, home, pages } = mainRoute;
+      if (pages.length) {
+
+      } else {
+        const homePath = path.resolve(__dirname, docsPath, `./${dir}/${home}`);
+        const file = await transformMarkdownPromise(homePath);
+        if (file) {
+          const storeFileSuccess = await storeFilePromise(file);
+          if (storeFileSuccess) {
+            console.log('successfully created file');
+          }
+        }
+      }
+    }
+  } catch(err) {
+    logError(err)
+  }
+}
+
+function transformMarkdownPromise(filePath) {
+  return new Promise((resolve, reject) => {
+    fs.readFile(filePath, (err, data) => {
+      if (err) {
+        return reject(err);
+      }
+      remark()
+        .use(recommended)
+        .use(html)
+        .process(data, function(err, file) {
+          if (err) {
+            return reject(err);
+          }
+          resolve(file);
+        });
+    })
+  })
+}
+
+function storeFilePromise(file) {
   const params = {
     absolutePath: file.cwd,
     content: file.contents
   }
-  createFile(params).then((resp) => {
-    console.log('successfully created file');
-  }).catch(err => logError(err));
+  return createFile(params);
 }

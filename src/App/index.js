@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React from 'react';
 import { Query } from 'react-apollo'
 import gql from 'graphql-tag'
 
@@ -14,7 +14,7 @@ const FILE_QUERY = gql`
   }
 `
 
-class App extends Component {
+class App extends React.Component {
   constructor(props) {
     super(props);
   }
@@ -35,19 +35,17 @@ class App extends Component {
                 {files.map(file => (
                   <ul key={file.id}>
                     <li>{file.id}</li>
-                    <li>{file.absolutePath}</li>
-                    <li>{file.content}</li>
+                    <li dangerouslySetInnerHTML={{ __html: file.content }}></li>
                   </ul>
                 ))}
               </div>
             )
           }
         }
-      </Query>
+        </Query>
       </div>
     )
   }
 }
 
 export default App;
-

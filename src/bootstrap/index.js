@@ -6,31 +6,48 @@ import { StaticRouter } from 'react-router';
 import { InMemoryCache } from "apollo-cache-inmemory";
 import fetch from 'node-fetch'
 import React  from 'react';
+import path from 'path';
+import fs from 'fs';
 import ReactDOMServer from 'react-dom/server';
 import { logError } from '../utils/log';
 import { config } from '../config';
-import Layout from '../index';
+import Layout from '../App';
 
-const bootstrap = () => {
-  const basePort = config.port.ssrServer;
-  const graphqlServerPort = config.port.graphqlServer;
+const basePort = config.port.ssrServer;
+const graphqlServerPort = config.port.graphqlServer;
+const htmlFilePath = path.resolve(__dirname, '..', '..', './build', './index.html');
 
-  function Html({ content, state }) {
-    return (
-      <html>
-        <body>
-          <div id="root" dangerouslySetInnerHTML={{ __html: content }} />
-          <script dangerouslySetInnerHTML={{
-            __html: `window.__APOLLO_STATE__=${JSON.stringify(state).replace(/</g, '\\u003c')};`,
-          }} />
-        </body>
-      </html>
-    );
-  }
+const context = {};
+
+const Html = ({ content, state }) => {
+  return (
+    <React.Fragment>
+      <div id="root" dangerouslySetInnerHTML={{ __html: content }}></div>
+      <script dangerouslySetInnerHTML={{
+        __html: `window.__APOLLO_STATE__=${JSON.stringify(state).replace(/</g, '\\u003c')};`,
+      }} />
+    </React.Fragment>
+  )
+}
+
+export const bootstrap = () => {
   const app = new Express();
 
-  app.use((req, res) => {
+  // handle static resources.
+  app.use('/static', Express.static(
+    path.resolve(__dirname, '..', '..', 'build', 'static'),
+  ));
+  app.use('/images', Express.static(
+    path.resolve(__dirname, '..', '..', 'build', 'images'),
+  ));
+  app.use('/dotsby.ico', Express.static(
+    path.resolve(__dirname, '..', '..', 'build', 'dotsby.ico'),
+  ));
+  app.use('/manifest.json', Express.static(
+    path.resolve(__dirname, '..', '..', 'build', 'manifest.json'),
+  ));
 
+  app.use('*', (req, res) => {
     const client = new ApolloClient({
       ssrMode: true,
       // Connect SSR server to API server. Ensure it isn't firewalled.
@@ -45,8 +62,6 @@ const bootstrap = () => {
       cache: new InMemoryCache(),
     });
 
-    const context = {};
-
     // The client-side App will instead use <BrowserRouter>
     const App = (
       <ApolloProvider client={client}>
@@ -56,24 +71,28 @@ const bootstrap = () => {
       </ApolloProvider>
     );
 
-    // rendering
-    getDataFromTree(App).then(() => {
-      const content = ReactDOMServer.renderToString(App);
-      const initialState = client.extract();
+    fs.readFile(htmlFilePath, 'utf8', (err, htmlData) => {
+        // rendering
+      getDataFromTree(App).then(() => {
+        const content = ReactDOMServer.renderToString(App);
+        const initialState = client.extract();
 
-      const html = <Html content={content} state={initialState} />;
+        const html = <Html content={content} state={initialState} />;
 
-      res.status(200);
-      res.send(`<!doctype html>\n${ReactDOMServer.renderToStaticMarkup(html)}`);
-      res.end();
-    }).catch(err => logError(err));
+        // send response
+        res.status(200);
+        const responseData = htmlData.replace(
+          '<div id="root"></div>',
+          ReactDOMServer.renderToStaticMarkup(html)
+        );
+        res.send(responseData);
+        res.end();
+      }).catch(err => logError(err));
+    })
   });
+
 
   app.listen(basePort, () => console.log( // eslint-disable-line no-console
     `app Server is now running on http://localhost:${basePort}`
   ));
-}
-
-export {
-  bootstrap
 }

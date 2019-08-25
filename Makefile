@@ -3,8 +3,8 @@
 start-graphql-server:
 	node ./src/server.js
 dev:
-	./node_modules/.bin/react-scripts start
+	./node_modules/.bin/react-app-rewired start
 build-app:
-		./node_modules/.bin/react-scripts build
+		./node_modules/.bin/react-app-rewired build
 build-docs:
 	./node_modules/.bin/nodemon --exec babel-node ./src/bin/index.js

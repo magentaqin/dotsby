@@ -1,5 +1,11 @@
 # dotsby
 
+#### Usage
+** Build Docs **
+```
+make build-docs
+```
+
 #### Dotsby In Development
 Dotsby do not use SSR in development. Instead, we use client-side rendering.
 
@@ -14,8 +20,9 @@ make dev
 #### Build Dotsby
 * build app
 ```
-
+make build-app
 ```
+
 
 #### Global Packages For Development
 * prisma

@@ -1,0 +1,32 @@
+@import "../theme/variables.less";
+
+body {
+  font-family: Avenir,Helvetica Neue,Arial,Helvetica,sans-serif;
+}
+
+::selection {
+  background-color: @white-color;
+  color: @primary-color;
+}
+
+.app-wrapper {
+  padding-right: 20%;
+  display: flex;
+  justify-content: center;
+
+  .ant-layout-sider-children {
+    .docs-title {
+      display: inline-block;
+      color: @primary-color;
+      font-weight: 600;
+      font-size: 20px;
+      vertical-align: middle;
+      text-align: center;
+    }
+
+    .ant-menu:not(.ant-menu-horizontal) .ant-menu-item-selected {
+      background-color: @white-color;
+    }
+  }
+}
+

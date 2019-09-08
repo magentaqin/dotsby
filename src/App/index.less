@@ -9,8 +9,15 @@ body {
   color: @primary-color;
 }
 
+h1 {
+  margin-bottom: 0;
+}
+
+ul {
+  list-style: none;
+}
+
 .app-wrapper {
-  padding-right: 20%;
   display: flex;
   justify-content: center;
 
@@ -26,6 +33,16 @@ body {
 
     .ant-menu:not(.ant-menu-horizontal) .ant-menu-item-selected {
       background-color: @white-color;
+    }
+
+    .ant-menu-item .anticon + span, .ant-menu-submenu-title .anticon + span {
+      font-size: 16px;
+      font-weight: bold;
+    }
+
+    .ant-menu-sub.ant-menu-inline > .ant-menu-item  {
+      font-size: 16px;
+      font-weight: 500;
     }
   }
 }

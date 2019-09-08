@@ -1,7 +1,7 @@
 import React from 'react';
 import { Query } from 'react-apollo'
 import gql from 'graphql-tag'
-import { Layout, Menu, Icon } from 'antd';
+import { Layout, Menu, Icon, Input } from 'antd';
 
 const { Header, Content, Footer, Sider } = Layout;
 const { SubMenu } = Menu;
@@ -29,13 +29,15 @@ class App extends React.Component {
     return (
       <div className="app-wrapper">
         <Layout style={{ minHeight: '100vh' }}>
-          <Sider width={320} theme="light">
-            <h1 className="docs-title">Fix Simulator Api Docs</h1>
-            <Menu theme="light" defaultSelectedKeys={['1']} mode="inline">
+          <Sider width={250} theme="light" style={{ borderRight: '1px solid #ddd' }}>
+            <div style={{ padding: '16px 0 16px 24px', borderBottom: '1px solid #ddd'}}>
+              <h1 className="docs-title">Fix Simulator Api Docs</h1>
+            </div>
+            <Menu theme="light" defaultSelectedKeys={['1']} mode="inline" style={{ borderRight: 0}}>
               <Menu.Item key="1">
                 <span>
                   <Icon type="read" />
-                  <span>Navigation One</span>
+                  <span>Overview</span>
                 </span>
                </Menu.Item>
               <SubMenu
@@ -43,7 +45,7 @@ class App extends React.Component {
                 title={
                   <span>
                     <Icon type="read" />
-                   <span>Navigation Two</span>
+                   <span>Lua Api</span>
                    </span>
                  }
                >
@@ -53,10 +55,12 @@ class App extends React.Component {
               </SubMenu>
             </Menu>
           </Sider>
-          <Layout>
-            <Header style={{ background: '#fff', padding: 0 }} />
-            <Content style={{ margin: '0 16px' }}>
-              <div style={{ padding: 24, background: '#fff', minHeight: 360 }}>
+          <Layout style={{ background: '#fff'}}>
+            <Header style={{ background: '#fff', padding: 0, padding: '16px 0 16px 48px', borderBottom: '1px solid #ddd', display: 'flex', alignItems: 'center'}}>
+              <Input style={{ width: '480px', height: '40px'}} placeholder="Search Docs" />
+            </Header>
+            <Content style={{ margin: '0 16px', position: 'relative', maxWidth: 1200 }}>
+              <div style={{ padding: 24, background: '#fff', minHeight: 360, maxWidth: 800 }}>
                 <Query query={FILE_QUERY}>
                   {
                     ({ loading, error, data }) => {
@@ -77,6 +81,13 @@ class App extends React.Component {
                   }
                 </Query>
               </div>
+              <ul style={{ position: 'absolute', top: 150, width: '100px', height: '200px', backgroundColor: 'red', right: 0}}>
+                <li>
+                  <span>
+                    <span>Overview</span>
+                  </span>
+                </li>
+              </ul>
             </Content>
             <Footer style={{ textAlign: 'center' }}>Fix Simulator Api Docs</Footer>
           </Layout>

@@ -1,100 +1,226 @@
 import React from 'react';
 import { Query } from 'react-apollo'
-import gql from 'graphql-tag'
-import { Layout, Menu, Icon, Input } from 'antd';
+import gql from 'graphql-tag';
+import styled, { ThemeProvider, createGlobalStyle } from 'styled-components';
+import theme from '../theme/light'
+import reset from 'styled-reset'
 
-const { Header, Content, Footer, Sider } = Layout;
-const { SubMenu } = Menu;
+import ArrowDown from './ArrowDown';
 
-require('./index.less');
+// const FILE_QUERY = gql`
+//   query {
+//     allFile {
+//       files {
+//         id
+//         absolutePath
+//         content
+//       }
+//     }
+//   }
+// `
 
-const FILE_QUERY = gql`
-  query {
-    allFile {
-      files {
-        id
-        absolutePath
-        content
-      }
-    }
+const GlobalStyle = createGlobalStyle`
+  ${reset}
+  body {
+    font-family: 'Source Sans Pro,sans-serif';
   }
 `
 
-class App extends React.Component {
-  constructor(props) {
-    super(props);
+const AppWrapper = styled.div`
+  position: absolute;
+  top: 0;
+  right: 0;
+  left: 0;
+  bottom: 0;
+  display: flex;
+`;
+
+const Aside = styled.aside`
+  width: 305px;
+  border-right: 1px solid ${props => props.theme.dividerColor};
+  height: 100vh;
+  overflow-y: auto;
+`;
+
+const AsideHeader = styled.header`
+  padding: 0 ${props => props.theme.mdPadding};
+  border-bottom: 1px solid ${props => props.theme.dividerColor};
+  display: flex;
+  alignItems: center;
+  height: 64px;
+`
+
+const H1 = styled.h1`
+  font-size: ${props => props.theme.headerFont};
+  line-height: 64px;
+  color: ${props => props.theme.primaryColor};
+`
+
+const AsideContent = styled.div`
+  padding: 0 0 ${props => props.theme.mdPadding} ${props => props.theme.mdPadding};
+`
+
+const AsideSection = styled.div`
+  ${'' /* border-bottom: 1px solid ${props => props.theme.dividerColor}; */}
+`;
+
+const CollapseButton = styled.button`
+  width: 100%;
+  outline: none;
+  color: ${props => props.theme.grayColor};
+  border: 0;
+  padding: ${props => props.theme.smPadding};
+  padding-left: 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: none;
+
+  &:hover {
+    cursor: pointer;
+  }
+`;
+
+const AsideSubtitle = styled.h6`
+  font-size: ${props => props.theme.normalFont};
+  line-height: ${props => props.theme.normalFont};
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  font-weight: 500;
+`
+
+const AsideNav = styled.ul`
+  margin-left: 0;
+  list-style: none;
+`
+
+const AsideItem = styled.li`
+  font-size: ${props => props.theme.normalFont};
+  margin-bottom: 0.725rem;
+  color: ${props => props.theme.grayColor};
+`
+
+const Main = styled.main`
+  overflow-y: auto;
+  flex-grow: 1;
+`
+
+const MainHeader = styled.header`
+  height: 64px;
+  padding: 0 24px;
+  display: flex;
+  position: sticky;
+  align-items: center;
+  top: 0;
+`
+
+const InputWrapper = styled.div`
+  margin-left: 40px;
+  max-width: 480px;
+  flex-grow: 1;
+`
+
+const Input = styled.input`
+  width: 100%;
+  height: 40px;
+  padding: 0;
+  padding-left: 16px;
+  border: 1px solid #959DAA;
+  border-radius: 5px;
+  box-shadow: none;
+  font-size: 14px;
+  background: white;
+  outline: none;
+  -webkit-appearance: none;
+`
+
+class Layout extends React.Component {
+  renderItems = () => {
+    return ['Get Started', 'Queries'].map(item => (
+      <AsideItem key={item}>
+        {item}
+      </AsideItem>
+    ))
+  }
+
+  renderAside = () => {
+    return (
+      <Aside>
+        <AsideHeader>
+          <H1>Fix Simulator Api Docs</H1>
+        </AsideHeader>
+        <AsideContent>
+          <AsideSection>
+            <CollapseButton>
+              <AsideSubtitle>Essentials</AsideSubtitle>
+              <ArrowDown />
+            </CollapseButton>
+            <AsideNav>
+              {this.renderItems()}
+            </AsideNav>
+          </AsideSection>
+        </AsideContent>
+      </Aside>
+    )
+  }
+
+  renderMainHeader = () => {
+    return (
+      <MainHeader>
+        <InputWrapper>
+          <Input />
+        </InputWrapper>
+      </MainHeader>
+    )
+  }
+
+  renderMain = () => {
+    return (
+      <Main>
+        {this.renderMainHeader()}
+      </Main>
+    )
   }
 
   render() {
     return (
-      <div className="app-wrapper">
-        <Layout style={{ minHeight: '100vh' }}>
-          <Sider width={250} theme="light" style={{ borderRight: '1px solid #ddd' }}>
-            <div style={{ padding: '16px 0 16px 24px', borderBottom: '1px solid #ddd'}}>
-              <h1 className="docs-title">Fix Simulator Api Docs</h1>
-            </div>
-            <Menu theme="light" defaultSelectedKeys={['1']} mode="inline" style={{ borderRight: 0}}>
-              <Menu.Item key="1">
-                <span>
-                  <Icon type="read" />
-                  <span>Overview</span>
-                </span>
-               </Menu.Item>
-              <SubMenu
-                key="sub1"
-                title={
-                  <span>
-                    <Icon type="read" />
-                   <span>Lua Api</span>
-                   </span>
-                 }
-               >
-                <Menu.Item key="3">Tom</Menu.Item>
-                <Menu.Item key="4">Bill</Menu.Item>
-                <Menu.Item key="5">Alex</Menu.Item>
-              </SubMenu>
-            </Menu>
-          </Sider>
-          <Layout style={{ background: '#fff'}}>
-            <Header style={{ background: '#fff', padding: 0, padding: '16px 0 16px 48px', borderBottom: '1px solid #ddd', display: 'flex', alignItems: 'center'}}>
-              <Input style={{ width: '480px', height: '40px'}} placeholder="Search Docs" />
-            </Header>
-            <Content style={{ margin: '0 16px', position: 'relative', maxWidth: 1200 }}>
-              <div style={{ padding: 24, background: '#fff', minHeight: 360, maxWidth: 800 }}>
-                <Query query={FILE_QUERY}>
-                  {
-                    ({ loading, error, data }) => {
-                      if (loading) return <div>Fetching</div>
-                      if (error) return <div>Error</div>
-
-                      const files = data.allFile.files;
-                      return (
-                        <div>
-                          {files.map(file => (
-                            <ul key={file.id}>
-                              <li dangerouslySetInnerHTML={{ __html: file.content }}></li>
-                            </ul>
-                          ))}
-                        </div>
-                      )
-                    }
-                  }
-                </Query>
-              </div>
-              <ul style={{ position: 'absolute', top: 150, width: '100px', height: '200px', backgroundColor: 'red', right: 0}}>
-                <li>
-                  <span>
-                    <span>Overview</span>
-                  </span>
-                </li>
-              </ul>
-            </Content>
-            <Footer style={{ textAlign: 'center' }}>Fix Simulator Api Docs</Footer>
-          </Layout>
-        </Layout>
-      </div>
+      <ThemeProvider theme={theme}>
+        <AppWrapper>
+          {this.renderAside()}
+          {this.renderMain()}
+        </AppWrapper>
+      </ThemeProvider>
     )
   }
 }
+
+const App = () => (
+  <React.Fragment>
+    <Layout />
+    <GlobalStyle />
+  </React.Fragment>
+)
+
+
+//                 <Query query={FILE_QUERY}>
+//                   {
+//                     ({ loading, error, data }) => {
+//                       if (loading) return <div>Fetching</div>
+//                       if (error) return <div>Error</div>
+
+//                       const files = data.allFile.files;
+//                       return (
+//                         <div>
+//                           {files.map(file => (
+//                             <ul key={file.id}>
+//                               <li dangerouslySetInnerHTML={{ __html: file.content }}></li>
+//                             </ul>
+//                           ))}
+//                         </div>
+//                       )
+//                     }
+//                   }
+//                 </Query>
+
 
 export default App;

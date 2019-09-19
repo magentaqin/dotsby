@@ -12,12 +12,23 @@ import ReactDOMServer from 'react-dom/server';
 import { logError } from '../utils/log';
 import { config } from '../config';
 import Layout from '../App';
+import { ServerStyleSheet, StyleSheetManager } from 'styled-components'
 
 const basePort = config.port.ssrServer;
 const graphqlServerPort = config.port.graphqlServer;
 const htmlFilePath = path.resolve(__dirname, '..', '..', './build', './index.html');
 
 const context = {};
+const sheet = new ServerStyleSheet();
+// try {
+//   const html = ReactDOMServer.renderToString(sheet.collectStyles(<Layout />))
+//   const styleTags = sheet.getStyleTags() // or sheet.getStyleElement();
+// } catch (error) {
+//   // handle error
+//   console.error(error)
+// } finally {
+//   sheet.seal()
+// }
 
 const Html = ({ content, state }) => {
   return (
@@ -63,32 +74,47 @@ export const bootstrap = () => {
     });
 
     // The client-side App will instead use <BrowserRouter>
-    const App = (
-      <ApolloProvider client={client}>
-        <StaticRouter location={req.url} context={context}>
-          <Layout />
-        </StaticRouter>
-      </ApolloProvider>
-    );
+    try {
+      const App = (
+        <ApolloProvider client={client}>
+          <StaticRouter location={req.url} context={context}>
+              <StyleSheetManager sheet={sheet.instance}>
+                <Layout />
+              </StyleSheetManager>
+          </StaticRouter>
+        </ApolloProvider>
+      );
 
-    fs.readFile(htmlFilePath, 'utf8', (err, htmlData) => {
-        // rendering
-      getDataFromTree(App).then(() => {
-        const content = ReactDOMServer.renderToString(App);
-        const initialState = client.extract();
 
-        const html = <Html content={content} state={initialState} />;
+      fs.readFile(htmlFilePath, 'utf8', (err, htmlData) => {
+          // rendering
+        getDataFromTree(App).then(() => {
+          const content = ReactDOMServer.renderToString(App);
+          const initialState = client.extract();
 
-        // send response
-        res.status(200);
-        const responseData = htmlData.replace(
-          '<div id="root"></div>',
-          ReactDOMServer.renderToStaticMarkup(html)
-        );
-        res.send(responseData);
-        res.end();
-      }).catch(err => logError(err));
-    })
+          const html = <Html content={content} state={initialState} />;
+
+          // send response
+          res.status(200);
+          const styleTags = sheet.getStyleTags();
+          console.log(`${styleTags}</head>`)
+          const responseData = htmlData.replace(
+            '<div id="root"></div>',
+            ReactDOMServer.renderToStaticMarkup(html)
+          ).replace(
+            '</head>',
+            `${styleTags}</head>`
+          )
+          res.send(responseData);
+          res.end();
+        }).catch(err => logError(err));
+      })
+    } catch(error) {
+      console.error(error)
+    } finally {
+      sheet.seal();
+    }
+
   });
 
 

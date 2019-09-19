@@ -20,15 +20,6 @@ const htmlFilePath = path.resolve(__dirname, '..', '..', './build', './index.htm
 
 const context = {};
 const sheet = new ServerStyleSheet();
-// try {
-//   const html = ReactDOMServer.renderToString(sheet.collectStyles(<Layout />))
-//   const styleTags = sheet.getStyleTags() // or sheet.getStyleElement();
-// } catch (error) {
-//   // handle error
-//   console.error(error)
-// } finally {
-//   sheet.seal()
-// }
 
 const Html = ({ content, state }) => {
   return (
@@ -97,7 +88,6 @@ export const bootstrap = () => {
           // send response
           res.status(200);
           const styleTags = sheet.getStyleTags();
-          console.log(`${styleTags}</head>`)
           const responseData = htmlData.replace(
             '<div id="root"></div>',
             ReactDOMServer.renderToStaticMarkup(html)

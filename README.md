@@ -3,6 +3,7 @@
 #### Usage
 ** Build Docs **
 ```
+// TODO
 make build-docs
 ```
 
@@ -14,13 +15,15 @@ Make sure that graphql server successfully started before you run the app.
 GraphQL server is starting at port 4000, and app is starting at port 3000.
 ```
 make start-graphql-server
-make dev
+make rundev
 ```
 
-#### Build Dotsby
+#### Build Dotsby and Run
 * build app
 ```
 make build-app
+make start-graphql-server
+make runbuild
 ```
 
 

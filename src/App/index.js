@@ -7,17 +7,17 @@ import reset from 'styled-reset'
 
 import ArrowDown from './ArrowDown';
 
-// const FILE_QUERY = gql`
-//   query {
-//     allFile {
-//       files {
-//         id
-//         absolutePath
-//         content
-//       }
-//     }
-//   }
-// `
+const FILE_QUERY = gql`
+  query {
+    allFile {
+      files {
+        id
+        absolutePath
+        content
+      }
+    }
+  }
+`
 
 const GlobalStyle = createGlobalStyle`
   ${reset}
@@ -178,6 +178,25 @@ class Layout extends React.Component {
     return (
       <Main>
         {this.renderMainHeader()}
+        <Query query={FILE_QUERY}>
+          {
+            ({ loading, error, data }) => {
+              if (loading) return <div>Fetching</div>
+              if (error) return <div>Error</div>
+
+              const files = data.allFile.files;
+              return (
+                <div>
+                  {files.map(file => (
+                    <ul key={file.id}>
+                      <li dangerouslySetInnerHTML={{ __html: file.content }}></li>
+                    </ul>
+                  ))}
+                </div>
+              )
+            }
+          }
+        </Query>
       </Main>
     )
   }
@@ -202,25 +221,25 @@ const App = () => (
 )
 
 
-//                 <Query query={FILE_QUERY}>
-//                   {
-//                     ({ loading, error, data }) => {
-//                       if (loading) return <div>Fetching</div>
-//                       if (error) return <div>Error</div>
+                // <Query query={FILE_QUERY}>
+                //   {
+                //     ({ loading, error, data }) => {
+                //       if (loading) return <div>Fetching</div>
+                //       if (error) return <div>Error</div>
 
-//                       const files = data.allFile.files;
-//                       return (
-//                         <div>
-//                           {files.map(file => (
-//                             <ul key={file.id}>
-//                               <li dangerouslySetInnerHTML={{ __html: file.content }}></li>
-//                             </ul>
-//                           ))}
-//                         </div>
-//                       )
-//                     }
-//                   }
-//                 </Query>
+                //       const files = data.allFile.files;
+                //       return (
+                //         <div>
+                //           {files.map(file => (
+                //             <ul key={file.id}>
+                //               <li dangerouslySetInnerHTML={{ __html: file.content }}></li>
+                //             </ul>
+                //           ))}
+                //         </div>
+                //       )
+                //     }
+                //   }
+                // </Query>
 
 
 export default App;

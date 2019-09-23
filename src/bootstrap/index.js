@@ -1,4 +1,6 @@
-import { ApolloProvider, getDataFromTree } from 'react-apollo'
+import { ApolloProvider, getDataFromTree } from 'react-apollo';
+// import { getDataFromTree } from "@apollo/react-ssr";
+// import { ApolloProvider } from '@apollo/react-common';
 import { ApolloClient } from 'apollo-client';
 import { createHttpLink } from 'apollo-link-http';
 import Express from 'express';
@@ -35,34 +37,38 @@ const Html = ({ content, state }) => {
 export const bootstrap = () => {
   const app = new Express();
 
-  // handle static resources.
-  app.use('/static', Express.static(
-    path.resolve(__dirname, '..', '..', 'build', 'static'),
-  ));
-  app.use('/images', Express.static(
-    path.resolve(__dirname, '..', '..', 'build', 'images'),
-  ));
-  app.use('/dotsby.ico', Express.static(
-    path.resolve(__dirname, '..', '..', 'build', 'dotsby.ico'),
-  ));
-  app.use('/manifest.json', Express.static(
-    path.resolve(__dirname, '..', '..', 'build', 'manifest.json'),
-  ));
 
-  app.use('*', (req, res) => {
-    const client = new ApolloClient({
-      ssrMode: true,
-      // Connect SSR server to API server. Ensure it isn't firewalled.
-      link: createHttpLink({
-        uri: `http://localhost:${graphqlServerPort}`,
-        fetch,
-        credentials: 'same-origin',
-        headers: {
-          cookie: req.header('Cookie'),
-        },
-      }),
-      cache: new InMemoryCache(),
-    });
+  fs.readFile(htmlFilePath, 'utf8', (err, htmlData) => {
+
+    // handle static resources.
+    app.use('/static', Express.static(
+      path.resolve(__dirname, '..', '..', 'build', 'static'),
+    ));
+    app.use('/images', Express.static(
+      path.resolve(__dirname, '..', '..', 'build', 'images'),
+    ));
+    app.use('/dotsby.ico', Express.static(
+      path.resolve(__dirname, '..', '..', 'build', 'dotsby.ico'),
+    ));
+    app.use('/manifest.json', Express.static(
+      path.resolve(__dirname, '..', '..', 'build', 'manifest.json'),
+    ));
+
+    app.use('*', (req, res) => {
+      const client = new ApolloClient({
+        ssrMode: true,
+        // Connect SSR server to API server. Ensure it isn't firewalled.
+        link: createHttpLink({
+          uri: `http://localhost:${graphqlServerPort}`,
+          fetch,
+          credentials: 'same-origin',
+          headers: {
+            cookie: req.header('Cookie'),
+          },
+        }),
+        cache: new InMemoryCache(),
+        queryDeduplication: false,
+      });
 
     // The client-side App will instead use <BrowserRouter>
     try {
@@ -77,11 +83,11 @@ export const bootstrap = () => {
       );
 
 
-      fs.readFile(htmlFilePath, 'utf8', (err, htmlData) => {
-          // rendering
-        getDataFromTree(App).then(() => {
+        // rendering
+        getDataFromTree(App).then((resp) => {
           const content = ReactDOMServer.renderToString(App);
           const initialState = client.extract();
+          console.log(resp)
 
           const html = <Html content={content} state={initialState} />;
 
@@ -98,12 +104,12 @@ export const bootstrap = () => {
           res.send(responseData);
           res.end();
         }).catch(err => logError(err));
-      })
-    } catch(error) {
-      console.error(error)
-    } finally {
-      sheet.seal();
-    }
+      } catch(error) {
+        console.error(error)
+      } finally {
+        sheet.seal();
+      }
+    })
 
   });
 

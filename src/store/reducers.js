@@ -1,7 +1,11 @@
 import { combineReducers } from 'redux'
 
-const initialState = {
+let initialState = {
   files: []
+}
+
+if (global.window) {
+  initialState = JSON.parse(global.window.__REDUX_STATE__.fileReducer)
 }
 
 export const fileReducer = (state = initialState, action) => {

@@ -1,6 +1,4 @@
 import React from 'react';
-// import { Query } from 'react-apollo'
-// import gql from 'graphql-tag';
 import styled, { ThemeProvider, createGlobalStyle } from 'styled-components';
 import { Dispatch, bindActionCreators } from 'redux';
 import { connect } from 'react-redux'
@@ -11,19 +9,7 @@ import ArrowDown from './ArrowDown';
 import { httpRequest } from './request';
 import { setFiles } from '../store/actions';
 
-// const FILE_QUERY = gql`
-//   query {
-//     allFile {
-//       files {
-//         id
-//         absolutePath
-//         content
-//       }
-//     }
-//   }
-// `
-
-const query = `
+export const query = `
   query {
     allFile {
       files {
@@ -152,10 +138,12 @@ const Input = styled.input`
 
 class Layout extends React.Component {
   componentDidMount() {
-    httpRequest.post('/', { query }).then(resp => {
-      console.log(resp.data)
-      this.props.setFiles(resp.data.data.allFile.files)
-    })
+    console.log('store files', this.props.files)
+    if (!this.props.files.length) {
+      httpRequest.post('/', { query }).then(resp => {
+        this.props.setFiles(resp.data.data.allFile.files)
+      })
+    }
   }
 
   renderItems = () => {

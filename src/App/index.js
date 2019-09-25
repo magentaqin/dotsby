@@ -1,13 +1,29 @@
 import React from 'react';
-import { Query } from 'react-apollo'
-import gql from 'graphql-tag';
+// import { Query } from 'react-apollo'
+// import gql from 'graphql-tag';
 import styled, { ThemeProvider, createGlobalStyle } from 'styled-components';
+import { Dispatch, bindActionCreators } from 'redux';
+import { connect } from 'react-redux'
 import theme from '../theme/light'
 import reset from 'styled-reset'
 
 import ArrowDown from './ArrowDown';
+import { httpRequest } from './request';
+import { setFiles } from '../store/actions';
 
-const FILE_QUERY = gql`
+// const FILE_QUERY = gql`
+//   query {
+//     allFile {
+//       files {
+//         id
+//         absolutePath
+//         content
+//       }
+//     }
+//   }
+// `
+
+const query = `
   query {
     allFile {
       files {
@@ -135,6 +151,13 @@ const Input = styled.input`
 `
 
 class Layout extends React.Component {
+  componentDidMount() {
+    httpRequest.post('/', { query }).then(resp => {
+      console.log(resp.data)
+      this.props.setFiles(resp.data.data.allFile.files)
+    })
+  }
+
   renderItems = () => {
     return ['Get Started', 'Queries'].map(item => (
       <AsideItem key={item}>
@@ -174,29 +197,26 @@ class Layout extends React.Component {
     )
   }
 
+  renderMainContent = () => {
+    if (!this.props.files.length) {
+      return <h1>loading</h1>
+    }
+    return (
+      <div>
+        {this.props.files.map(file => (
+          <ul key={file.id}>
+            <li dangerouslySetInnerHTML={{ __html: file.content }}></li>
+          </ul>
+        ))}
+      </div>
+    )
+  }
+
   renderMain = () => {
     return (
       <Main>
         {this.renderMainHeader()}
-        <Query query={FILE_QUERY}>
-          {
-            ({ loading, error, data }) => {
-              if (loading) return <div>Fetching</div>
-              if (error) return <div>Error</div>
-
-              const files = data.allFile.files;
-              return (
-                <div>
-                  {files.map(file => (
-                    <ul key={file.id}>
-                      <li dangerouslySetInnerHTML={{ __html: file.content }}></li>
-                    </ul>
-                  ))}
-                </div>
-              )
-            }
-          }
-        </Query>
+        {this.renderMainContent()}
       </Main>
     )
   }
@@ -213,33 +233,26 @@ class Layout extends React.Component {
   }
 }
 
+const mapStateToProps = (store) => {
+  return {
+    files: store.fileReducer.files,
+  }
+}
+
+const mapDispatchToProps = (dispatch) => {
+  return bindActionCreators({
+    setFiles: setFiles,
+  }, dispatch)
+}
+
+const ConnectedLayout = connect(mapStateToProps, mapDispatchToProps)(Layout);
+
 const App = () => (
   <React.Fragment>
-    <Layout />
+    <ConnectedLayout />
     <GlobalStyle />
   </React.Fragment>
 )
-
-
-                // <Query query={FILE_QUERY}>
-                //   {
-                //     ({ loading, error, data }) => {
-                //       if (loading) return <div>Fetching</div>
-                //       if (error) return <div>Error</div>
-
-                //       const files = data.allFile.files;
-                //       return (
-                //         <div>
-                //           {files.map(file => (
-                //             <ul key={file.id}>
-                //               <li dangerouslySetInnerHTML={{ __html: file.content }}></li>
-                //             </ul>
-                //           ))}
-                //         </div>
-                //       )
-                //     }
-                //   }
-                // </Query>
 
 
 export default App;

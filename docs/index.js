@@ -22,14 +22,15 @@ module.exports = {
         //         api.filter(/^\/script\./),
         //     ],
         // },
-        // {
-        //     name: 'Order Requests',
-        //     dir: 'order',
-        //     home: 'index.md',
-        //     pages: [
-        //         api.filter(/^\/order\./),
-        //     ],
-        // },
+        {
+            name: 'Order Requests',
+            dir: 'order',
+            home: 'index.md',
+            pages: [],
+            // pages: [
+            //     api.filter(/^\/order\./),
+            // ],
+        },
         {
             name: 'Lua api',
             dir: 'lua',

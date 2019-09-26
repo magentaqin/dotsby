@@ -1,11 +1,14 @@
 import React from 'react';
 import styled, { ThemeProvider, createGlobalStyle } from 'styled-components';
-import { Dispatch, bindActionCreators } from 'redux';
+import { bindActionCreators } from 'redux';
+import { withRouter, Link, Switch, Route, Redirect } from "react-router-dom"
 import { connect } from 'react-redux'
 import theme from '../theme/light'
 import reset from 'styled-reset'
 
 import ArrowDown from './ArrowDown';
+import MainContent from './MainContent';
+import Welcome from './Welcome';
 import { httpRequest } from './request';
 import { setFiles } from '../store/actions';
 
@@ -138,7 +141,6 @@ const Input = styled.input`
 
 class Layout extends React.Component {
   componentDidMount() {
-    console.log('store files', this.props.files)
     if (!this.props.files.length) {
       httpRequest.post('/', { query }).then(resp => {
         this.props.setFiles(resp.data.data.allFile.files)
@@ -147,9 +149,16 @@ class Layout extends React.Component {
   }
 
   renderItems = () => {
-    return ['Get Started', 'Queries'].map(item => (
-      <AsideItem key={item}>
-        {item}
+    // TODO: mock
+    const arr = this.props.files.map(item => {
+      return {
+        id: item.id,
+        name: item.id,
+      }
+    })
+    return arr.map(item => (
+      <AsideItem key={item.id}>
+        <Link to={item.id}>{item.id}</Link>
       </AsideItem>
     ))
   }
@@ -185,26 +194,15 @@ class Layout extends React.Component {
     )
   }
 
-  renderMainContent = () => {
-    if (!this.props.files.length) {
-      return <h1>loading</h1>
-    }
-    return (
-      <div>
-        {this.props.files.map(file => (
-          <ul key={file.id}>
-            <li dangerouslySetInnerHTML={{ __html: file.content }}></li>
-          </ul>
-        ))}
-      </div>
-    )
-  }
 
   renderMain = () => {
     return (
       <Main>
         {this.renderMainHeader()}
-        {this.renderMainContent()}
+        <Switch>
+          <Route path="/:id" component={MainContent}/>
+          <Route to="/" component={Welcome} />
+        </Switch>
       </Main>
     )
   }

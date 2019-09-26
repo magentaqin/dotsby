@@ -58,6 +58,7 @@ export const bootstrap = () => {
     try {
 
       httpRequest.post('/', { query }).then(resp => {
+        console.log(resp.data.data)
         store.dispatch(setFiles(resp.data.data.allFile.files))
 
         const App = (

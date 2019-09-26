@@ -4,8 +4,8 @@ let initialState = {
   files: []
 }
 
-if (global.window) {
-  initialState = JSON.parse(global.window.__REDUX_STATE__.fileReducer)
+if (global.window && global.window.__REDUX_STATE__) {
+  initialState = JSON.parse(global.window.__REDUX_STATE__).fileReducer;
 }
 
 export const fileReducer = (state = initialState, action) => {

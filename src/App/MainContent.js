@@ -4,9 +4,6 @@ import { connect } from 'react-redux';
 
 class MainContent extends React.Component {
   render() {
-    if (!this.props.files.length) {
-      return <h1>loading</h1>
-    }
     return (
       <div>
         {this.props.files.map(file => (

@@ -3,12 +3,12 @@ import styled, { ThemeProvider, createGlobalStyle } from 'styled-components';
 import { bindActionCreators } from 'redux';
 import { withRouter, Link, Switch, Route, Redirect } from "react-router-dom"
 import { connect } from 'react-redux'
-import theme from '../theme/light'
 import reset from 'styled-reset'
+import theme from '../theme/light'
 
 import ArrowDown from './ArrowDown';
 import MainContent from './MainContent';
-import Welcome from './Welcome';
+// import Welcome from './Welcome';
 import { httpRequest } from './request';
 import { setFiles } from '../store/actions';
 
@@ -140,6 +140,7 @@ const Input = styled.input`
 `
 
 class Layout extends React.Component {
+
   componentDidMount() {
     if (!this.props.files.length) {
       httpRequest.post('/', { query }).then(resp => {
@@ -196,18 +197,22 @@ class Layout extends React.Component {
 
 
   renderMain = () => {
+    const defaultId = this.props.files[0].id;
     return (
       <Main>
         {this.renderMainHeader()}
         <Switch>
-          <Route path="/:id" component={MainContent}/>
-          <Route to="/" component={Welcome} />
+          <Route path="/:id" component={MainContent} />
+          <Redirect to={defaultId} />
         </Switch>
       </Main>
     )
   }
 
   render() {
+    if (!this.props.files.length) {
+      return <h1>loading</h1>;
+    }
     return (
       <ThemeProvider theme={theme}>
         <AppWrapper>
@@ -231,7 +236,9 @@ const mapDispatchToProps = (dispatch) => {
   }, dispatch)
 }
 
-const ConnectedLayout = connect(mapStateToProps, mapDispatchToProps)(Layout);
+const LayoutWithRouter = withRouter(Layout);
+
+const ConnectedLayout = connect(mapStateToProps, mapDispatchToProps)(LayoutWithRouter);
 
 const App = () => (
   <React.Fragment>

@@ -4,8 +4,15 @@ let initialState = {
   files: []
 }
 
-if (global.window && global.window.__REDUX_STATE__) {
-  initialState = JSON.parse(global.window.__REDUX_STATE__).fileReducer;
+if (process.env.NODE_ENV === 'production') {
+  if (window.__REDUX_STATE__) {
+    const reduxState = window.__REDUX_STATE__;
+    initialState = JSON.parse(JSON.stringify(reduxState)).fileReducer;
+  }
+} else {
+  if (global.window && global.window.__REDUX_STATE__) {
+    initialState = JSON.parse(global.window.__REDUX_STATE__).fileReducer;
+  }
 }
 
 export const fileReducer = (state = initialState, action) => {

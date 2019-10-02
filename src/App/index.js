@@ -198,6 +198,7 @@ class Layout extends React.Component {
 
   renderMain = () => {
     const defaultId = this.props.files[0].id;
+    console.log('prop.location.pathname',this.props.location)
     return (
       <Main>
         {this.renderMainHeader()}

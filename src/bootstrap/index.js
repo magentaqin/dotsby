@@ -1,5 +1,5 @@
 import Express from 'express';
-import { StaticRouter } from 'react-router';
+import { StaticRouter } from 'react-router-dom';
 import { Provider as ReduxProvider } from 'react-redux'
 import React  from 'react';
 import path from 'path';
@@ -55,14 +55,15 @@ export const bootstrap = () => {
     app.use('*', (req, res) => {
 
     // The client-side App will instead use <BrowserRouter>
+
     try {
 
       httpRequest.post('/', { query }).then(resp => {
-        console.log(resp.data.data)
+        // console.log(resp.data.data)
         store.dispatch(setFiles(resp.data.data.allFile.files))
 
         const App = (
-          <StaticRouter location={req.url} context={context}>
+          <StaticRouter location={req.originalUrl} context={context}>
             <ReduxProvider store={store}>
               <StyleSheetManager sheet={sheet.instance}>
                 <Layout />
@@ -70,9 +71,15 @@ export const bootstrap = () => {
             </ReduxProvider>
           </StaticRouter>
         );
+
           // rendering
         const content = ReactDOMServer.renderToString(App);
         const initialState = store.getState();
+
+        if (req.originalUrl === '/' && context.url) {
+          console.log(context.url)
+          return res.redirect(301, context.url)
+        }
 
         const html = <Html content={content} state={initialState} />;
 

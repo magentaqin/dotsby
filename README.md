@@ -4,7 +4,7 @@
 ** Build Docs **
 ```
 // TODO
-make build-docs
+yarn build-docs
 ```
 
 #### Dotsby In Development
@@ -14,18 +14,18 @@ Dotsby do not use SSR in development. Instead, we use client-side rendering.
 Make sure that graphql server successfully started before you run the app.
 GraphQL server is starting at port 4000, and app is starting at port 3000.
 ```
-make start-graphql-server
-make rundev
+yarn start-graphql-server
+yarn rundev
 ```
 
 #### Build Dotsby and Run
-* build app
+* build app and watch changes
 ```
-make build-app
-make start-graphql-server
-make runbuild
+yarn start-graphql-server
+yarn watch-runbuild
 ```
 
 
 #### Global Packages For Development
-* prisma
+* nodemon
+* react-scripts

@@ -1,6 +1,11 @@
 {
   "scripts": {
-    "runbuild": "nodemon --watch . --exec 'make build-app && make runbuild' --ignore build/"
+    "build-app": "react-scripts build",
+    "rundev": "react-scripts start",
+    "runbuild": "babel-node ./src/bin/bootstrap.js",
+    "start-graphql-server": "node ./src/server.js",
+    "watch-runbuild": "nodemon --watch . --exec 'yarn build-app && yarn runbuild' --ignore build/",
+    "build-docs": "babel-node ./src/bin/index.js"
   },
   "devDependencies": {
     "@babel/plugin-proposal-class-properties": "^7.5.5",

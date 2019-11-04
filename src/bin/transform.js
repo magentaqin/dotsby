@@ -4,7 +4,7 @@ const html = require('remark-html');
 const fs = require('fs');
 const path = require('path');
 
-const { graphqlServer } = require(path.resolve(__dirname, '../db/index'));
+const { dbServer } = require(path.resolve(__dirname, '../db/index'));
 const { createFile } = require(path.resolve(__dirname, '../db/request'));
 const config = require('../config');
 const { logError } = require('../utils/log');
@@ -17,10 +17,10 @@ const { mainRoutes } = docConfig;
 
 export const transform = () => {
   return new Promise((resolve) => {
-    // bootstrap graphqlServer
-    graphqlServer
+    // bootstrap dbServer
+    dbServer
     .start(async () => {
-      console.log(`GraphQl server started at port ${config.config.port.graphqlServer}`)
+      console.log(`GraphQl server started at port ${config.config.port.dbServer}`)
       await loopMainRoutes();
       resolve();
     })

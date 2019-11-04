@@ -15,7 +15,7 @@ import { httpRequest } from '../App/request';
 import { ServerStyleSheet, StyleSheetManager } from 'styled-components'
 
 const basePort = config.port.ssrServer;
-const graphqlServerPort = config.port.graphqlServer;
+const dbServerPort = config.port.dbServer;
 const htmlFilePath = path.resolve(__dirname, '..', '..', './build', './index.html');
 
 const context = {};

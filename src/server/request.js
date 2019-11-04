@@ -1,5 +1,5 @@
 const axios = require('axios')
-const config = require('../config')
+const config = require('config')
 
 const client = axios.create({
   baseURL: `http://localhost:${config.port.dbServer}/api/v1`,
@@ -47,7 +47,7 @@ const http = {
 }
 
 const createDocument = async(query) => {
-  const resp = await http.post('/document/createDocument', {});
+  const resp = await http.post('/document/createDocument', query);
   return resp;
 }
 

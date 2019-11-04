@@ -1,42 +1,24 @@
-const path = require('path');
-// const Descriptor = require('doxo').RamlDescriptor;
+const config = {
+  document_token: '1qazxsw2',
+  doc_title: 'Example Doc Api',
+  version: 0.1,
+  sections: [
+    {
+      section_title: 'Overview', //default root file is index.md.
+      dir: 'overview',
+      pages: [] //TODO. READ FROM RAML AND SCHEMA
+    },
+    {
+      section_title: 'User Api',
+      dir: 'user',
+      pages: []
+    },
+    {
+      section_title: 'Account Api',
+      dir: 'account',
+      pages: []
+    }
+  ],
+}
 
-// const api = new Descriptor(path.resolve(__dirname, './api.raml'));
-
-module.exports = {
-    apiPath: path.resolve(__dirname, './api.raml'),
-    docTitle: 'Fix Simulator Backend API',
-    mainRoutes: [
-        {
-            name: 'Overview',
-            dir: 'overview',
-            home: 'index.md',
-            pages: [
-            ],
-        },
-        // {
-        //     name: 'Script Requests',
-        //     dir: 'script',
-        //     home: 'index.md',
-        //     pages: [
-        //         api.filter(/^\/script\./),
-        //     ],
-        // },
-        {
-            name: 'Order Requests',
-            dir: 'order',
-            home: 'index.md',
-            pages: [],
-            // pages: [
-            //     api.filter(/^\/order\./),
-            // ],
-        },
-        {
-            name: 'Lua api',
-            dir: 'lua',
-            home: 'index.md',
-            pages: [
-            ],
-        },
-    ],
-};
+module.exports = config;

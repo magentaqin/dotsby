@@ -31,7 +31,10 @@ const request = async(url, method, data, headerData = {}) => {
     } else {
       return {
         status: 500,
-        data: { error: 'Server Failed.'}
+        data: {
+          code: 'SERVER_ERROR',
+          msg: 'Server is not available now.'
+        }
       }
     }
   }

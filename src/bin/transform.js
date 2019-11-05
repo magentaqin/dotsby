@@ -1,56 +1,65 @@
+require('module-alias/register');
+
 const remark = require('remark');
 const recommended = require('remark-preset-lint-recommended');
 const html = require('remark-html');
 const fs = require('fs');
 const path = require('path');
 
-const { dbServer } = require(path.resolve(__dirname, '../db/index'));
-const { createFile } = require(path.resolve(__dirname, '../db/request'));
-const config = require('../config');
-const { logError } = require('../utils/log');
+const { createDocument } = require('@src/server/request.js');
+const { logError } = require('@src/utils/log');
 
 //docs config
 const docsPath = '../../docs';
-const docRootPath = path.resolve(__dirname, docsPath, 'index.js');
+const docRootPath = path.resolve(__dirname, docsPath);
 const docConfig = require(docRootPath);
-const { mainRoutes } = docConfig;
 
 export const transform = () => {
-  return new Promise((resolve) => {
-    // bootstrap dbServer
-    dbServer
-    .start(async () => {
-      console.log(`GraphQl server started at port ${config.config.port.dbServer}`)
-      await loopMainRoutes();
-      resolve();
-    })
-    .catch(err => logError(err));
+  return new Promise(async(resolve) => {
+    const sections = await loopMainRoutes();
+    console.log(JSON.stringify(sections))
+    const resp = await storeDocumentPromise(sections)
+    resolve(resp);
   })
 }
 
 const loopMainRoutes = async () => {
+  const sections = [];
   try {
-    for (const mainRoute of mainRoutes) {
-      const { name, dir, home, pages } = mainRoute;
-      if (pages.length) {
-
-      } else {
-        const homePath = path.resolve(__dirname, docsPath, `./${dir}/${home}`);
-        const file = await transformMarkdownPromise(homePath);
-        if (file) {
-          const storeFileSuccess = await storeFilePromise(file);
-          if (storeFileSuccess) {
-            console.log('successfully created file');
-          }
+    for (const sectionConfig of docConfig.sections) {
+      const { section_title, dir, pages, root_file } = sectionConfig;
+      const sectionItem = {
+        section_title,
+        pages: [],
+      };
+      if (root_file) {
+        const rootPath = path.resolve(docRootPath, `./${dir}/${root_file}`);
+        const htmlFile = await transformMarkdownPromise(rootPath)
+        const contents = htmlFile.contents;
+        if (htmlFile) {
+          sectionItem.pages.push({
+            page_title: '',
+            is_root_path: true,
+            path: `/${dir}`,
+            content: contents,
+          })
         }
       }
+
+      if (pages && pages.length) {
+
+      }
+
+      sections.push(sectionItem);
+      return sections;
     }
   } catch(err) {
     logError(err)
   }
 }
 
-function transformMarkdownPromise(filePath) {
+// transform markdown to html
+const transformMarkdownPromise = (filePath) => {
   return new Promise((resolve, reject) => {
     fs.readFile(filePath, (err, data) => {
       if (err) {
@@ -69,10 +78,16 @@ function transformMarkdownPromise(filePath) {
   })
 }
 
-function storeFilePromise(file) {
+// store document to database.
+const storeDocumentPromise = (sections) => {
+  const { document_token, doc_title, version } = docConfig
   const params = {
-    absolutePath: file.cwd,
-    content: file.contents
+    document_token,
+    doc_title,
+    version,
+    sections
   }
-  return createFile(params);
+  return createDocument(params)
 }
+
+

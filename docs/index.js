@@ -4,14 +4,17 @@ const config = {
   version: 0.1,
   sections: [
     {
-      section_title: 'Overview', //default root file is index.md.
+      section_title: 'Overview',
       dir: 'overview',
+      root_file: 'index.md',
       pages: [] //TODO. READ FROM RAML AND SCHEMA
     },
     {
       section_title: 'User Api',
       dir: 'user',
-      pages: []
+      root_file: 'index.md',
+      pages: [
+      ]
     },
     {
       section_title: 'Account Api',

@@ -1,4 +1,5 @@
 const config = {
+  user_token: 'dfjakjdfkajdfkj123',
   document_token: '1qazxsw2',
   doc_title: 'Example Doc Api',
   version: 0.1,

@@ -8,7 +8,7 @@ const theme = {
   // font
   headerFont: '20px',
   normalFont: '16px',
-  textFont: '15px'
+  textFont: '15px',
 }
 
 export default theme;

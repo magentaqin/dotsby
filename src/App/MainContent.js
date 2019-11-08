@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import React from 'react';
 import { connect } from 'react-redux';
 
@@ -16,10 +17,8 @@ class MainContent extends React.Component {
   }
 }
 
-const mapStateToProps = (store) => {
-  return {
-    files: store.fileReducer.files,
-  }
-}
+const mapStateToProps = (store) => ({
+  files: store.fileReducer.files,
+})
 
 export default connect(mapStateToProps, null)(MainContent);

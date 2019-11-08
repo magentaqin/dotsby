@@ -1,28 +1,19 @@
+/* eslint-disable react/prop-types */
+/* eslint-disable import/named */
+/* eslint-disable no-unused-vars */
 import React from 'react';
 import styled, { ThemeProvider, createGlobalStyle } from 'styled-components';
 import { bindActionCreators } from 'redux';
-import { withRouter, Link, Switch, Route, Redirect } from "react-router-dom"
+import {
+  withRouter, Link, Switch, Route, Redirect,
+} from 'react-router-dom'
 import { connect } from 'react-redux'
 import reset from 'styled-reset'
 import theme from '../theme/light'
 
 import ArrowDown from './ArrowDown';
 import MainContent from './MainContent';
-// import Welcome from './Welcome';
-import { httpRequest } from './request';
 import { setFiles } from '../store/actions';
-
-export const query = `
-  query {
-    allFile {
-      files {
-        id
-        absolutePath
-        content
-      }
-    }
-  }
-`
 
 const GlobalStyle = createGlobalStyle`
   ${reset}
@@ -66,7 +57,7 @@ const AsideContent = styled.div`
 `
 
 const AsideSection = styled.div`
-  ${'' /* border-bottom: 1px solid ${props => props.theme.dividerColor}; */}
+  ${''}
 `;
 
 const CollapseButton = styled.button`
@@ -140,23 +131,20 @@ const Input = styled.input`
 `
 
 class Layout extends React.Component {
-
   componentDidMount() {
     if (!this.props.files.length) {
-      httpRequest.post('/', { query }).then(resp => {
-        this.props.setFiles(resp.data.data.allFile.files)
-      })
+      // httpRequest.post('/', { query }).then(resp => {
+      //   this.props.setFiles(resp.data.data.allFile.files)
+      // })
     }
   }
 
   renderItems = () => {
     // TODO: mock
-    const arr = this.props.files.map(item => {
-      return {
-        id: item.id,
-        name: item.id,
-      }
-    })
+    const arr = this.props.files.map(item => ({
+      id: item.id,
+      name: item.id,
+    }))
     return arr.map(item => (
       <AsideItem key={item.id}>
         <Link to={item.id}>{item.id}</Link>
@@ -164,41 +152,36 @@ class Layout extends React.Component {
     ))
   }
 
-  renderAside = () => {
-    return (
-      <Aside>
-        <AsideHeader>
-          <H1>Fix Simulator Api Docs</H1>
-        </AsideHeader>
-        <AsideContent>
-          <AsideSection>
-            <CollapseButton>
-              <AsideSubtitle>Essentials</AsideSubtitle>
-              <ArrowDown />
-            </CollapseButton>
-            <AsideNav>
-              {this.renderItems()}
-            </AsideNav>
-          </AsideSection>
-        </AsideContent>
-      </Aside>
-    )
-  }
+  renderAside = () => (
+    <Aside>
+      <AsideHeader>
+        <H1>Fix Simulator Api Docs</H1>
+      </AsideHeader>
+      <AsideContent>
+        <AsideSection>
+          <CollapseButton>
+            <AsideSubtitle>Essentials</AsideSubtitle>
+            <ArrowDown />
+          </CollapseButton>
+          <AsideNav>
+            {this.renderItems()}
+          </AsideNav>
+        </AsideSection>
+      </AsideContent>
+    </Aside>
+  )
 
-  renderMainHeader = () => {
-    return (
-      <MainHeader>
-        <InputWrapper>
-          <Input />
-        </InputWrapper>
-      </MainHeader>
-    )
-  }
+  renderMainHeader = () => (
+    <MainHeader>
+      <InputWrapper>
+        <Input />
+      </InputWrapper>
+    </MainHeader>
+  )
 
 
   renderMain = () => {
     const defaultId = this.props.files[0].id;
-    console.log('prop.location.pathname',this.props.location)
     return (
       <Main>
         {this.renderMainHeader()}
@@ -225,17 +208,13 @@ class Layout extends React.Component {
   }
 }
 
-const mapStateToProps = (store) => {
-  return {
-    files: store.fileReducer.files,
-  }
-}
+const mapStateToProps = (store) => ({
+  files: store.fileReducer.files,
+})
 
-const mapDispatchToProps = (dispatch) => {
-  return bindActionCreators({
-    setFiles: setFiles,
-  }, dispatch)
-}
+const mapDispatchToProps = (dispatch) => bindActionCreators({
+  setFiles,
+}, dispatch)
 
 const LayoutWithRouter = withRouter(Layout);
 

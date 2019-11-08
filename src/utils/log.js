@@ -4,5 +4,5 @@ const logError = (err) => {
 }
 
 module.exports = {
-  logError
+  logError,
 }

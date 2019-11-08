@@ -9,25 +9,25 @@ const path = require('path');
 const { createDocument } = require('@src/server/request.js');
 const { logError } = require('@src/utils/log');
 
-//docs config
+// docs config
 const docsPath = '../../docs';
 const docRootPath = path.resolve(__dirname, docsPath);
 const docConfig = require(docRootPath);
 
-export const transform = () => {
-  return new Promise(async(resolve) => {
-    const sections = await loopMainRoutes();
-    console.log(JSON.stringify(sections))
-    const resp = await storeDocumentPromise(sections)
-    resolve(resp);
-  })
-}
+export const transform = () => new Promise(async(resolve) => {
+  const sections = await loopMainRoutes();
+  console.log(JSON.stringify(sections))
+  const resp = await storeDocumentPromise(sections)
+  resolve(resp);
+})
 
 const loopMainRoutes = async () => {
   const sections = [];
   try {
     for (const sectionConfig of docConfig.sections) {
-      const { section_title, dir, pages, root_file } = sectionConfig;
+      const {
+        section_title, dir, pages, root_file,
+      } = sectionConfig;
       const sectionItem = {
         section_title,
         pages: [],
@@ -35,7 +35,7 @@ const loopMainRoutes = async () => {
       if (root_file) {
         const rootPath = path.resolve(docRootPath, `./${dir}/${root_file}`);
         const htmlFile = await transformMarkdownPromise(rootPath)
-        const contents = htmlFile.contents;
+        const { contents } = htmlFile;
         if (htmlFile) {
           sectionItem.pages.push({
             page_title: '',
@@ -53,30 +53,28 @@ const loopMainRoutes = async () => {
       sections.push(sectionItem);
       return sections;
     }
-  } catch(err) {
+  } catch (err) {
     logError(err)
   }
 }
 
 // transform markdown to html
-const transformMarkdownPromise = (filePath) => {
-  return new Promise((resolve, reject) => {
-    fs.readFile(filePath, (err, data) => {
-      if (err) {
-        return reject(err);
-      }
-      remark()
-        .use(recommended)
-        .use(html)
-        .process(data, function(err, file) {
-          if (err) {
-            return reject(err);
-          }
-          resolve(file);
-        });
-    })
+const transformMarkdownPromise = (filePath) => new Promise((resolve, reject) => {
+  fs.readFile(filePath, (err, data) => {
+    if (err) {
+      return reject(err);
+    }
+    remark()
+      .use(recommended)
+      .use(html)
+      .process(data, (err, file) => {
+        if (err) {
+          return reject(err);
+        }
+        resolve(file);
+      });
   })
-}
+})
 
 // store document to database.
 const storeDocumentPromise = (sections) => {
@@ -85,9 +83,7 @@ const storeDocumentPromise = (sections) => {
     document_token,
     doc_title,
     version,
-    sections
+    sections,
   }
   return createDocument(params)
 }
-
-

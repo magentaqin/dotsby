@@ -1,7 +1,7 @@
 import { combineReducers } from 'redux'
 
 let initialState = {
-  files: []
+  files: [],
 }
 
 if (process.env.NODE_ENV === 'production') {
@@ -9,18 +9,16 @@ if (process.env.NODE_ENV === 'production') {
     const reduxState = window.__REDUX_STATE__;
     initialState = JSON.parse(JSON.stringify(reduxState)).fileReducer;
   }
-} else {
-  if (global.window && global.window.__REDUX_STATE__) {
-    initialState = JSON.parse(global.window.__REDUX_STATE__).fileReducer;
-  }
+} else if (global.window && global.window.__REDUX_STATE__) {
+  initialState = JSON.parse(global.window.__REDUX_STATE__).fileReducer;
 }
 
 export const fileReducer = (state = initialState, action) => {
-  switch(action.type) {
+  switch (action.type) {
     case 'SET_FILES':
       return {
         ...state,
-        files: action.payload
+        files: action.payload,
       }
     default:
       return state;

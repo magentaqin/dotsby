@@ -15,38 +15,32 @@ const request = async(url, method, data, headerData = {}) => {
     url,
     method,
     data,
-    headers
+    headers,
   }
 
   try {
     const resp = await client.request(options)
     return resp
-  } catch(err) {
+  } catch (err) {
     if (err.response) {
-      const { status, data } = err.response;
       return {
-        status,
-        data
+        status: err.response.status,
+        data: err.response.data,
       }
-    } else {
-      return {
-        status: 500,
-        data: {
-          code: 'SERVER_ERROR',
-          message: 'Server is not available now.'
-        }
-      }
+    }
+    return {
+      status: 500,
+      data: {
+        code: 'SERVER_ERROR',
+        message: 'Server is not available now.',
+      },
     }
   }
 }
 
 const http = {
-  get: (url, data, headerData = {}) => {
-    return request(url, 'GET', data, headerData)
-  },
-  post: (url, data, headerData = {}) => {
-    return request(url, 'POST', data, headerData)
-  },
+  get: (url, data, headerData = {}) => request(url, 'GET', data, headerData),
+  post: (url, data, headerData = {}) => request(url, 'POST', data, headerData),
 }
 
 const createDocument = async(query) => {
@@ -54,10 +48,12 @@ const createDocument = async(query) => {
   return resp;
 }
 
-module.exports = {
-  createDocument,
+const getDocumentInfo = async(query) => {
+  const resp = await http.get('/document/getDocumentInfo', query)
+  return resp;
 }
 
-
-
-
+module.exports = {
+  createDocument,
+  getDocumentInfo,
+}

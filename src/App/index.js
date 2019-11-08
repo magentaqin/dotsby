@@ -14,6 +14,8 @@ import theme from '../theme/light'
 import ArrowDown from './ArrowDown';
 import MainContent from './MainContent';
 import { setFiles } from '../store/actions';
+import { getDocumentInfo } from '../server/request'
+
 
 const GlobalStyle = createGlobalStyle`
   ${reset}
@@ -136,6 +138,9 @@ class Layout extends React.Component {
       // httpRequest.post('/', { query }).then(resp => {
       //   this.props.setFiles(resp.data.data.allFile.files)
       // })
+      getDocumentInfo({ document_id: 12312312 }).then(resp => {
+        const document = resp.data.data
+      })
     }
   }
 

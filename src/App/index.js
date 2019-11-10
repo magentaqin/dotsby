@@ -13,8 +13,8 @@ import theme from '../theme/light'
 
 import ArrowDown from './ArrowDown';
 import MainContent from './MainContent';
-import { setFiles } from '../store/actions';
 import { getDocumentInfo } from '../server/request'
+import { setDocumentInfo } from '../store/reducerActions.js/document'
 
 
 const GlobalStyle = createGlobalStyle`
@@ -134,27 +134,34 @@ const Input = styled.input`
 
 class Layout extends React.Component {
   componentDidMount() {
-    if (!this.props.files.length) {
-      // httpRequest.post('/', { query }).then(resp => {
-      //   this.props.setFiles(resp.data.data.allFile.files)
-      // })
-      getDocumentInfo({ document_id: 12312312 }).then(resp => {
-        const document = resp.data.data
+    getDocumentInfo({ document_id: 123123 }).then(resp => {
+      const { data } = resp.data;
+      const { document_id, sections, ...rest } = data
+      const sectionIds = []
+      sections.forEach(section => {
+        sectionIds.push(section.section_id)
       })
-    }
+      const documentInfo = {
+        ...rest,
+        id: document_id,
+        sectionIds,
+      }
+      this.props.setDocumentInfo(documentInfo)
+    }).catch(err => console.log(err))
   }
 
   renderItems = () => {
     // TODO: mock
-    const arr = this.props.files.map(item => ({
-      id: item.id,
-      name: item.id,
-    }))
-    return arr.map(item => (
-      <AsideItem key={item.id}>
-        <Link to={item.id}>{item.id}</Link>
-      </AsideItem>
-    ))
+    // const arr = this.props.files.map(item => ({
+    //   id: item.id,
+    //   name: item.id,
+    // }))
+    // return arr.map(item => (
+    //   <AsideItem key={item.id}>
+    //     <Link to={item.id}>{item.id}</Link>
+    //   </AsideItem>
+    // ))
+    return null;
   }
 
   renderAside = () => (
@@ -186,7 +193,8 @@ class Layout extends React.Component {
 
 
   renderMain = () => {
-    const defaultId = this.props.files[0].id;
+    // const defaultId = this.props.files[0].id;
+    const defaultId = 1;
     return (
       <Main>
         {this.renderMainHeader()}
@@ -199,7 +207,7 @@ class Layout extends React.Component {
   }
 
   render() {
-    if (!this.props.files.length) {
+    if (!this.props.files) {
       return <h1>loading</h1>;
     }
     return (
@@ -214,11 +222,10 @@ class Layout extends React.Component {
 }
 
 const mapStateToProps = (store) => ({
-  files: store.fileReducer.files,
 })
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
-  setFiles,
+  setDocumentInfo,
 }, dispatch)
 
 const LayoutWithRouter = withRouter(Layout);

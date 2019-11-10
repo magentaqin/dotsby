@@ -1,9 +1,10 @@
 import { createStore, applyMiddleware, compose } from 'redux'
-import { rootReducer } from './reducerActions.js';
+import rootReducer from './reducerActions.js';
 
 
 const store = createStore(
   rootReducer,
+  window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__()
 )
 
 export default store;

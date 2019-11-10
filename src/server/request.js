@@ -1,41 +1,49 @@
-const axios = require('axios')
-const config = require('config')
+/* eslint-disable arrow-body-style */
+import axios from 'axios'
+import qs from 'qs'
+import config from '../config'
 
 const client = axios.create({
   baseURL: `http://localhost:${config.port.dbServer}/api/v1`,
   headers: { 'X-Requested-With': 'XMLHttpRequest', 'Content-Type': 'application/json' },
-  withCredentials: true,
   responseType: 'json',
   timeout: 20000,
 })
 
-const request = async(url, method, data, headerData = {}) => {
+const request = (url, method, data, headerData = {}) => {
   const headers = { ...headerData }
   const options = {
     url,
     method,
-    data,
     headers,
+    paramsSerializer: (params) => {
+      return qs.stringify(params, { arrayFormat: 'repeat' })
+    },
   }
 
-  try {
-    const resp = await client.request(options)
-    return resp
-  } catch (err) {
-    if (err.response) {
-      return {
-        status: err.response.status,
-        data: err.response.data,
-      }
-    }
-    return {
-      status: 500,
-      data: {
-        code: 'SERVER_ERROR',
-        message: 'Server is not available now.',
-      },
-    }
+  if (method === 'GET') {
+    options.params = data;
+  } else {
+    options.data = data;
   }
+
+  const requestPromise = new Promise((resolve, reject) => {
+    client.request(options).then((resp) => {
+      resolve(resp)
+    }).catch(error => {
+      const formattedError = {
+        method: error.config.method,
+        url: error.config.url,
+        status: error.response ? error.response.status : '',
+        statusText: error.response ? error.response.statusText : '',
+        data: error.response ? error.response.data : '',
+        raw: error,
+      };
+      reject(formattedError)
+    })
+  })
+
+  return requestPromise;
 }
 
 const http = {
@@ -43,17 +51,17 @@ const http = {
   post: (url, data, headerData = {}) => request(url, 'POST', data, headerData),
 }
 
-const createDocument = async(query) => {
+export const createDocument = async(query) => {
   const resp = await http.post('/document/createDocument', query);
   return resp;
 }
 
-const getDocumentInfo = async(query) => {
+export const getDocumentInfo = async(query) => {
   const resp = await http.get('/document/getDocumentInfo', query)
   return resp;
 }
 
-module.exports = {
-  createDocument,
-  getDocumentInfo,
-}
+// module.exports = {
+//   createDocument,
+//   getDocumentInfo,
+// }

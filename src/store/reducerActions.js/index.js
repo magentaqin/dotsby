@@ -1,5 +1,5 @@
 import { combineReducers } from 'redux'
-import documentInfo from './document'
+import { documentReducer } from './document'
 import sections from './sections'
 import pages from './pages'
 
@@ -33,7 +33,7 @@ import pages from './pages'
 // })
 
 const rootReducer = combineReducers({
-  documentReducer: documentInfo.documentReducer,
+  documentReducer,
   sectionsReducer: sections.sectionsReducer,
   pagesReducer: pages.pagesReducer,
 })

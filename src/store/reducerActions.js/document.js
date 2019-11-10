@@ -1,7 +1,7 @@
 
 const setDocumentInfoActionType = 'DOCUMENT/SET_DOCUMENT_INFO';
 
-const setDocumentInfo = (documentInfo) => ({
+export const setDocumentInfo = (documentInfo) => ({
   type: setDocumentInfoActionType,
   payload: documentInfo,
 })
@@ -17,7 +17,7 @@ const initialState = {
   },
 }
 
-const documentReducer = (state = initialState, action) => {
+export const documentReducer = (state = initialState, action) => {
   switch (action.type) {
     case setDocumentInfoActionType:
       return {
@@ -27,9 +27,4 @@ const documentReducer = (state = initialState, action) => {
     default:
       return state;
   }
-}
-
-export default {
-  setDocumentInfo,
-  documentReducer,
 }

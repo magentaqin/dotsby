@@ -14,8 +14,8 @@ import theme from '../theme/light'
 import ArrowDown from './ArrowDown';
 import MainContent from './MainContent';
 import { getDocumentInfo } from '../server/request'
-import { setDocumentInfo } from '../store/reducerActions.js/document'
-
+import { setDocumentInfo } from '../store/reducerActions/document'
+import { setSectionsInfo } from '../store/reducerActions/sections'
 
 const GlobalStyle = createGlobalStyle`
   ${reset}
@@ -138,47 +138,67 @@ class Layout extends React.Component {
       const { data } = resp.data;
       const { document_id, sections, ...rest } = data
       const sectionIds = []
-      sections.forEach(section => {
-        sectionIds.push(section.section_id)
-      })
+      const sectionMap = {}
+      /**
+       * set document info
+       */
       const documentInfo = {
         ...rest,
         id: document_id,
         sectionIds,
       }
       this.props.setDocumentInfo(documentInfo)
+
+      /**
+       * set sections info
+       */
+      sections.forEach(section => {
+        const { section_id, section_title, pages } = section;
+        const pagesInfo = []
+        pages.forEach(page => {
+          pagesInfo.push(page)
+        })
+        sectionIds.push(section_id)
+        sectionMap[section_id] = {
+          section_id,
+          section_title,
+          pagesInfo,
+        }
+
+        this.props.setSectionsInfo(sectionMap)
+      })
     }).catch(err => console.log(err))
   }
 
-  renderItems = () => {
-    // TODO: mock
-    // const arr = this.props.files.map(item => ({
-    //   id: item.id,
-    //   name: item.id,
-    // }))
-    // return arr.map(item => (
-    //   <AsideItem key={item.id}>
-    //     <Link to={item.id}>{item.id}</Link>
-    //   </AsideItem>
-    // ))
-    return null;
+  renderPages = (pages) => {
+    return pages.map(item => (
+      <AsideItem key={item.page_id}>
+        <Link to={item.path}>{item.page_title}</Link>
+      </AsideItem>
+    ))
+  }
+
+  renderSections = () => {
+    return this.props.sections.map(item => {
+      return (
+        <AsideSection key={item.section_id}>
+          <CollapseButton>
+            <AsideSubtitle>{item.section_title}</AsideSubtitle>
+            <ArrowDown />
+          </CollapseButton>
+          <AsideNav>{this.renderPages(item.pagesInfo)}</AsideNav>
+        </AsideSection>
+      )
+    })
   }
 
   renderAside = () => (
     <Aside>
       <AsideHeader>
-        <H1>Fix Simulator Api Docs</H1>
+        <H1>{this.props.documentTitle}</H1>
       </AsideHeader>
       <AsideContent>
-        <AsideSection>
-          <CollapseButton>
-            <AsideSubtitle>Essentials</AsideSubtitle>
-            <ArrowDown />
-          </CollapseButton>
-          <AsideNav>
-            {this.renderItems()}
-          </AsideNav>
-        </AsideSection>
+        {this.renderSections()}
       </AsideContent>
     </Aside>
   )
@@ -193,8 +213,7 @@ class Layout extends React.Component {
 
 
   renderMain = () => {
-    // const defaultId = this.props.files[0].id;
-    const defaultId = 1;
+    const defaultId = this.props.sections[0].pagesInfo[0].path;
     return (
       <Main>
         {this.renderMainHeader()}
@@ -207,7 +226,7 @@ class Layout extends React.Component {
   }
 
   render() {
-    if (!this.props.files) {
+    if (!this.props.sections.length) {
       return <h1>loading</h1>;
     }
     return (
@@ -222,10 +241,13 @@ class Layout extends React.Component {
 }
 
 const mapStateToProps = (store) => ({
+  documentTitle: store.documentReducer.document.doc_title,
+  sections: Object.values(store.sectionsReducer.sections),
 })
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
   setDocumentInfo,
+  setSectionsInfo,
 }, dispatch)
 
 const LayoutWithRouter = withRouter(Layout);

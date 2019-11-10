@@ -7,18 +7,14 @@ class MainContent extends React.Component {
   render() {
     return (
       <div>
-        {this.props.files.map(file => (
-          <ul key={file.id}>
-            <li dangerouslySetInnerHTML={{ __html: file.content }}></li>
-          </ul>
-        ))}
+        <div dangerouslySetInnerHTML={{ __html: '<h1>HELLO WORLD</h1>' }}></div>
       </div>
     )
   }
 }
 
 const mapStateToProps = (store) => ({
-  files: store.fileReducer.files,
+
 })
 
 export default connect(mapStateToProps, null)(MainContent);

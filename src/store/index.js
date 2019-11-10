@@ -1,5 +1,5 @@
 import { createStore, applyMiddleware, compose } from 'redux'
-import rootReducer from './reducerActions.js';
+import rootReducer from './reducerActions';
 
 
 const store = createStore(

@@ -1,7 +1,7 @@
 
 const setSectionsInfoActionType = 'SECTIONS/SET_SECTIONS_INFO';
 
-const setSectionsInfo = (sections) => ({
+export const setSectionsInfo = (sections) => ({
   type: setSectionsInfoActionType,
   payload: sections,
 })
@@ -11,7 +11,7 @@ const initialState = {
 }
 
 
-const sectionsReducer = (state = initialState, action) => {
+export const sectionsReducer = (state = initialState, action) => {
   switch (action.type) {
     case setSectionsInfoActionType:
       return {
@@ -21,11 +21,6 @@ const sectionsReducer = (state = initialState, action) => {
     default:
       return state;
   }
-}
-
-export default {
-  setSectionsInfo,
-  sectionsReducer,
 }
 
 

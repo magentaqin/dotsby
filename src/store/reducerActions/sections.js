@@ -22,18 +22,3 @@ export const sectionsReducer = (state = initialState, action) => {
       return state;
   }
 }
-
-
-/**
- * const sectionPageMap = {
- *   '@section_id': {
- *      section_title: '',
- *      pagesInfo: [
- *        {
- *          page_title: '',
- *          page_id: @pageId,
- *        }
- *    ]
- *   }
- * }
- */

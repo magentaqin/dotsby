@@ -1,6 +1,6 @@
 const setPagesInfoActionType = 'PAGES/SET_PAGES_INFO'
 
-const setPagesInfo = (pages) => ({
+export const setPagesInfo = (pages) => ({
   type: setPagesInfoActionType,
   payload: pages,
 })
@@ -11,7 +11,7 @@ const initialState = {
 }
 
 
-const pagesReducer = (state = initialState, action) => {
+export const pagesReducer = (state = initialState, action) => {
   switch (action.type) {
     case setPagesInfoActionType:
       return {
@@ -23,18 +23,3 @@ const pagesReducer = (state = initialState, action) => {
   }
 }
 
-export default {
-  pagesReducer,
-  setPagesInfo,
-}
-
-/**
- * example
- * const pagemap = {
- *  @pageid: {
- *    page_title: '',
- *    is_root_path: '',
- *    path: '',
- *  }
- * }
- */

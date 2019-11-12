@@ -134,20 +134,17 @@ const Input = styled.input`
 
 class Layout extends React.Component {
   componentDidMount() {
+    if (!Object.keys(this.props.document).length) {
+      this.fetchDocumentInfo()
+    }
+  }
+
+  fetchDocumentInfo = () => {
     getDocumentInfo({ document_id: 123123 }).then(resp => {
       const { data } = resp.data;
       const { document_id, sections, ...rest } = data
       const sectionIds = []
       const sectionMap = {}
-      /**
-       * set document info
-       */
-      const documentInfo = {
-        ...rest,
-        id: document_id,
-        sectionIds,
-      }
-      this.props.setDocumentInfo(documentInfo)
 
       /**
        * set sections info
@@ -166,6 +163,16 @@ class Layout extends React.Component {
         }
 
         this.props.setSectionsInfo(sectionMap)
+
+        /**
+         * set document info
+         */
+        const documentInfo = {
+          ...rest,
+          id: document_id,
+          sectionIds,
+        }
+        this.props.setDocumentInfo(documentInfo)
       })
     }).catch(err => console.log(err))
   }
@@ -241,6 +248,7 @@ class Layout extends React.Component {
 }
 
 const mapStateToProps = (store) => ({
+  document: store.documentReducer.document,
   documentTitle: store.documentReducer.document.doc_title,
   sections: Object.values(store.sectionsReducer.sections),
 })

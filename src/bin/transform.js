@@ -1,5 +1,3 @@
-require('module-alias/register');
-
 const remark = require('remark');
 const recommended = require('remark-preset-lint-recommended');
 const html = require('remark-html');

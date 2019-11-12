@@ -7,12 +7,12 @@ import { setPagesInfo } from '../store/reducerActions/pages';
 
 class MainContent extends React.Component {
   componentDidMount() {
-    const info = {}
-    getPageInfo({ id: this.pageId }).then(resp => {
-      const { page_id } = resp.data.data
-      info[page_id] = resp.data.data
-      this.props.setPagesInfo(info)
-    }).catch(err => err)
+    // const info = {}
+    // getPageInfo({ id: this.pageId }).then(resp => {
+    //   const { page_id } = resp.data.data
+    //   info[page_id] = resp.data.data
+    //   this.props.setPagesInfo(info)
+    // }).catch(err => err)
   }
 
   get pageId() {
@@ -22,10 +22,11 @@ class MainContent extends React.Component {
   }
 
   render() {
-    if (!Object.keys(this.props.pages).length) {
-      return null;
-    }
-    const { content } = this.props.pages[this.pageId]
+    // if (!Object.keys(this.props.pages).length) {
+    //   return null;
+    // }
+    // const { content } = this.props.pages[this.pageId]
+    const content = '<h1>Hello World</h1>'
     return (
       <div>
         <div dangerouslySetInnerHTML={{ __html: `${content}` }}></div>

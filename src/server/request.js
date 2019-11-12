@@ -65,8 +65,3 @@ export const getPageInfo = async(query) => {
   const resp = await http.get('/page/info', query)
   return resp;
 }
-
-// module.exports = {
-//   createDocument,
-//   getDocumentInfo,
-// }

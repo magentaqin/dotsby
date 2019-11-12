@@ -1,4 +1,8 @@
+/* eslint-disable react/prop-types */
+/* eslint-disable import/first */
+/* eslint-disable import/prefer-default-export */
 /* eslint-disable no-unused-vars */
+
 import Express from 'express';
 import { StaticRouter } from 'react-router-dom';
 import { Provider as ReduxProvider } from 'react-redux'
@@ -6,17 +10,19 @@ import React from 'react';
 import path from 'path';
 import fs from 'fs';
 import ReactDOMServer from 'react-dom/server';
-import { ServerStyleSheet, StyleSheetManager } from 'styled-components'
-import { logError } from '../utils/log';
-import { config } from '../config';
-import Layout, { query } from '../App';
-import store from '../store';
-import { setFiles } from '../store/actions'
+import { ServerStyleSheet, StyleSheetManager } from 'styled-components';
 
-import { httpRequest } from '../App/request';
+import { logError } from '@src/utils/log';
+import config from '@src/config';
+import Layout from '@src/App';
+import { getDocumentInfo } from '@src/server/request';
+import { setDocumentInfo } from '@src/store/reducerActions/document';
+import { setSectionsInfo } from '@src/store/reducerActions/sections';
 
-const basePort = config.port.ssrServer;
-const dbServerPort = config.port.dbServer;
+import store from '@src/store';
+
+
+const port = config.port.ssrServer;
 const htmlFilePath = path.resolve(__dirname, '..', '..', './build', './index.html');
 
 const context = {};
@@ -51,12 +57,43 @@ export const bootstrap = () => {
     ));
 
     app.use('*', (req, res) => {
-    // The client-side App will instead use <BrowserRouter>
-
+      console.log('RECEIVEORIGINALURL', req.originalUrl)
       try {
-        httpRequest.post('/', { query }).then(resp => {
-        // console.log(resp.data.data)
-          store.dispatch(setFiles(resp.data.data.allFile.files))
+        getDocumentInfo({ document_id: 123123 }).then(resp => {
+          console.log('----sent request--')
+          const { data } = resp.data;
+          const { document_id, sections, ...rest } = data
+          const sectionIds = []
+          const sectionMap = {}
+
+          /**
+           * set sections info
+           */
+          sections.forEach(section => {
+            const { section_id, section_title, pages } = section;
+            const pagesInfo = []
+            pages.forEach(page => {
+              pagesInfo.push(page)
+            })
+            sectionIds.push(section_id)
+            sectionMap[section_id] = {
+              section_id,
+              section_title,
+              pagesInfo,
+            }
+          })
+
+          /**
+             * set document info
+             */
+          const documentInfo = {
+            ...rest,
+            id: document_id,
+            sectionIds,
+          }
+
+          store.dispatch(setDocumentInfo(documentInfo))
+          store.dispatch(setSectionsInfo(sectionMap))
 
           const App = (
             <StaticRouter location={req.originalUrl} context={context}>
@@ -73,7 +110,7 @@ export const bootstrap = () => {
           const initialState = store.getState();
 
           if (req.originalUrl === '/' && context.url) {
-            console.log(context.url)
+            console.log('**REDIRECT**', context.url)
             return res.redirect(301, context.url)
           }
 
@@ -91,6 +128,8 @@ export const bootstrap = () => {
           )
           res.send(responseData);
           res.end();
+        }).catch(err => {
+          console.error(err)
         })
       } catch (error) {
         console.error(error)
@@ -101,7 +140,7 @@ export const bootstrap = () => {
   });
 
 
-  app.listen(basePort, () => console.log( // eslint-disable-line no-console
-    `app Server is now running on http://localhost:${basePort}`,
+  app.listen(port, () => console.log( // eslint-disable-line no-console
+    `app Server is now running on http://localhost:${port}`,
   ));
 }

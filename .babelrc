@@ -3,5 +3,15 @@
     "@babel/preset-env",
     "@babel/preset-react"
   ],
-  "plugins": ["babel-plugin-styled-components", "@babel/plugin-proposal-class-properties"]
+  "plugins": [
+    "babel-plugin-styled-components",
+    "@babel/plugin-proposal-class-properties",
+    ["module-resolver", {
+      "root": ["."],
+      "alias": {
+        "@src": "./src",
+        "@docs": "./docs"
+      }
+    }]
+  ]
 }

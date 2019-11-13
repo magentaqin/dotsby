@@ -6,7 +6,7 @@ export const setDocumentInfo = (documentInfo) => ({
   payload: documentInfo,
 })
 
-let initialState = {
+const initialState = {
   document: {
     id: 0,
     document_token: '',
@@ -16,20 +16,6 @@ let initialState = {
     sectionIds: [],
   },
 }
-
-
-if (process.env.NODE_ENV === 'production') {
-  // render on server
-  if (global.window && global.window.__REDUX_STATE__) {
-    initialState = JSON.parse(JSON.stringify(global.window.__REDUX_STATE__)).documentReducer;
-  }
-
-  // render on browser
-  if (window && window.__REDUX_STATE__) {
-    initialState = JSON.parse(JSON.stringify(window.__REDUX_STATE__)).documentReducer;
-  }
-}
-
 
 export const documentReducer = (state = initialState, action) => {
   switch (action.type) {

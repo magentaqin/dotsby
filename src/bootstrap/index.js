@@ -5,6 +5,7 @@
 
 import Express from 'express';
 import { StaticRouter } from 'react-router-dom';
+import { createStore } from 'redux'
 import { Provider as ReduxProvider } from 'react-redux'
 import React from 'react';
 import path from 'path';
@@ -18,12 +19,12 @@ import Layout from '@src/App';
 import { getDocumentInfo } from '@src/server/request';
 import { setDocumentInfo } from '@src/store/reducerActions/document';
 import { setSectionsInfo } from '@src/store/reducerActions/sections';
-
-import store from '@src/store';
+import reducer from '@src/store/reducerActions';
 
 
 const port = config.port.ssrServer;
-const htmlFilePath = path.resolve(__dirname, '..', '..', './build', './index.html');
+const buildFolderPath = path.resolve(__dirname, '..', '..', './build');
+const htmlFilePath = path.resolve(buildFolderPath, './index.html');
 
 const context = {};
 const sheet = new ServerStyleSheet();
@@ -66,7 +67,7 @@ const dispatchToStore = (data, reduxStore) => {
 }
 
 
-const getApp = (req, context) => {
+const getApp = (req, context, store) => {
   return (
     <StaticRouter location={req.originalUrl} context={context}>
       <ReduxProvider store={store}>
@@ -80,15 +81,12 @@ const getApp = (req, context) => {
 
 const fetchDocumentInfo = async (store) => {
   let hasError = false;
-  const documentId = store.getState().documentReducer.document.id;
-  if (!documentId) {
-    console.log('---Fetch Request--')
-    const resp = await getDocumentInfo({ document_id: 123123 }).catch(err => console.log(err));
-    if (!resp || !resp.data || !resp.data.data) {
-      hasError = true
-    } else {
-      dispatchToStore(resp.data.data, store);
-    }
+  console.log('--FETCH REQUEST--')
+  const resp = await getDocumentInfo({ document_id: 123123 }).catch(err => console.log(err));
+  if (!resp || !resp.data || !resp.data.data) {
+    hasError = true
+  } else {
+    dispatchToStore(resp.data.data, store);
   }
   return hasError;
 }
@@ -123,29 +121,22 @@ export const bootstrap = () => {
 
   fs.readFile(htmlFilePath, 'utf8', (_err, htmlData) => {
     // handle static resources.
-    app.use('/static', Express.static(
-      path.resolve(__dirname, '..', '..', 'build', 'static'),
-    ));
-    app.use('/images', Express.static(
-      path.resolve(__dirname, '..', '..', 'build', 'images'),
-    ));
-    app.use('/dotsby.ico', Express.static(
-      path.resolve(__dirname, '..', '..', 'build', 'dotsby.ico'),
-    ));
-    app.use('/manifest.json', Express.static(
-      path.resolve(__dirname, '..', '..', 'build', 'manifest.json'),
-    ));
+    app.use('/static', Express.static(path.resolve(buildFolderPath, 'static')));
+    app.use('/images', Express.static(path.resolve(buildFolderPath, 'images')));
+    app.use('/dotsby.ico', Express.static(path.resolve(buildFolderPath, 'dotsby.ico')));
+    app.use('/manifest.json', Express.static(path.resolve(buildFolderPath, 'manifest.json')));
 
     app.use('*', async(req, res) => {
       console.log('RECEIVEORIGINALURL', req.originalUrl)
+      const store = createStore(reducer);
       try {
-        const hasError = await fetchDocumentInfo(store);
+        const hasError = await fetchDocumentInfo(store); // server store.
         if (hasError) {
           handleServerError(res)
           return;
         }
 
-        const App = getApp(req, context)
+        const App = getApp(req, context, store)
         const content = ReactDOMServer.renderToString(App);
 
         if (req.originalUrl === '/' && context.url) {
@@ -153,6 +144,7 @@ export const bootstrap = () => {
           return res.redirect(301, context.url)
         }
 
+        // put the server store in response to init the client store.
         handleSuccess(store, content, htmlData, res)
       } catch (error) {
         console.error(error)

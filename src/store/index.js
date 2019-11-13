@@ -15,8 +15,15 @@ if (process.env.NODE_ENV === 'development') {
   reduxDevTools = window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__()
 }
 
+
+let initialState;
+if (window.__REDUX_STATE__) {
+  initialState = JSON.parse(JSON.stringify(window.__REDUX_STATE__))
+}
+
 const store = createStore(
   rootReducer,
+  initialState,
   reduxDevTools,
 )
 

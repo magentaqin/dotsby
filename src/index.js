@@ -1,5 +1,5 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
+import ReactDOM, { hydrate } from 'react-dom';
 import { Provider } from 'react-redux';
 import { Router } from 'react-router-dom'
 import { createBrowserHistory } from 'history'
@@ -16,7 +16,16 @@ const App = () => (
   </Provider>
 )
 
-ReactDOM.render(
-  <App />,
-  document.getElementById('root'),
-)
+if (process.env.NODE_ENV === 'development') {
+  ReactDOM.render(
+    <App />,
+    document.getElementById('root'),
+  )
+}
+
+if (process.env.NODE_ENV === 'production') {
+  hydrate(
+    <App />,
+    document.getElementById('root'),
+  )
+}

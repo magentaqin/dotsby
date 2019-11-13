@@ -161,19 +161,19 @@ class Layout extends React.Component {
           section_title,
           pagesInfo,
         }
+      })
 
-        this.props.setSectionsInfo(sectionMap)
+      this.props.setSectionsInfo(sectionMap)
 
-        /**
+      /**
          * set document info
          */
-        const documentInfo = {
-          ...rest,
-          id: document_id,
-          sectionIds,
-        }
-        this.props.setDocumentInfo(documentInfo)
-      })
+      const documentInfo = {
+        ...rest,
+        id: document_id,
+        sectionIds,
+      }
+      this.props.setDocumentInfo(documentInfo)
     }).catch(err => console.log(err))
   }
 

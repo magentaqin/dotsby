@@ -16,9 +16,10 @@ import { ServerStyleSheet, StyleSheetManager } from 'styled-components';
 import { logError } from '@src/utils/log';
 import config from '@src/config';
 import Layout from '@src/App';
-import { getDocumentInfo } from '@src/server/request';
+import { getDocumentInfo, getPageInfo } from '@src/server/request';
 import { setDocumentInfo } from '@src/store/reducerActions/document';
 import { setSectionsInfo } from '@src/store/reducerActions/sections';
+import { setPagesInfo } from '@src/store/reducerActions/pages';
 import reducer from '@src/store/reducerActions';
 
 
@@ -38,7 +39,7 @@ const Html = ({ content, state }) => (
   </React.Fragment>
 )
 
-const dispatchToStore = (data, reduxStore) => {
+const dispatchDocInfo = (data, store) => {
   const { document_id, sections, ...rest } = data
   const sectionIds = []
   const sectionMap = {}
@@ -62,8 +63,8 @@ const dispatchToStore = (data, reduxStore) => {
     sectionIds,
   }
 
-  reduxStore.dispatch(setDocumentInfo(documentInfo))
-  reduxStore.dispatch(setSectionsInfo(sectionMap))
+  store.dispatch(setDocumentInfo(documentInfo))
+  store.dispatch(setSectionsInfo(sectionMap))
 }
 
 
@@ -80,15 +81,37 @@ const getApp = (req, context, store) => {
 }
 
 const fetchDocumentInfo = async (store) => {
-  let hasError = false;
+  let hasDocFetchErr = false;
   console.log('--FETCH REQUEST--')
   const resp = await getDocumentInfo({ document_id: 123123 }).catch(err => console.log(err));
   if (!resp || !resp.data || !resp.data.data) {
-    hasError = true
+    hasDocFetchErr = true
   } else {
-    dispatchToStore(resp.data.data, store);
+    dispatchDocInfo(resp.data.data, store);
   }
-  return hasError;
+  return hasDocFetchErr;
+}
+
+const fetchPageInfo = async (pathname, store) => {
+  let hasPageFetchErr = false;
+  const sections = Object.values(store.getState().sectionsReducer.sections)
+  const routeIdMap = {}
+  sections.forEach(section => {
+    section.pagesInfo.forEach(item => {
+      routeIdMap[item.path] = item.page_id
+    })
+  })
+  const pageId = routeIdMap[pathname]
+  const info = {}
+  const resp = await getPageInfo({ id: pageId }).catch(err => console.log(err))
+  if (!resp || !resp.data || !resp.data.data) {
+    hasPageFetchErr = true;
+  } else {
+    const { page_id } = resp.data.data
+    info[page_id] = resp.data.data
+    store.dispatch(setPagesInfo(info))
+  }
+  return hasPageFetchErr;
 }
 
 const handleSuccess = (store, content, htmlData, res) => {
@@ -114,6 +137,12 @@ const handleServerError = (res) => {
   res.end();
 }
 
+const handlePageNotFound = (res) => {
+  const html = '<h1>Oops...Page Not Found.</h1>';
+  res.status(404);
+  res.send(html);
+  res.end();
+}
 
 export const bootstrap = () => {
   const app = new Express();
@@ -128,12 +157,21 @@ export const bootstrap = () => {
 
     app.use('*', async(req, res) => {
       console.log('RECEIVEORIGINALURL', req.originalUrl)
+      // create store on every request.
       const store = createStore(reducer);
       try {
-        const hasError = await fetchDocumentInfo(store); // server store.
-        if (hasError) {
+        const hasDocFetchErr = await fetchDocumentInfo(store); // server store.
+        if (hasDocFetchErr) {
           handleServerError(res)
           return;
+        }
+
+        // get page info
+        if (req.originalUrl !== '/') {
+          const hasPageFetchErr = await fetchPageInfo(req.originalUrl, store)
+          if (hasPageFetchErr) {
+            return handlePageNotFound(res);
+          }
         }
 
         const App = getApp(req, context, store)

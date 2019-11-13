@@ -7,12 +7,25 @@ import { setPagesInfo } from '../store/reducerActions/pages';
 
 class MainContent extends React.Component {
   componentDidMount() {
-    // const info = {}
-    // getPageInfo({ id: this.pageId }).then(resp => {
-    //   const { page_id } = resp.data.data
-    //   info[page_id] = resp.data.data
-    //   this.props.setPagesInfo(info)
-    // }).catch(err => err)
+    const info = {}
+    if (!this.props.pages[this.pageId]) {
+      getPageInfo({ id: this.pageId }).then(resp => {
+        const { page_id } = resp.data.data
+        info[page_id] = resp.data.data
+        this.props.setPagesInfo(info)
+      }).catch(err => err)
+    }
+  }
+
+  componentDidUpdate(prevProps) {
+    if (prevProps.location.pathname !== this.props.location.pathname) {
+      const info = {}
+      getPageInfo({ id: this.pageId }).then(resp => {
+        const { page_id } = resp.data.data
+        info[page_id] = resp.data.data
+        this.props.setPagesInfo(info)
+      }).catch(err => err)
+    }
   }
 
   get pageId() {
@@ -22,11 +35,10 @@ class MainContent extends React.Component {
   }
 
   render() {
-    // if (!Object.keys(this.props.pages).length) {
-    //   return null;
-    // }
-    // const { content } = this.props.pages[this.pageId]
-    const content = '<h1>Hello World</h1>'
+    if (!this.props.pages[this.pageId]) {
+      return <h1>loading</h1>
+    }
+    const { content } = this.props.pages[this.pageId]
     return (
       <div>
         <div dangerouslySetInnerHTML={{ __html: `${content}` }}></div>

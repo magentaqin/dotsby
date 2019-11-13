@@ -134,7 +134,7 @@ const Input = styled.input`
 
 class Layout extends React.Component {
   componentDidMount() {
-    if (!Object.keys(this.props.document).length) {
+    if (!this.props.document.id) {
       this.fetchDocumentInfo()
     }
   }

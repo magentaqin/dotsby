@@ -37,6 +37,86 @@ const Html = ({ content, state }) => (
   </React.Fragment>
 )
 
+const dispatchToStore = (data, reduxStore) => {
+  const { document_id, sections, ...rest } = data
+  const sectionIds = []
+  const sectionMap = {}
+  sections.forEach(section => {
+    const { section_id, section_title, pages } = section;
+    const pagesInfo = []
+    pages.forEach(page => {
+      pagesInfo.push(page)
+    })
+    sectionIds.push(section_id)
+    sectionMap[section_id] = {
+      section_id,
+      section_title,
+      pagesInfo,
+    }
+  })
+
+  const documentInfo = {
+    ...rest,
+    id: document_id,
+    sectionIds,
+  }
+
+  reduxStore.dispatch(setDocumentInfo(documentInfo))
+  reduxStore.dispatch(setSectionsInfo(sectionMap))
+}
+
+
+const getApp = (req, context) => {
+  return (
+    <StaticRouter location={req.originalUrl} context={context}>
+      <ReduxProvider store={store}>
+        <StyleSheetManager sheet={sheet.instance}>
+          <Layout />
+        </StyleSheetManager>
+      </ReduxProvider>
+    </StaticRouter>
+  )
+}
+
+const fetchDocumentInfo = async (store) => {
+  let hasError = false;
+  const documentId = store.getState().documentReducer.document.id;
+  if (!documentId) {
+    console.log('---Fetch Request--')
+    const resp = await getDocumentInfo({ document_id: 123123 }).catch(err => console.log(err));
+    if (!resp || !resp.data || !resp.data.data) {
+      hasError = true
+    } else {
+      dispatchToStore(resp.data.data, store);
+    }
+  }
+  return hasError;
+}
+
+const handleSuccess = (store, content, htmlData, res) => {
+  const initialState = store.getState();
+  const html = <Html content={content} state={initialState} />;
+  res.status(200);
+  const styleTags = sheet.getStyleTags();
+  const responseData = htmlData.replace(
+    '<div id="root"></div>',
+    ReactDOMServer.renderToStaticMarkup(html),
+  ).replace(
+    '</head>',
+    `${styleTags}</head>`,
+  )
+  res.send(responseData);
+  res.end();
+}
+
+const handleServerError = (res) => {
+  const html = '<h1>Server Error. Try Again.</h1>';
+  res.status(500);
+  res.send(html);
+  res.end();
+}
+
+
 export const bootstrap = () => {
   const app = new Express();
 
@@ -56,81 +136,24 @@ export const bootstrap = () => {
       path.resolve(__dirname, '..', '..', 'build', 'manifest.json'),
     ));
 
-    app.use('*', (req, res) => {
+    app.use('*', async(req, res) => {
       console.log('RECEIVEORIGINALURL', req.originalUrl)
       try {
-        getDocumentInfo({ document_id: 123123 }).then(resp => {
-          console.log('----sent request--')
-          const { data } = resp.data;
-          const { document_id, sections, ...rest } = data
-          const sectionIds = []
-          const sectionMap = {}
+        const hasError = await fetchDocumentInfo(store);
+        if (hasError) {
+          handleServerError(res)
+          return;
+        }
 
-          /**
-           * set sections info
-           */
-          sections.forEach(section => {
-            const { section_id, section_title, pages } = section;
-            const pagesInfo = []
-            pages.forEach(page => {
-              pagesInfo.push(page)
-            })
-            sectionIds.push(section_id)
-            sectionMap[section_id] = {
-              section_id,
-              section_title,
-              pagesInfo,
-            }
-          })
+        const App = getApp(req, context)
+        const content = ReactDOMServer.renderToString(App);
 
-          /**
-             * set document info
-             */
-          const documentInfo = {
-            ...rest,
-            id: document_id,
-            sectionIds,
-          }
+        if (req.originalUrl === '/' && context.url) {
+          console.log('**REDIRECT**', context.url)
+          return res.redirect(301, context.url)
+        }
 
-          store.dispatch(setDocumentInfo(documentInfo))
-          store.dispatch(setSectionsInfo(sectionMap))
-
-          const App = (
-            <StaticRouter location={req.originalUrl} context={context}>
-              <ReduxProvider store={store}>
-                <StyleSheetManager sheet={sheet.instance}>
-                  <Layout />
-                </StyleSheetManager>
-              </ReduxProvider>
-            </StaticRouter>
-          );
-
-          // rendering
-          const content = ReactDOMServer.renderToString(App);
-          const initialState = store.getState();
-
-          if (req.originalUrl === '/' && context.url) {
-            console.log('**REDIRECT**', context.url)
-            return res.redirect(301, context.url)
-          }
-
-          const html = <Html content={content} state={initialState} />;
-
-          // send response
-          res.status(200);
-          const styleTags = sheet.getStyleTags();
-          const responseData = htmlData.replace(
-            '<div id="root"></div>',
-            ReactDOMServer.renderToStaticMarkup(html),
-          ).replace(
-            '</head>',
-            `${styleTags}</head>`,
-          )
-          res.send(responseData);
-          res.end();
-        }).catch(err => {
-          console.error(err)
-        })
+        handleSuccess(store, content, htmlData, res)
       } catch (error) {
         console.error(error)
       } finally {

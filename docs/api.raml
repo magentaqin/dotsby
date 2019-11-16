@@ -1,0 +1,91 @@
+#%RAML 1.0
+---
+title: "Dotsby API"
+version: v1
+protocols: [HTTPS]
+mediaType: application/json
+
+annotationTypes:
+  serviceName:
+    type: string
+    description: API service catalog
+    allowedTargets: Resource
+  exampleString:
+    type: string
+    description: example string
+
+securitySchemes:
+  token:
+    description: |
+      API request need carry valid token obtained from [CreateToken](/auth/auth.createToken) API
+    type: x-token
+    describedBy:
+      headers:
+        X-APP-TOKEN:
+          description: Token fetching through /AppUsers.login
+          type: string
+      responses:
+        401:
+          body:
+            type: ResponseError
+          description: |
+            bad or expired token. This can happen if the AppUser
+            revoked token or this token had already expired or
+            submitted token not suited to this API.
+            To fix, generate the token through Auth API again.
+
+            Another situation is that the token is not formed in a valid syntax
+            or the token value is just missing.
+
+traits:
+  caller_error:
+    usage: Apply to method for generating caller side error
+    responses:
+      400:
+        body:
+          type: ResponseError
+        description: caller side error, primary for incorret parameters
+  paged:
+    usage: Apply to .list method for pagination response
+    queryParameters:
+      page?:
+        description: Specify the page that you want to retrieve
+        type: integer
+        default: 1
+      limit?:
+        description: Specify the amount of items that will be retrieved per page
+        type: integer
+        default: 10
+    responses:
+      200:
+        body:
+          type: object
+          properties:
+            pagination:
+              type: object
+              properties:
+                page:
+                  type: integer
+                  description: current page number
+                pages:
+                  type: integer
+                  description: total page number
+                limit:
+                  type: integer
+                  description: the amount of items per page
+                count:
+                  type: integer
+                  description: Total count of all data items
+
+## Document
+/document/token
+  (service): Document
+  get:
+    displayName: Get Document Token
+    responses:
+      200:
+        body:
+          type: object
+          properties:
+            data:
+              type: !include ../schemas/dist/document/document_token.json

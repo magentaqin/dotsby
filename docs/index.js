@@ -8,7 +8,7 @@ const config = {
       section_title: 'Overview',
       dir: 'overview',
       root_file: 'index.md',
-      pages: [] //TODO. READ FROM RAML AND SCHEMA
+      pages: []
     },
     {
       section_title: 'User Api',

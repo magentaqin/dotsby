@@ -21,7 +21,7 @@ securitySchemes:
     type: x-token
     describedBy:
       headers:
-        X-APP-TOKEN:
+        X-TOKEN:
           description: Token fetching through /AppUsers.login
           type: string
       responses:
@@ -78,10 +78,10 @@ traits:
                   description: Total count of all data items
 
 ## Document
-/document/token
-  (service): Document
+/document/token:
   get:
     displayName: Get Document Token
+    securedBy: [token]
     responses:
       200:
         body:

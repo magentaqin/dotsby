@@ -38,6 +38,12 @@ securitySchemes:
             or the token value is just missing.
 
 traits:
+  headers:
+    Content-type:
+      displayName: Content-type
+      description: either xml or json
+      type: string
+      required: true
   caller_error:
     usage: Apply to method for generating caller side error
     responses:
@@ -82,6 +88,13 @@ traits:
   get:
     displayName: Get Document Token
     securedBy: [token]
+    is: [headers]
+    headers:
+      Tenant-Id:
+        displayName: Tenant-Id
+        description: Tenant id for multi-tenant environments
+        type: string
+        required: true
     responses:
       200:
         body:
@@ -89,3 +102,11 @@ traits:
           properties:
             data:
               type: !include ../schemas/dist/document/document_token.json
+        headers:
+          X-Some-Header:
+            description: |
+              HTTP Custom Parameter.
+              Some description.
+            type: datetime
+            required: false
+            example: 2017-12-31T23:59:59.0+01:00

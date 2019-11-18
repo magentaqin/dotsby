@@ -1,12 +1,26 @@
-import path from 'path'
+import path, { format } from 'path'
 import ramlParser from '@src/lib/parse/ramlParser'
 import ramlFormatter from '@src/lib/parse/ramlFormatter'
 
 const ramlFilePath = path.resolve(__dirname, '../../../docs/api.raml')
 
 const formatRequestHeaders = (resource, securitySchemes) => {
+  let requestHeaders = []
   const { headers, securedBy } = resource
-  console.log(securedBy)
+  if (headers) {
+    requestHeaders = [...headers]
+  }
+  if (securedBy) {
+    securedBy.forEach(item => {
+      const key = item.schemeName;
+      if (key && securitySchemes[key]) {
+        securitySchemes[key].describedBy.headers.forEach(securityHeader => {
+          requestHeaders.push(securityHeader)
+        })
+      }
+    })
+  }
+  return requestHeaders;
 }
 
 const formatRamlPage = (page, securitySchemes) => {
@@ -22,6 +36,7 @@ const formatRamlPage = (page, securitySchemes) => {
   const { resource } = page;
   // console.log(resource)
   const requestHeaders = formatRequestHeaders(resource, securitySchemes)
+  formattedPage.request_headers = requestHeaders
 
   return formattedPage;
 }
@@ -37,7 +52,7 @@ const getApiContent = (apis, ramlPages, securitySchemes) => {
 }
 
 ramlParser.parse(ramlFilePath).then(parsedResult => {
-  console.log(parsedResult.securitySchemes)
+  // console.log(parsedResult.securitySchemes)
   const ramlPages = ramlFormatter.getPages(parsedResult)
   const apis = [
     { method: 'get', relativeUrl: '/document/token' },

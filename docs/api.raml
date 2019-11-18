@@ -22,28 +22,10 @@ securitySchemes:
     describedBy:
       headers:
         X-TOKEN:
-          description: Token fetching through /AppUsers.login
+          description: Token fetching through Login Api
           type: string
-      responses:
-        401:
-          body:
-            type: ResponseError
-          description: |
-            bad or expired token. This can happen if the AppUser
-            revoked token or this token had already expired or
-            submitted token not suited to this API.
-            To fix, generate the token through Auth API again.
-
-            Another situation is that the token is not formed in a valid syntax
-            or the token value is just missing.
-  token2:
-    description: |
-      API request need carry valid token obtained from [CreateToken](/auth/auth.createToken) API
-    type: x-token
-    describedBy:
-      headers:
-        X-TOKEN:
-          description: Token fetching through /AppUsers.login
+        X-TOKEN2:
+          description: Token fetching through Github Api
           type: string
       responses:
         401:
@@ -65,11 +47,6 @@ traits:
       Authorization:
         displayName: Authorization
         description: Basic authentication base 64 encoded string
-        type: string
-        required: true
-      Tenant-Id:
-        displayName: Tenant-Id
-        description: Tenant id for multi-tenant environments
         type: string
         required: true
       Content-type:

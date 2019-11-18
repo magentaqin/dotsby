@@ -1,14 +1,17 @@
 const config = {
   user_token: 'dfjakjdfkajdfkj123',
   document_token: '1qazxsw2',
-  doc_title: 'Example Doc Api',
+  doc_title: 'Dotsby Api Doc',
   version: 0.1,
   sections: [
     {
       section_title: 'Overview',
       dir: 'overview',
       root_file: 'index.md',
-      pages: []
+      pages: [], // for customized md file
+      apis: [
+        { method: 'get', relativeUrl: '/document/token' },
+      ],
     },
     {
       section_title: 'User Api',

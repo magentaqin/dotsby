@@ -36,14 +36,47 @@ securitySchemes:
 
             Another situation is that the token is not formed in a valid syntax
             or the token value is just missing.
+  token2:
+    description: |
+      API request need carry valid token obtained from [CreateToken](/auth/auth.createToken) API
+    type: x-token
+    describedBy:
+      headers:
+        X-TOKEN:
+          description: Token fetching through /AppUsers.login
+          type: string
+      responses:
+        401:
+          body:
+            type: ResponseError
+          description: |
+            bad or expired token. This can happen if the AppUser
+            revoked token or this token had already expired or
+            submitted token not suited to this API.
+            To fix, generate the token through Auth API again.
+
+            Another situation is that the token is not formed in a valid syntax
+            or the token value is just missing.
+
 
 traits:
-  headers:
-    Content-type:
-      displayName: Content-type
-      description: either xml or json
-      type: string
-      required: true
+  hasHeaders:
+    headers:
+      Authorization:
+        displayName: Authorization
+        description: Basic authentication base 64 encoded string
+        type: string
+        required: true
+      Tenant-Id:
+        displayName: Tenant-Id
+        description: Tenant id for multi-tenant environments
+        type: string
+        required: true
+      Content-type:
+        displayName: Content-type
+        description: either xml or json
+        type: string
+        required: true
   caller_error:
     usage: Apply to method for generating caller side error
     responses:
@@ -87,12 +120,12 @@ traits:
 /document/token:
   get:
     displayName: Get Document Token
-    securedBy: [token]
-    is: [headers]
+    securedBy: ["token", "token2"]
+    is: ["hasHeaders"]
     headers:
-      Tenant-Id:
-        displayName: Tenant-Id
-        description: Tenant id for multi-tenant environments
+      Some-Id:
+        displayName: Some-Id
+        description: Some-Id Example
         type: string
         required: true
     responses:

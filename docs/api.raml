@@ -98,24 +98,51 @@ traits:
   get:
     displayName: Get Document Token
     securedBy: ["token", "token2"]
-    is: ["hasHeaders"]
+    is: ["hasHeaders", "paged"]
     headers:
       Some-Id:
         displayName: Some-Id
         description: Some-Id Example
         type: string
         required: true
+    queryParameters:
+      id:
+        type: string
+        description: ID of account
+    body:
+      id:
+        type: string
+        description: ID of user
+      account_id:
+        type: string
+        description: ID of account
+      flat_body:
+        type: object
+        properties:
+          id:
+            type: string
+            description: ID of user
+          example_id:
+            type: string
+            description: ID of example
+      flat_body2:
+        type: object
+        properties:
+          data:
+            type: !include ../schemas/dist/document/document_token.json
     responses:
       200:
         body:
+          # type:  !include ../schemas/dist/document/document_token.json
           type: object
           properties:
             data:
-              type: !include ../schemas/dist/document/document_token.json
+              type: array
+              items: !include ../schemas/dist/document/document_token.json
         headers:
           X-Some-Header:
             description: |
-              HTTP Custom Parameter.
+              HTTP Custom Parameter
               Some description.
             type: datetime
             required: false

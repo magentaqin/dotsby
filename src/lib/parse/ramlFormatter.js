@@ -71,18 +71,18 @@ const getPages = (obj) => {
 
       mes.relativeUri = res.relativeUri;
       const displayName = mes.displayName ? mes.displayName : `${mes.method.toUpperCase()} ${mes.relativeUri}`;
-      mes.responses.forEach((child, cindex) => {
-        if (child.body) {
-          child.body.forEach((item, tindex) => {
-            try {
-              const schema = toSchema(item);
-              item.jsonschema = JSON.stringify(schema);
-            } catch (e) {
-              console.error('convert error: ', e)
-            }
-          })
-        }
-      })
+      // mes.responses.forEach((child, cindex) => {
+      //   if (child.body) {
+      //     child.body.forEach((item, tindex) => {
+      //       try {
+      //         const schema = toSchema(item);
+      //         item.jsonschema = JSON.stringify(schema);
+      //       } catch (e) {
+      //         console.error('convert error: ', e)
+      //       }
+      //     })
+      //   }
+      // })
       pages.push({
         name,
         displayName,

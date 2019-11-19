@@ -1,4 +1,4 @@
-import path, { format } from 'path'
+import path from 'path'
 import ramlParser from '@src/lib/parse/ramlParser'
 import ramlFormatter from '@src/lib/parse/ramlFormatter'
 
@@ -23,20 +23,52 @@ const formatRequestHeaders = (resource, securitySchemes) => {
   return requestHeaders;
 }
 
+const formatResponseHeaders = (headers) => {
+  return headers.map(header => {
+    if (header.examples) {
+      const examples = header.examples.map(example => example.value);
+      return {
+        ...header,
+        examples,
+      }
+    }
+    return header;
+  })
+}
+
 const formatRamlPage = (page, securitySchemes) => {
+  const { resource } = page;
+  const {
+    relativeUri,
+    queryParameters,
+    body,
+    responses,
+  } = resource;
   const formattedPage = {
     title: page.displayName,
-    request_url: page.resource.relativeUri,
+    request_url: relativeUri,
     method: page.method,
     request_headers: [],
-    params: [],
+    query_params: queryParameters,
+    body,
     responses: [],
-    response_headers: [],
   }
-  const { resource } = page;
-  // console.log(resource)
+  // console.log(responses)
+  // format request headers
   const requestHeaders = formatRequestHeaders(resource, securitySchemes)
   formattedPage.request_headers = requestHeaders
+
+  // format responses
+  const formattedResponses = responses.map(res => {
+    const resHeaders = formatResponseHeaders(res.headers)
+    return {
+      key: res.key,
+      status: res.code,
+      headers: resHeaders,
+      data: res.body
+    }
+  })
+  formattedPage.responses = formattedResponses
 
   return formattedPage;
 }
@@ -52,7 +84,6 @@ const getApiContent = (apis, ramlPages, securitySchemes) => {
 }
 
 ramlParser.parse(ramlFilePath).then(parsedResult => {
-  // console.log(parsedResult.securitySchemes)
   const ramlPages = ramlFormatter.getPages(parsedResult)
   const apis = [
     { method: 'get', relativeUrl: '/document/token' },

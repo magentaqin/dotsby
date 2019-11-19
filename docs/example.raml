@@ -21,8 +21,11 @@ securitySchemes:
     type: x-token
     describedBy:
       headers:
-        Authorization:
+        X-TOKEN:
           description: Token fetching through Login Api
+          type: string
+        X-TOKEN2:
+          description: Token fetching through Github Api
           type: string
       responses:
         401:
@@ -41,6 +44,11 @@ securitySchemes:
 traits:
   hasHeaders:
     headers:
+      Authorization:
+        displayName: Authorization
+        description: Basic authentication base 64 encoded string
+        type: string
+        required: true
       Content-type:
         displayName: Content-type
         description: either xml or json
@@ -89,8 +97,53 @@ traits:
 /document/token:
   get:
     displayName: Get Document Token
-    securedBy: ["token"]
+    securedBy: ["token", "token2"]
+    is: ["hasHeaders", "paged"]
+    headers:
+      Some-Id:
+        displayName: Some-Id
+        description: Some-Id Example
+        type: string
+        required: true
+    queryParameters:
+      id:
+        type: string
+        description: ID of account
+    body:
+      id:
+        type: string
+        description: ID of user
+      account_id:
+        type: string
+        description: ID of account
+      flat_body:
+        type: object
+        properties:
+          id:
+            type: string
+            description: ID of user
+          example_id:
+            type: string
+            description: ID of example
+      flat_body2:
+        type: object
+        properties:
+          data:
+            type: !include ../schemas/dist/document/document_token.json
     responses:
       200:
         body:
-          type:  !include ../schemas/dist/document/document_token.json
+          # type:  !include ../schemas/dist/document/document_token.json
+          type: object
+          properties:
+            data:
+              type: array
+              items: !include ../schemas/dist/document/document_token.json
+        headers:
+          X-Some-Header:
+            description: |
+              HTTP Custom Parameter
+              Some description.
+            type: datetime
+            required: false
+            example: 2017-12-31T23:59:59.0+01:00

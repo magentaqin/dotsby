@@ -1,8 +1,5 @@
-const logError = (err) => {
+/* eslint-disable import/prefer-default-export */
+export const logError = (err) => {
   console.error(err);
   process.exit(1);
-}
-
-module.exports = {
-  logError,
 }

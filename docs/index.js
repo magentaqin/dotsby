@@ -1,4 +1,5 @@
 const config = {
+  ramlFile: 'api.raml',
   user_token: 'dfjakjdfkajdfkj123',
   document_token: '1qazxsw2',
   doc_title: 'Dotsby Api Doc',
@@ -10,7 +11,7 @@ const config = {
       root_file: 'index.md',
       pages: [], // for customized md file
       apis: [
-        { method: 'get', relativeUrl: '/document/token' },
+        { method: 'get', relativeUrl: '/document/token', route: '/document/token' }, // route optional.default to relativeUrl.
       ],
     },
     {
@@ -18,14 +19,14 @@ const config = {
       dir: 'user',
       root_file: 'index.md',
       pages: [
-      ]
+        { title: 'Update Notices', file: 'update.md' },
+      ],
     },
     {
       section_title: 'Account Api',
       dir: 'account',
-      pages: []
-    }
+    },
   ],
 }
 
-module.exports = config;
+export default config;

@@ -24,6 +24,7 @@ const formatRequestHeaders = (resource, securitySchemes) => {
 }
 
 const formatResponseHeaders = (headers) => {
+  if (!headers) { return [] }
   return headers.map(header => {
     if (header.examples) {
       const examples = header.examples.map(example => example.value);
@@ -43,17 +44,18 @@ const formatRamlPage = (page, securitySchemes) => {
     queryParameters,
     body,
     responses,
+    method,
   } = resource;
   const formattedPage = {
     title: page.displayName,
     request_url: relativeUri,
-    method: page.method,
+    method,
     request_headers: [],
-    query_params: queryParameters,
-    body,
+    query_params: queryParameters || [],
+    body: body || [],
     responses: [],
   }
-  // console.log(responses)
+
   // format request headers
   const requestHeaders = formatRequestHeaders(resource, securitySchemes)
   formattedPage.request_headers = requestHeaders
@@ -65,7 +67,7 @@ const formatRamlPage = (page, securitySchemes) => {
       key: res.key,
       status: res.code,
       headers: resHeaders,
-      data: res.body
+      data: res.body,
     }
   })
   formattedPage.responses = formattedResponses
@@ -74,19 +76,22 @@ const formatRamlPage = (page, securitySchemes) => {
 }
 
 const getApiContent = (apis, ramlPages, securitySchemes) => {
-  apis.forEach(api => {
+  return apis.map(api => {
     const { method, relativeUrl } = api;
     const matchedRamlPage = ramlPages.find(ramlPage => {
       return ramlPage.resource.method === method && ramlPage.resource.relativeUri === relativeUrl;
     })
-    formatRamlPage(matchedRamlPage, securitySchemes)
+    const formattedRamlPage = formatRamlPage(matchedRamlPage, securitySchemes)
+    return formattedRamlPage;
   })
 }
 
-ramlParser.parse(ramlFilePath).then(parsedResult => {
+const transformApis = async (ramlFilePath, apis) => {
+  let apiContent = {};
+  const parsedResult = await ramlParser.parse(ramlFilePath).catch(err => console.log('parse raml file err', err))
   const ramlPages = ramlFormatter.getPages(parsedResult)
-  const apis = [
-    { method: 'get', relativeUrl: '/document/token' },
-  ]
-  getApiContent(apis, ramlPages, parsedResult.securitySchemes)
-}).catch(err => console.log('RAML ERR', err))
+  apiContent = getApiContent(apis, ramlPages, parsedResult.securitySchemes)
+  return apiContent;
+}
+
+export default transformApis;

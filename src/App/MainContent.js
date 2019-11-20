@@ -5,6 +5,8 @@ import { bindActionCreators } from 'redux';
 import { getPageInfo } from '../server/request';
 import { setPagesInfo } from '../store/reducerActions/pages';
 
+const { Fragment } = React;
+
 class MainContent extends React.Component {
   componentDidMount() {
     const info = {}
@@ -34,16 +36,65 @@ class MainContent extends React.Component {
     return pageId;
   }
 
-  render() {
-    if (!this.props.pages[this.pageId]) {
-      return <h1>loading</h1>
+  renderRequestHeaders = (headers) => {
+    if (headers && headers.length) {
+      return (
+        <li>
+          <h6>Request Headers</h6>
+        </li>
+      )
     }
-    const { content } = this.props.pages[this.pageId]
+    return null;
+  }
+
+  renderRequestData = (apiContent) => {
     return (
       <div>
-        <div dangerouslySetInnerHTML={{ __html: `${content}` }}></div>
+        <h3>Request Definitions</h3>
+        <ul>
+          <li>
+            <h6>Request URL</h6>
+            <p>{apiContent.request_url}</p>
+          </li>
+          <li>
+            <h6>Request Method</h6>
+            <p>{apiContent.method}</p>
+          </li>
+          {this.renderRequestHeaders(apiContent.request_headers)}
+        </ul>
       </div>
     )
+  }
+
+  renderApiContent = (apiContent) => {
+    return (
+      <div>
+        <h1>{apiContent.title}</h1>
+        {this.renderRequestData(apiContent)}
+      </div>
+    )
+  }
+
+  render() {
+    if (!this.props.pages[this.pageId]) {
+      return <h1>Content Not Available.</h1>
+    }
+    const { content, apiContent } = this.props.pages[this.pageId]
+    if (content) {
+      return (
+        <div>
+          <div dangerouslySetInnerHTML={{ __html: `${content}` }}></div>
+        </div>
+      )
+    }
+
+    if (apiContent) {
+      return (
+        <div>
+          {this.renderApiContent(apiContent)}
+        </div>
+      )
+    }
   }
 }
 

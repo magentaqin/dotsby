@@ -97,13 +97,13 @@ const loopSections = async () => {
 
     if (apis && apis.length) {
       const apiContents = await transformApis(ramlFilePath, apis)
-      const apiPages = apiContents.map(apiContent => {
-        const { title, method, request_url } = apiContent;
+      const apiPages = apiContents.map((apiContent, index) => {
+        const { title, request_url } = apiContent;
+        const childPath = apis[index].path || request_url;
         return {
           page_title: title,
           is_root_path: false,
-          path: `/${method}/${request_url}`,
-          content: '',
+          path: `/${dir}${childPath}`,
           apiContent,
         }
       })
@@ -120,6 +120,7 @@ const loopSections = async () => {
 
 export const transform = () => new Promise(async(resolve) => {
   const sections = await loopSections();
+  console.log(sections[0])
   // const resp = await storeDocumentPromise(sections)
   // resolve(resp);
 })

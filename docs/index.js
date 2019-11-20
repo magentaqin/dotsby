@@ -11,7 +11,12 @@ const config = {
       root_file: 'index.md',
       pages: [], // for customized md file
       apis: [
-        { method: 'get', relativeUrl: '/document/token', route: '/document/token' }, // route optional.default to relativeUrl.
+        // path is the page route displayed on doc. Optional.
+        {
+          method: 'get',
+          relativeUrl: '/document/token',
+          path: '/document-token',
+        },
       ],
     },
     {

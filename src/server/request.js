@@ -52,16 +52,16 @@ const http = {
 }
 
 export const createDocument = async(query) => {
-  const resp = await http.post('/document/createDocument', query);
+  const resp = await http.post('/document/create', query);
   return resp;
 }
 
 export const getDocumentInfo = async(query) => {
-  const resp = await http.get('/document/getDocumentInfo', query)
+  const resp = await http.get('/document', query)
   return resp;
 }
 
 export const getPageInfo = async(query) => {
-  const resp = await http.get('/page/info', query)
+  const resp = await http.get('/page', query)
   return resp;
 }

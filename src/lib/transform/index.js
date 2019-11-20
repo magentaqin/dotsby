@@ -13,6 +13,7 @@ import fs from 'fs';
 import path from 'path';
 
 import { createDocument } from '@src/server/request';
+import { shallowOmit } from '@src/utils/obj';
 import { logError } from '@src/utils/log';
 import transformApis from './apisTransform';
 import docConfig from '@docs';
@@ -22,7 +23,8 @@ const ramlFilePath = path.resolve(docRootPath, docConfig.ramlFile)
 
 const getFileContent = async (path) => {
   const data = await fs.promises.readFile(path, 'utf-8').catch(err => {
-    logError('get file content err', err)
+    const filePath = JSON.parse(JSON.stringify(err)).path
+    logError(new Error(`Fail to read file content: ${filePath}`))
   })
   return data;
 }
@@ -67,7 +69,7 @@ const loopSections = async () => {
       apis,
     } = sectionConfig;
 
-    const sectionItem = {
+    let sectionItem = {
       section_title,
       pages: [],
     };
@@ -80,7 +82,7 @@ const loopSections = async () => {
       const content = await getFileContent(rootPath)
       if (content) {
         sectionItem.pages.push({
-          page_title: '',
+          page_title: dir,
           is_root_path: true,
           path: `/${dir}`,
           content,
@@ -113,17 +115,14 @@ const loopSections = async () => {
       ]
     }
 
+    if (!sectionItem.pages.length) {
+      sectionItem = shallowOmit(sectionItem, 'pages')
+    }
+
     sections.push(sectionItem);
   }
   return sections;
 }
-
-export const transform = () => new Promise(async(resolve) => {
-  const sections = await loopSections();
-  console.log(sections[0])
-  // const resp = await storeDocumentPromise(sections)
-  // resolve(resp);
-})
 
 
 // TODO: transform markdown to html. MOVE THIS TO SERVER SIDE.
@@ -144,4 +143,21 @@ export const transform = () => new Promise(async(resolve) => {
 //   })
 // })
 
-transform().then(() => {})
+
+export const transform = () => {
+  return new Promise(async(resolve, reject) => {
+    let errMsg = '';
+    const sections = await loopSections();
+    if (!sections || !sections.length) {
+      reject(new Error('Fail to parse config file.'))
+    }
+    const resp = await storeDocumentPromise(sections).catch(err => {
+      errMsg = JSON.stringify(err.data);
+    })
+    if (resp) {
+      resolve(resp)
+    } else {
+      reject(new Error(`Fail to store document: ${errMsg}`))
+    }
+  })
+}

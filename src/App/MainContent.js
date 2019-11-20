@@ -4,10 +4,18 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { getPageInfo } from '../server/request';
 import { setPagesInfo } from '../store/reducerActions/pages';
+import Table from '../components/Table';
 
 const { Fragment } = React;
 
 class MainContent extends React.Component {
+  tConfig = [
+    { label: 'Key', value: 'key' },
+    { label: 'Type', value: 'type' },
+    { label: 'Required', value: 'required', render: (required) => (required ? 'Required' : 'Optional') },
+    { label: 'Description', value: 'description' },
+  ]
+
   componentDidMount() {
     const info = {}
     if (!this.props.pages[this.pageId]) {
@@ -41,6 +49,7 @@ class MainContent extends React.Component {
       return (
         <li>
           <h6>Request Headers</h6>
+          <Table tConfig={this.tConfig} tData={headers} />
         </li>
       )
     }

@@ -1,6 +1,7 @@
 import React from 'react';
 
-const Table = (tConfig, tData) => {
+const Table = (props) => {
+  const { tConfig, tData } = props;
   const renderTableHeaders = () => {
     return tConfig.map(item => {
       return (
@@ -13,9 +14,11 @@ const Table = (tConfig, tData) => {
 
   const renderRow = (row) => {
     return tConfig.map(config => {
+      const value = row[config.value]
+      const displayText = config.render ? config.render(value) : value
       return (
         <div key={config.value}>
-          <p>{row[config.value]}</p>
+          <p>{displayText}</p>
         </div>
       )
     })

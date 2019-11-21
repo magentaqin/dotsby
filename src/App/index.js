@@ -20,7 +20,7 @@ import { setSectionsInfo } from '../store/reducerActions/sections'
 const GlobalStyle = createGlobalStyle`
   ${reset}
   body {
-    font-family: 'Source Sans Pro,sans-serif';
+    font-family: Source Sans Pro,sans-serif;
   }
 `
 
@@ -59,7 +59,6 @@ const AsideContent = styled.div`
 `
 
 const AsideSection = styled.div`
-  ${''}
 `;
 
 const CollapseButton = styled.button`
@@ -101,11 +100,11 @@ const AsideItem = styled.li`
 const Main = styled.main`
   overflow-y: auto;
   flex-grow: 1;
+  padding: 40px 64px;
 `
 
 const MainHeader = styled.header`
   height: 64px;
-  padding: 0 24px;
   display: flex;
   position: sticky;
   align-items: center;

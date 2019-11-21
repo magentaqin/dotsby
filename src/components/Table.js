@@ -1,13 +1,31 @@
 import React from 'react';
+import styled from 'styled-components';
+
+const StyledTable = styled.table`
+  width: 100%;
+  text-align: left;
+  border-radius: 4px 4px 0 0;
+  border-collapse: collapse;
+`
+
+const StyledHeader = styled.thead`
+  background-color: ${props => props.theme.dividerColor};
+`
+
+const P = styled.p`
+  line-height: 40px;
+  font-size: ${props => props.theme.normalFont};
+
+`
 
 const Table = (props) => {
   const { tConfig, tData } = props;
   const renderTableHeaders = () => {
     return tConfig.map(item => {
       return (
-        <div key={item.value}>
-          <p>{item.label}</p>
-        </div>
+        <th key={item.value}>
+          <P>{item.label}</P>
+        </th>
       )
     })
   }
@@ -17,9 +35,9 @@ const Table = (props) => {
       const value = row[config.value]
       const displayText = config.render ? config.render(value) : value
       return (
-        <div key={config.value}>
-          <p>{displayText}</p>
-        </div>
+        <th key={config.value}>
+          <P>{displayText}</P>
+        </th>
       )
     })
   }
@@ -27,15 +45,15 @@ const Table = (props) => {
   const renderTbody = () => {
     return tData.map(row => {
       return (
-        <div className="tRow" key={row.key}>{renderRow(row)}</div>
+        <tr className="tRow" key={row.key}>{renderRow(row)}</tr>
       )
     })
   }
   return (
-    <div>
-      <div className="tHeaders">{renderTableHeaders()}</div>
-      <div className="tBody">{renderTbody()}</div>
-    </div>
+    <StyledTable>
+      <StyledHeader><tr>{renderTableHeaders()}</tr></StyledHeader>
+      <tbody>{renderTbody()}</tbody>
+    </StyledTable>
   )
 }
 

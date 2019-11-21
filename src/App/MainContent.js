@@ -2,11 +2,29 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
+import styled from 'styled-components';
+
 import { getPageInfo } from '../server/request';
 import { setPagesInfo } from '../store/reducerActions/pages';
 import Table from '../components/Table';
+import Divider from '../components/Divider';
 
 const { Fragment } = React;
+
+const H1 = styled.h1`
+  font-size: ${props => props.theme.mainHeaderFont};
+  color: ${props => props.theme.blackColor};
+  font-weight: 400;
+  margin-bottom: 16px;
+  margin-top: 56px;
+`
+
+const H2 = styled.h1`
+  font-size: ${props => props.theme.mainSubtitleFont};
+  color: ${props => props.theme.blackColor};
+  font-weight: 400;
+  margin-top: 56px;
+`
 
 class MainContent extends React.Component {
   tConfig = [
@@ -59,7 +77,7 @@ class MainContent extends React.Component {
   renderRequestData = (apiContent) => {
     return (
       <div>
-        <h3>Request Definitions</h3>
+        <H2>Request Definitions</H2>
         <ul>
           <li>
             <h6>Request URL</h6>
@@ -78,7 +96,8 @@ class MainContent extends React.Component {
   renderApiContent = (apiContent) => {
     return (
       <div>
-        <h1>{apiContent.title}</h1>
+        <H1>{apiContent.title}</H1>
+        <Divider />
         {this.renderRequestData(apiContent)}
       </div>
     )

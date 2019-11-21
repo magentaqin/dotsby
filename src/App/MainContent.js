@@ -11,19 +11,42 @@ import Divider from '../components/Divider';
 
 const { Fragment } = React;
 
+const CoreContent = styled.div`
+  max-width: 800px;
+`
+
 const H1 = styled.h1`
   font-size: ${props => props.theme.mainHeaderFont};
   color: ${props => props.theme.blackColor};
-  font-weight: 400;
+  font-weight: bolder;
   margin-bottom: 16px;
-  margin-top: 56px;
+  margin-top: 40px;
 `
 
 const H2 = styled.h1`
   font-size: ${props => props.theme.mainSubtitleFont};
   color: ${props => props.theme.blackColor};
-  font-weight: 400;
-  margin-top: 56px;
+  font-weight: bold;
+  margin-top: 40px;
+`
+
+const H6 = styled.h1`
+  font-size: ${props => props.theme.normalFont};
+  color: ${props => props.theme.grayColor};
+  font-weight: bold;
+  line-height: 40px;
+`
+
+const Li = styled.li`
+  margin-top: 24px;
+`
+
+const HighlightText = styled.code`
+  font-size: ${props => props.theme.textFont};
+  color: ${props => props.theme.pinkColor};
+  background-color: ${props => props.theme.lightGrayColor};
+  padding: 4px;
+  border-radius: 4px;
 `
 
 class MainContent extends React.Component {
@@ -65,10 +88,10 @@ class MainContent extends React.Component {
   renderRequestHeaders = (headers) => {
     if (headers && headers.length) {
       return (
-        <li>
-          <h6>Request Headers</h6>
+        <Li>
+          <H6>Request Headers</H6>
           <Table tConfig={this.tConfig} tData={headers} />
-        </li>
+        </Li>
       )
     }
     return null;
@@ -79,14 +102,14 @@ class MainContent extends React.Component {
       <div>
         <H2>Request Definitions</H2>
         <ul>
-          <li>
-            <h6>Request URL</h6>
-            <p>{apiContent.request_url}</p>
-          </li>
-          <li>
-            <h6>Request Method</h6>
-            <p>{apiContent.method}</p>
-          </li>
+          <Li>
+            <H6>Request URL</H6>
+            <HighlightText>{apiContent.request_url}</HighlightText>
+          </Li>
+          <Li>
+            <H6>Request Method</H6>
+            <HighlightText>{apiContent.method}</HighlightText>
+          </Li>
           {this.renderRequestHeaders(apiContent.request_headers)}
         </ul>
       </div>
@@ -98,7 +121,9 @@ class MainContent extends React.Component {
       <div>
         <H1>{apiContent.title}</H1>
         <Divider />
-        {this.renderRequestData(apiContent)}
+        <CoreContent>
+          {this.renderRequestData(apiContent)}
+        </CoreContent>
       </div>
     )
   }

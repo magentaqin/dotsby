@@ -9,12 +9,13 @@ const StyledTable = styled.table`
 `
 
 const StyledHeader = styled.thead`
-  background-color: ${props => props.theme.dividerColor};
+  background-color: ${props => props.theme.lightGrayColor};
 `
 
 const P = styled.p`
   line-height: 40px;
   font-size: ${props => props.theme.normalFont};
+  padding-left: 8px;
 
 `
 

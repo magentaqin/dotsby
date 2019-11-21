@@ -100,7 +100,8 @@ const AsideItem = styled.li`
 const Main = styled.main`
   overflow-y: auto;
   flex-grow: 1;
-  padding: 40px 64px;
+  padding: 20px 64px;
+  max-width: 1200px;
 `
 
 const MainHeader = styled.header`

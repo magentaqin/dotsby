@@ -3,6 +3,8 @@ const theme = {
   primaryColor: '#3f20ba',
   grayColor: '#5A6270',
   blackColor: '#2f353f',
+  lightGrayColor: '#ebeef0',
+  pinkColor: '#f25cc1',
   // padding
   mdPadding: '24px',
   smPadding: '16px',
@@ -11,7 +13,7 @@ const theme = {
   mainSubtitleFont: '24px',
   headerFont: '20px',
   normalFont: '16px',
-  textFont: '15px',
+  textFont: '14px',
 }
 
 export default theme;

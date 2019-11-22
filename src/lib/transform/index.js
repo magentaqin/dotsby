@@ -148,7 +148,7 @@ export const transform = () => {
   return new Promise(async(resolve, reject) => {
     let errMsg = '';
     const sections = await loopSections();
-    console.log(sections[0].pages[1].apiContent)
+    console.log(sections[0].pages[1].apiContent.responses[0].data)
     if (!sections || !sections.length) {
       reject(new Error('Fail to parse config file.'))
     }

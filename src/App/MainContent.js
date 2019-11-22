@@ -49,6 +49,14 @@ const HighlightText = styled.code`
   border-radius: 4px;
 `
 
+const HighlightTitle = styled.code`
+font-size: ${props => props.theme.headerFont};
+color: ${props => props.theme.pinkColor};
+background-color: ${props => props.theme.lightGrayColor};
+padding: 4px;
+border-radius: 4px;
+`
+
 class MainContent extends React.Component {
   tConfig = [
     { label: 'Key', value: 'key' },
@@ -97,10 +105,34 @@ class MainContent extends React.Component {
     return null;
   }
 
+  renderQueryParams = (queryParams) => {
+    if (queryParams && queryParams.length) {
+      return (
+        <Li>
+          <H6>Query Params</H6>
+          <Table tConfig={this.tConfig} tData={queryParams} />
+        </Li>
+      )
+    }
+    return null;
+  }
+
+  renderBody = (body) => {
+    if (body && body.length) {
+      return (
+        <Li>
+          <H6>Body</H6>
+          <Table tConfig={this.tConfig} tData={body} />
+        </Li>
+      )
+    }
+    return null;
+  }
+
   renderRequestData = (apiContent) => {
     return (
       <div>
-        <H2>Request Definitions</H2>
+        <H2>Request</H2>
         <ul>
           <Li>
             <H6>Request URL</H6>
@@ -111,7 +143,30 @@ class MainContent extends React.Component {
             <HighlightText>{apiContent.method}</HighlightText>
           </Li>
           {this.renderRequestHeaders(apiContent.request_headers)}
+          {this.renderQueryParams(apiContent.query_params)}
+          {this.renderBody(apiContent.body)}
         </ul>
+      </div>
+    )
+  }
+
+  renderResponses = (responses) => {
+    return responses.map(response => {
+      return (
+        <ul key={response.key}>
+          <Li>
+            <HighlightTitle>{response.status}</HighlightTitle>
+          </Li>
+        </ul>
+      )
+    })
+  }
+
+  renderResponseData = (apiContent) => {
+    return (
+      <div>
+        <H2>Response</H2>
+        {this.renderResponses(apiContent.responses)}
       </div>
     )
   }
@@ -123,6 +178,7 @@ class MainContent extends React.Component {
         <Divider />
         <CoreContent>
           {this.renderRequestData(apiContent)}
+          {this.renderResponseData(apiContent)}
         </CoreContent>
       </div>
     )

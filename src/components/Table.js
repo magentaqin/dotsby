@@ -19,6 +19,10 @@ const P = styled.p`
 
 `
 
+const Row = styled.tr`
+  border-top: 1px solid ${props => props.theme.dividerColor};
+`
+
 const Table = (props) => {
   const { tConfig, tData } = props;
   const renderTableHeaders = () => {
@@ -46,7 +50,7 @@ const Table = (props) => {
   const renderTbody = () => {
     return tData.map(row => {
       return (
-        <tr className="tRow" key={row.key}>{renderRow(row)}</tr>
+        <Row className="tRow" key={row.key}>{renderRow(row)}</Row>
       )
     })
   }

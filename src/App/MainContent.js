@@ -117,11 +117,11 @@ class MainContent extends React.Component {
     return null;
   }
 
-  renderBody = (body) => {
+  renderRequestBody = (body) => {
     if (body && body.length) {
       return (
         <Li>
-          <H6>Body</H6>
+          <H6>Request Body</H6>
           <Table tConfig={this.tConfig} tData={body} />
         </Li>
       )
@@ -144,22 +144,41 @@ class MainContent extends React.Component {
           </Li>
           {this.renderRequestHeaders(apiContent.request_headers)}
           {this.renderQueryParams(apiContent.query_params)}
-          {this.renderBody(apiContent.body)}
+          {this.renderRequestBody(apiContent.body)}
         </ul>
       </div>
     )
   }
 
+  renderResponseBody = (data) => {
+
+  }
+
   renderResponses = (responses) => {
     return responses.map(response => {
+      const { status, headers, data } = response;
       return (
         <ul key={response.key}>
           <Li>
-            <HighlightTitle>{response.status}</HighlightTitle>
+            <HighlightTitle>{`${status} Status`}</HighlightTitle>
           </Li>
+          {this.renderRequestHeaders(headers)}
+          {this.renderResponseBody(data)}
         </ul>
       )
     })
+  }
+
+  renderResponseHeaders = (headers) => {
+    if (headers && headers.length) {
+      return (
+        <Li>
+          <H6>Response Headers</H6>
+          <Table tConfig={this.tConfig} tData={headers} />
+        </Li>
+      )
+    }
+    return null;
   }
 
   renderResponseData = (apiContent) => {

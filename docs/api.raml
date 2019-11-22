@@ -93,4 +93,7 @@ traits:
     responses:
       200:
         body:
-          type:  !include ../schemas/dist/document/document_token.json
+          type: object
+          properties:
+            data:
+              type:  !include ../schemas/dist/document/document_token.json

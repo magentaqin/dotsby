@@ -5,6 +5,8 @@ const theme = {
   blackColor: '#2f353f',
   lightGrayColor: '#ebeef0',
   pinkColor: '#f25cc1',
+  panelItemColor: '#f8fafc',
+  whiteColor: '#fff',
   // padding
   mdPadding: '24px',
   smPadding: '16px',

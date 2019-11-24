@@ -11,7 +11,7 @@ import { connect } from 'react-redux'
 import reset from 'styled-reset'
 import theme from '../theme/light'
 
-import ArrowDown from './ArrowDown';
+import { BigArrow } from '../components/Arrow';
 import MainContent from './MainContent';
 import { getDocumentInfo } from '../server/request'
 import { setDocumentInfo } from '../store/reducerActions/document'
@@ -191,7 +191,7 @@ class Layout extends React.Component {
         <AsideSection key={item.section_id}>
           <CollapseButton>
             <AsideSubtitle>{item.section_title}</AsideSubtitle>
-            <ArrowDown />
+            <BigArrow />
           </CollapseButton>
           <AsideNav>{this.renderPages(item.pagesInfo)}</AsideNav>
         </AsideSection>

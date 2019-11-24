@@ -8,6 +8,7 @@ import { getPageInfo } from '../server/request';
 import { setPagesInfo } from '../store/reducerActions/pages';
 import Table from '../components/Table';
 import Divider from '../components/Divider';
+import CollapsePanel from '../components/CollapsePanel'
 
 const { Fragment } = React;
 
@@ -151,7 +152,9 @@ class MainContent extends React.Component {
   }
 
   renderResponseBody = (data) => {
-
+    return (
+      <CollapsePanel data={data} />
+    );
   }
 
   renderResponses = (responses) => {

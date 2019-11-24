@@ -1,20 +1,41 @@
 import React from 'react';
 
-const CollapsePanel = (data) => {
+const CollapsePanel = ({ data }) => {
+
   const renderPanel = (data) => {
-    return data.map(item => {
+    return data.map((item, index) => {
+      // console.log(item)
+      let { displayName, type, description, required, example, properties } = item
+      let enumText = item.enum;
+      const hasJsonSchema = type.includes('type')
+      if (hasJsonSchema) {
+        const schemaItem = JSON.parse(item.type);
+        type = schemaItem.type;
+        const schemaProperties = []
+        Object.keys(schemaItem.properties).forEach(prop => {
+          schemaProperties.push({
+            type: schemaItem.properties[prop].type,
+            description: schemaItem.properties[prop].description,
+            displayName: prop,
+            key: prop,
+            required: schemaItem.required.includes(prop)
+          })
+        })
+        properties = schemaProperties
+      }
       return (
-        <div className="panel-item" key={item.key}>
+        <div className="panel-item" key={index}>
           <div className="left-item">
-            <p>{item.displayName + item.type }</p>
-            <p>{item.description + item.title}</p>
+            <p>{displayName === 'application/json' ? '' : displayName }</p>
+            <p>{type}</p>
+            <p>{description}</p>
           </div>
           <div className="right-item">
-            <p>{item.required ? 'Required' : 'Optional'}</p>
-            <p>{item.enum}</p>
-            <p>{item.example}</p>
+            <p>{required ? 'Required' : 'Optional'}</p>
+            <p>{enumText}</p>
+            <p>{example}</p>
           </div>
-          {item.properties && item.properties.length ? renderPanel(item.properties) : null }
+          {properties && properties.length ? renderPanel(properties) : null }
         </div>
       )
     })

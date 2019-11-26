@@ -34,7 +34,7 @@ const RightItem = styled.div`
   flex-direction: column;
   align-items: flex-end;
   flex: 1;
-  padding: 8px 8px 8px 0;;
+  padding: 8px 32px 8px 0;;
 `
 
 const FlexRow = styled.div`
@@ -62,14 +62,65 @@ const RequiredText = styled.p`
   font-weight: bolder;
 `
 
-const CollapsePanel = ({ data }) => {
-  let count = 0;
-  let nestedLevel = 0;
-  let prevIndex = -1;
+class CollapsePanel extends React.Component {
+  constructor(props) {
+    super(props)
+    this.state = {
+      expandedItems: [],
+    }
+  }
 
-  const renderPanel = (data) => {
+  count = 0;
+
+  nestedLevel = 0;
+
+  prevIndex = -1;
+
+  checkShouldExpand(index) {
+    let shouldExpand = false;
+    this.state.expandedItems.forEach(item => {
+      if (index === item.index && this.nestedLevel === item.nestedLevel) {
+        shouldExpand = true;
+      }
+    })
+    return shouldExpand;
+  }
+
+  toggleExpand = (index, nestedLevel) => {
+    const item = { index, nestedLevel }
+    console.log('EXPAND', index, nestedLevel, this.state.expandedItems)
+
+    let shouldAdd = true;
+    const filteredExpandedItems = this.state.expandedItems.filter(item => {
+      const prevNestedLevel = nestedLevel - 1;
+      if (item.index === index && nestedLevel > item.nestedLevel) {
+        shouldAdd = false;
+        return;
+      }
+      return item;
+    })
+
+    console.log('shouldAdd', shouldAdd)
+    const expandedItems = [...this.state.expandedItems]
+    expandedItems.push(item)
+    this.nestedLevel = nestedLevel;
+    this.prevIndex = -1;
+    this.setState({ expandedItems })
+
+    if (shouldAdd) {
+      // const expandedItems = [...this.state.expandedItems]
+      // expandedItems.push(item)
+      // this.nestedLevel = nestedLevel;
+      // this.prevIndex = -1;
+      // this.setState({ expandedItems })
+    } else {
+      // this.prevIndex = -1;
+      // this.setState({ expandedItems: filteredExpandedItems })
+    }
+  }
+
+  renderPanel = (data) => {
     return data.map((item, index) => {
-      console.log(item)
       let {
         displayName,
         type,
@@ -97,23 +148,26 @@ const CollapsePanel = ({ data }) => {
       }
 
       // total row count
-      count += 1;
+      this.count += 1;
 
-      if (prevIndex !== index) {
-        nestedLevel = 0;
-        prevIndex = index;
+      if (this.prevIndex !== index) {
+        this.nestedLevel = 0;
+        this.prevIndex = index;
       } else {
-        nestedLevel += 1;
+        this.nestedLevel += 1;
       }
 
-      const isNested = properties && properties.length;
+      const isNested = (properties && properties.length) ? true : false;
+      const shouldExpand = this.checkShouldExpand(index);
+
+      console.log('RENDER', index, this.nestedLevel)
 
       return (
         <div key={index}>
-          <PanelWrapper count={count}>
-            <LeftItem nestedLevel={nestedLevel}>
+          <PanelWrapper count={this.count}>
+            <LeftItem nestedLevel={this.nestedLevel}>
               <FlexRow>
-                {isNested ? <SmallArrow /> : null }
+                {isNested ? <div onClick={() => this.toggleExpand(index, this.nestedLevel)}><SmallArrow /></div> : null }
                 <p>{displayName}</p>
                 <TypeText>{type}</TypeText>
               </FlexRow>
@@ -125,16 +179,19 @@ const CollapsePanel = ({ data }) => {
               <NoteText>{example}</NoteText>
             </RightItem>
           </PanelWrapper>
-          {isNested ? renderPanel(properties) : null }
+          {isNested && shouldExpand ? this.renderPanel(properties) : null }
         </div>
       )
     })
   }
-  return (
-    <Wrapper>
-      {renderPanel(data)}
-    </Wrapper>
-  )
+
+  render() {
+    return (
+      <Wrapper>
+        {this.renderPanel(this.props.data)}
+      </Wrapper>
+    )
+  }
 }
 
 export default CollapsePanel;

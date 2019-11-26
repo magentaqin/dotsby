@@ -6,12 +6,20 @@ const Wrapper = styled.div`
   border: 1px solid ${props => props.theme.dividerColor};
 `
 
-const PanelItem = styled.div`
-  display: flex;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  background-color: ${props => (props.count % 2 === 0 ? props.theme.whiteColor : 'red')};
-  width: 100%;
+const PanelWrapper = styled.div`
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    width: 100%;
+   &:hover {
+    background-color: ${props => props.theme.panelItemHoverColor};
+    cursor: pointer;
+  }
+  &:not(:hover) {
+    background-color: ${props => (props.count % 2 === 0 ? props.theme.panelItemColor : props.theme.whiteColor)};
+    cursor: initial;
+  }
 `
 
 const LeftItem = styled.div`
@@ -24,8 +32,34 @@ const LeftItem = styled.div`
 const RightItem = styled.div`
   display: flex;
   flex-direction: column;
+  align-items: flex-end;
   flex: 1;
-  padding: 8px 0;
+  padding: 8px 8px 8px 0;;
+`
+
+const FlexRow = styled.div`
+  display: flex;
+  align-items: center;
+`
+
+const TypeText = styled.code`
+  font-size: ${props => props.theme.textFont};
+  color: ${props => props.theme.pinkColor};
+  background-color: ${props => props.theme.lightGrayColor};
+  padding: 4px;
+  border-radius: 4px;
+  margin-left: 8px;
+`
+
+const NoteText = styled.p`
+  font-size: ${props => props.theme.textFont};
+  color: ${props => props.theme.grayColor};
+`
+
+const RequiredText = styled.p`
+  font-size: ${props => props.theme.textFont};
+  color: ${props => props.theme.primaryColor};
+  font-weight: bolder;
 `
 
 const CollapsePanel = ({ data }) => {
@@ -75,22 +109,24 @@ const CollapsePanel = ({ data }) => {
       const isNested = properties && properties.length;
 
       return (
-        <PanelItem key={index} count={count}>
-          <LeftItem nestedLevel={nestedLevel}>
-            <div>
-              {isNested ? <SmallArrow /> : null }
-              <span>{displayName}</span>
-              <span>{type}</span>
-            </div>
-            <span>{description}</span>
-          </LeftItem>
-          <RightItem>
-            <span>{required ? 'Required' : 'Optional'}</span>
-            <span>{enumText}</span>
-            <span>{example}</span>
-          </RightItem>
+        <div key={index}>
+          <PanelWrapper count={count}>
+            <LeftItem nestedLevel={nestedLevel}>
+              <FlexRow>
+                {isNested ? <SmallArrow /> : null }
+                <p>{displayName}</p>
+                <TypeText>{type}</TypeText>
+              </FlexRow>
+              <NoteText>{description}</NoteText>
+            </LeftItem>
+            <RightItem>
+              <RequiredText>{required ? 'Required' : 'Optional'}</RequiredText>
+              <NoteText>{enumText}</NoteText>
+              <NoteText>{example}</NoteText>
+            </RightItem>
+          </PanelWrapper>
           {isNested ? renderPanel(properties) : null }
-        </PanelItem>
+        </div>
       )
     })
   }

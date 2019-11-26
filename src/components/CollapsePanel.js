@@ -76,47 +76,16 @@ class CollapsePanel extends React.Component {
 
   prevIndex = -1;
 
-  checkShouldExpand(index) {
-    let shouldExpand = false;
-    this.state.expandedItems.forEach(item => {
-      if (index === item.index && this.nestedLevel === item.nestedLevel) {
-        shouldExpand = true;
-      }
-    })
-    return shouldExpand;
-  }
-
-  toggleExpand = (index, nestedLevel) => {
-    const item = { index, nestedLevel }
-    console.log('EXPAND', index, nestedLevel, this.state.expandedItems)
-
-    let shouldAdd = true;
-    const filteredExpandedItems = this.state.expandedItems.filter(item => {
-      const prevNestedLevel = nestedLevel - 1;
-      if (item.index === index && nestedLevel > item.nestedLevel) {
-        shouldAdd = false;
-        return;
-      }
-      return item;
-    })
-
-    console.log('shouldAdd', shouldAdd)
-    const expandedItems = [...this.state.expandedItems]
-    expandedItems.push(item)
-    this.nestedLevel = nestedLevel;
+  toggleExpand = (count) => () => {
+    let expandedItems = []
+    if (this.state.expandedItems.includes(count)) {
+      expandedItems = this.state.expandedItems.filter(item => item !== count);
+    } else {
+      expandedItems = [...this.state.expandedItems]
+      expandedItems.push(count)
+    }
     this.prevIndex = -1;
     this.setState({ expandedItems })
-
-    if (shouldAdd) {
-      // const expandedItems = [...this.state.expandedItems]
-      // expandedItems.push(item)
-      // this.nestedLevel = nestedLevel;
-      // this.prevIndex = -1;
-      // this.setState({ expandedItems })
-    } else {
-      // this.prevIndex = -1;
-      // this.setState({ expandedItems: filteredExpandedItems })
-    }
   }
 
   renderPanel = (data) => {
@@ -148,26 +117,27 @@ class CollapsePanel extends React.Component {
       }
 
       // total row count
-      this.count += 1;
 
       if (this.prevIndex !== index) {
         this.nestedLevel = 0;
         this.prevIndex = index;
+        this.count = 0;
       } else {
         this.nestedLevel += 1;
       }
 
-      const isNested = (properties && properties.length) ? true : false;
-      const shouldExpand = this.checkShouldExpand(index);
+      // total row count
+      this.count += 1;
 
-      console.log('RENDER', index, this.nestedLevel)
+      const isNested = (properties && properties.length) ? true : false;
+      const shouldExpand = this.state.expandedItems.includes(this.count);
 
       return (
         <div key={index}>
           <PanelWrapper count={this.count}>
             <LeftItem nestedLevel={this.nestedLevel}>
               <FlexRow>
-                {isNested ? <div onClick={() => this.toggleExpand(index, this.nestedLevel)}><SmallArrow /></div> : null }
+                {isNested ? <div onClick={this.toggleExpand(this.count)}><SmallArrow /></div> : null }
                 <p>{displayName}</p>
                 <TypeText>{type}</TypeText>
               </FlexRow>

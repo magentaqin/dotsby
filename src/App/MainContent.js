@@ -12,6 +12,10 @@ import CollapsePanel from '../components/CollapsePanel';
 
 const { Fragment } = React;
 
+const Wrapper = styled.div`
+  padding: 20px 64px;
+`
+
 const CoreContent = styled.div`
   max-width: 800px;
 `
@@ -216,17 +220,17 @@ class MainContent extends React.Component {
     const { content, apiContent } = this.props.pages[this.pageId]
     if (content) {
       return (
-        <div>
+        <Wrapper>
           <div dangerouslySetInnerHTML={{ __html: `${content}` }}></div>
-        </div>
+        </Wrapper>
       )
     }
 
     if (apiContent) {
       return (
-        <div>
+        <Wrapper>
           {this.renderApiContent(apiContent)}
-        </div>
+        </Wrapper>
       )
     }
   }

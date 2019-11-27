@@ -100,7 +100,6 @@ const AsideItem = styled.li`
 const Main = styled.main`
   overflow-y: auto;
   flex-grow: 1;
-  padding: 20px 64px;
   max-width: 1200px;
 `
 
@@ -110,6 +109,7 @@ const MainHeader = styled.header`
   position: sticky;
   align-items: center;
   top: 0;
+  background-color: ${props => props.theme.whiteColor};
 `
 
 const InputWrapper = styled.div`

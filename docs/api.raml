@@ -29,13 +29,7 @@ securitySchemes:
           body:
             type: ResponseError
           description: |
-            bad or expired token. This can happen if the AppUser
-            revoked token or this token had already expired or
-            submitted token not suited to this API.
-            To fix, generate the token through Auth API again.
-
-            Another situation is that the token is not formed in a valid syntax
-            or the token value is just missing.
+            bad or expired token.
 
 
 traits:

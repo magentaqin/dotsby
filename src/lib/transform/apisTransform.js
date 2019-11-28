@@ -61,6 +61,22 @@ const formatRamlPage = (page, securitySchemes) => {
   formattedPage.request_headers = requestHeaders
 
   // format responses
+  const securityResponses = []
+  if (securitySchemes) {
+    Object.keys(securitySchemes).forEach(key => {
+      if (securitySchemes[key] && securitySchemes[key].describedBy && securitySchemes[key].describedBy.responses) {
+        securitySchemes[key].describedBy.responses.forEach(res => {
+          securityResponses.push({
+            key: res.code,
+            status: res.code,
+            headers: res.headers ? res.headers : [],
+            data: res.body,
+          })
+        })
+      }
+    })
+  }
+
   const formattedResponses = responses.map(res => {
     const resHeaders = formatResponseHeaders(res.headers)
     return {
@@ -70,7 +86,10 @@ const formatRamlPage = (page, securitySchemes) => {
       data: res.body,
     }
   })
-  formattedPage.responses = formattedResponses
+
+  formattedPage.responses = [...formattedResponses, ...securityResponses];
+  console.log(formattedPage.responses)
+  console.log(formattedPage.responses[1].data)
 
   return formattedPage;
 }

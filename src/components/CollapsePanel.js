@@ -12,14 +12,16 @@ const PanelWrapper = styled.div`
     align-items: center;
     flex-wrap: wrap;
     width: 100%;
-   &:hover {
-    background-color: ${props => props.theme.panelItemHoverColor};
-    cursor: pointer;
-  }
-  &:not(:hover) {
-    background-color: ${props => (props.count % 2 === 0 ? props.theme.panelItemColor : props.theme.whiteColor)};
-    cursor: initial;
-  }
+
+    &:hover {
+      background-color: ${props => props.theme.panelItemHoverColor};
+      cursor: pointer;
+    }
+
+    &:not(:hover) {
+      background-color: ${props => (props.count % 2 === 0 ? props.theme.panelItemColor : props.theme.whiteColor)};
+      cursor: initial;
+    }
 `
 
 const LeftItem = styled.div`
@@ -74,21 +76,22 @@ class CollapsePanel extends React.Component {
 
   nestedLevel = 0;
 
-  prevIndex = -1;
-
   toggleExpand = (count) => () => {
     let expandedItems = []
     if (this.state.expandedItems.includes(count)) {
       expandedItems = this.state.expandedItems.filter(item => item !== count);
+      this.count = 0;
+      this.nestedLevel = 0;
     } else {
       expandedItems = [...this.state.expandedItems]
       expandedItems.push(count)
+      this.count = 0;
+      this.nestedLevel = 0;
     }
-    this.prevIndex = -1;
     this.setState({ expandedItems })
   }
 
-  renderPanel = (data) => {
+  renderNestedPanel = (data) => {
     return data.map((item, index) => {
       let {
         displayName,
@@ -96,9 +99,11 @@ class CollapsePanel extends React.Component {
         description,
         required,
         example,
-        properties,
       } = item
       const enumText = item.enum;
+      let properties = item.properties ? item.properties : []
+
+      // handle json schema type
       const hasJsonSchema = type.includes('type')
       if (hasJsonSchema) {
         const schemaItem = JSON.parse(item.type);
@@ -113,23 +118,19 @@ class CollapsePanel extends React.Component {
             required: schemaItem.required.includes(prop),
           })
         })
-        properties = schemaProperties
+        properties = [...properties, ...schemaProperties]
       }
 
-      // total row count
+      const isNested = !!((properties && properties.length));
 
-      if (this.prevIndex !== index) {
-        this.nestedLevel = 0;
-        this.prevIndex = index;
-        this.count = 0;
-      } else {
+
+      // this count is previous count.
+      if (this.state.expandedItems.includes(this.count)) {
         this.nestedLevel += 1;
       }
 
-      // total row count
+      // this count is current count
       this.count += 1;
-
-      const isNested = (properties && properties.length) ? true : false;
       const shouldExpand = this.state.expandedItems.includes(this.count);
 
       return (
@@ -149,7 +150,69 @@ class CollapsePanel extends React.Component {
               <NoteText>{example}</NoteText>
             </RightItem>
           </PanelWrapper>
-          {isNested && shouldExpand ? this.renderPanel(properties) : null }
+          {isNested && shouldExpand ? this.renderNestedPanel(properties) : null }
+        </div>
+      )
+    })
+  }
+
+  renderPanel = (data) => {
+    return data.map((item, index) => {
+      let {
+        displayName,
+        type,
+        description,
+        required,
+        example,
+      } = item
+      const enumText = item.enum;
+      let properties = item.properties ? item.properties : []
+
+      // handle json schema type
+      const hasJsonSchema = type.includes('type')
+      if (hasJsonSchema) {
+        const schemaItem = JSON.parse(item.type);
+        type = schemaItem.type;
+        const schemaProperties = []
+        Object.keys(schemaItem.properties).forEach(prop => {
+          schemaProperties.push({
+            type: schemaItem.properties[prop].type,
+            description: schemaItem.properties[prop].description,
+            displayName: prop,
+            key: prop,
+            required: schemaItem.required.includes(prop),
+          })
+        })
+        properties = [...properties, ...schemaProperties]
+      }
+
+      console.log('PARENT', index)
+
+      // total row count
+      this.count += 1;
+      this.nestedLevel = 0;
+
+      const isNested = !!((properties && properties.length));
+      const shouldExpand = this.state.expandedItems.includes(this.count);
+
+      return (
+        <div key={index}>
+          <PanelWrapper count={this.count}>
+            <LeftItem nestedLevel={0}>
+              <FlexRow>
+                {isNested ? <div onClick={this.toggleExpand(this.count)}><SmallArrow /></div> : null }
+                <p>{displayName}</p>
+                <TypeText>{type}</TypeText>
+              </FlexRow>
+              <NoteText>{description}</NoteText>
+            </LeftItem>
+            <RightItem>
+              <RequiredText>{required ? 'Required' : 'Optional'}</RequiredText>
+              <NoteText>{enumText}</NoteText>
+              <NoteText>{example}</NoteText>
+            </RightItem>
+          </PanelWrapper>
+          {isNested && shouldExpand ? this.renderNestedPanel(properties) : null }
         </div>
       )
     })

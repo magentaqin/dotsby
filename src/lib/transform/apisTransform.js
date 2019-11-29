@@ -71,6 +71,7 @@ const formatRamlPage = (page, securitySchemes) => {
             status: res.code,
             headers: res.headers ? res.headers : [],
             data: res.body,
+            description: res.description,
           })
         })
       }
@@ -88,8 +89,8 @@ const formatRamlPage = (page, securitySchemes) => {
   })
 
   formattedPage.responses = [...formattedResponses, ...securityResponses];
-  console.log(formattedPage.responses)
-  console.log(formattedPage.responses[1].data)
+  // console.log(formattedPage.responses)
+  console.log(formattedPage.responses[1].data[0].properties[0].properties)
 
   return formattedPage;
 }

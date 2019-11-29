@@ -27,7 +27,13 @@ securitySchemes:
       responses:
         401:
           body:
-            type: ResponseError
+            type: object
+            properties:
+              data:
+                type: object
+                properties:
+                  code: string
+                  message: string
           description: |
             bad or expired token.
 

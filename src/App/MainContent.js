@@ -71,31 +71,32 @@ class MainContent extends React.Component {
   ]
 
   componentDidMount() {
-    const info = {}
     if (!this.props.pages[this.pageId]) {
-      getPageInfo({ id: this.pageId }).then(resp => {
-        const { page_id } = resp.data.data
-        info[page_id] = resp.data.data
-        this.props.setPagesInfo(info)
-      }).catch(err => err)
+      this.fetchPageInfo();
     }
   }
 
   componentDidUpdate(prevProps) {
     if (prevProps.location.pathname !== this.props.location.pathname) {
-      const info = {}
-      getPageInfo({ id: this.pageId }).then(resp => {
-        const { page_id } = resp.data.data
-        info[page_id] = resp.data.data
-        this.props.setPagesInfo(info)
-      }).catch(err => err)
+      this.fetchPageInfo();
     }
   }
 
   get pageId() {
-    const { pathname } = this.props.location
-    const pageId = this.props.routeIdMap[pathname]
-    return pageId;
+    return this.props.match.params.pageId;
+  }
+
+  get documentId() {
+    return this.props.match.params.documentId;
+  }
+
+  fetchPageInfo = () => {
+    const info = {}
+    getPageInfo({ document_id: this.documentId, page_id: this.pageId }).then(resp => {
+      const { page_id } = resp.data.data
+      info[page_id] = resp.data.data
+      this.props.setPagesInfo(info)
+    }).catch(err => err)
   }
 
   renderRequestHeaders = (headers) => {
@@ -217,7 +218,7 @@ class MainContent extends React.Component {
     if (!this.props.pages[this.pageId]) {
       return <h1>Content Not Available.</h1>
     }
-    const { content, apiContent } = this.props.pages[this.pageId]
+    const { content, api_content } = this.props.pages[this.pageId]
     if (content) {
       return (
         <Wrapper>
@@ -226,10 +227,10 @@ class MainContent extends React.Component {
       )
     }
 
-    if (apiContent) {
+    if (api_content) {
       return (
         <Wrapper>
-          {this.renderApiContent(apiContent)}
+          {this.renderApiContent(api_content)}
         </Wrapper>
       )
     }
@@ -237,15 +238,7 @@ class MainContent extends React.Component {
 }
 
 const mapStateToProps = (store) => {
-  const sections = Object.values(store.sectionsReducer.sections)
-  const routeIdMap = {}
-  sections.forEach(section => {
-    section.pagesInfo.forEach(item => {
-      routeIdMap[item.path] = item.page_id
-    })
-  })
   return {
-    routeIdMap,
     pages: store.pagesReducer.pages,
   }
 }

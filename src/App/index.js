@@ -1,3 +1,4 @@
+/* eslint-disable prefer-destructuring */
 /* eslint-disable react/prop-types */
 /* eslint-disable import/named */
 /* eslint-disable no-unused-vars */
@@ -135,17 +136,20 @@ const Input = styled.input`
 `
 
 class Layout extends React.Component {
+  documentId = '';
+
   componentDidMount() {
     if (!this.props.document.id) {
+      const { pathname } = this.props.location;
+      this.documentId = pathname.split('/')[1];
       this.fetchDocumentInfo()
     }
   }
 
   fetchDocumentInfo = () => {
-    const { pathname, search } = this.props.location;
-    const document_id = pathname.slice(1);
+    const { search } = this.props.location;
     const { version, token } = qs.parse(search, { ignoreQueryPrefix: true });
-    getDocumentInfo({ document_id, version, token }).then(resp => {
+    getDocumentInfo({ document_id: this.documentId, version, token }).then(resp => {
       const { data } = resp.data;
       const { document_id, sections, ...rest } = data
       const sectionIds = []
@@ -179,11 +183,14 @@ class Layout extends React.Component {
   }
 
   renderPages = (pages) => {
-    return pages.map(item => (
-      <AsideItem key={item.page_id}>
-        <Link to={item.path}>{item.title}</Link>
-      </AsideItem>
-    ))
+    return pages.map(item => {
+      const path = `/${this.documentId}/page/${item.page_id}${this.props.location.search}`
+      return (
+        <AsideItem key={item.page_id}>
+          <Link to={path}>{item.title}</Link>
+        </AsideItem>
+      )
+    })
   }
 
   renderSections = () => {
@@ -221,13 +228,15 @@ class Layout extends React.Component {
 
 
   renderMain = () => {
-    const defaultId = this.props.sections[0].pagesInfo[0].path;
+    const { search } = this.props.location;
+    const pageId = this.props.sections[0].pagesInfo[0].page_id;
+    const defaultPath = `/${this.documentId}/page/${pageId}${search}`;
     return (
       <Main>
         {this.renderMainHeader()}
         <Switch>
-          <Route path="/:id" component={MainContent} />
-          <Redirect to={defaultId} />
+          <Route path="/:documentId/page/:pageId" component={MainContent} />
+          <Redirect to={defaultPath} />
         </Switch>
       </Main>
     )

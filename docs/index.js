@@ -1,8 +1,8 @@
 const config = {
   ramlFile: 'api.raml',
-  user_token: 'dfjakjdfkajdfkj123',
-  document_token: '1qazxsw2',
-  doc_title: 'Dotsby Api Doc',
+  token: 'dfjakjdfkajdfkj123',
+  document_id: '1qazxsw2',
+  title: 'Dotsby Api Doc',
   version: 0.1,
   sections: [
     {

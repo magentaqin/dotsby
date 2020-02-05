@@ -8,11 +8,9 @@ export const setDocumentInfo = (documentInfo) => ({
 
 const initialState = {
   document: {
-    id: 0,
-    document_token: '',
-    version: 0,
-    doc_title: '',
-    is_private: false,
+    id: '',
+    version: '',
+    title: '',
     sectionIds: [],
   },
 }

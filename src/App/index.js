@@ -9,8 +9,9 @@ import {
 } from 'react-router-dom'
 import { connect } from 'react-redux'
 import reset from 'styled-reset'
-import theme from '../theme/light'
+import qs from 'qs'
 
+import theme from '../theme/light'
 import { BigArrow } from '../components/Arrow';
 import MainContent from './MainContent';
 import { getDocumentInfo } from '../server/request'
@@ -84,6 +85,7 @@ const AsideSubtitle = styled.h6`
   text-transform: uppercase;
   letter-spacing: 2px;
   font-weight: 500;
+  text-align: left;
 `
 
 const AsideNav = styled.ul`
@@ -140,17 +142,18 @@ class Layout extends React.Component {
   }
 
   fetchDocumentInfo = () => {
-    getDocumentInfo({ document_id: 123123 }).then(resp => {
+    const { pathname, search } = this.props.location;
+    const document_id = pathname.slice(1);
+    const { version, token } = qs.parse(search, { ignoreQueryPrefix: true });
+    getDocumentInfo({ document_id, version, token }).then(resp => {
       const { data } = resp.data;
       const { document_id, sections, ...rest } = data
       const sectionIds = []
       const sectionMap = {}
 
-      /**
-       * set sections info
-       */
+      // set sections info
       sections.forEach(section => {
-        const { section_id, section_title, pages } = section;
+        const { section_id, title, pages } = section;
         const pagesInfo = []
         pages.forEach(page => {
           pagesInfo.push(page)
@@ -158,16 +161,14 @@ class Layout extends React.Component {
         sectionIds.push(section_id)
         sectionMap[section_id] = {
           section_id,
-          section_title,
+          title,
           pagesInfo,
         }
       })
 
       this.props.setSectionsInfo(sectionMap)
 
-      /**
-         * set document info
-         */
+      // set document info
       const documentInfo = {
         ...rest,
         id: document_id,
@@ -180,7 +181,7 @@ class Layout extends React.Component {
   renderPages = (pages) => {
     return pages.map(item => (
       <AsideItem key={item.page_id}>
-        <Link to={item.path}>{item.page_title}</Link>
+        <Link to={item.path}>{item.title}</Link>
       </AsideItem>
     ))
   }
@@ -190,7 +191,7 @@ class Layout extends React.Component {
       return (
         <AsideSection key={item.section_id}>
           <CollapseButton>
-            <AsideSubtitle>{item.section_title}</AsideSubtitle>
+            <AsideSubtitle>{item.title}</AsideSubtitle>
             <BigArrow />
           </CollapseButton>
           <AsideNav>{this.renderPages(item.pagesInfo)}</AsideNav>
@@ -249,7 +250,7 @@ class Layout extends React.Component {
 
 const mapStateToProps = (store) => ({
   document: store.documentReducer.document,
-  documentTitle: store.documentReducer.document.doc_title,
+  documentTitle: store.documentReducer.document.title,
   sections: Object.values(store.sectionsReducer.sections),
 })
 

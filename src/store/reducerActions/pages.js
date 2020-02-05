@@ -10,7 +10,6 @@ const initialState = {
   pages: {},
 }
 
-
 export const pagesReducer = (state = initialState, action) => {
   switch (action.type) {
     case setPagesInfoActionType:

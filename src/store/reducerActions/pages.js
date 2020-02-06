@@ -15,7 +15,10 @@ export const pagesReducer = (state = initialState, action) => {
     case setPagesInfoActionType:
       return {
         ...state,
-        pages: action.payload,
+        pages: {
+          ...state.pages,
+          ...action.payload,
+        }
       }
     default:
       return state;

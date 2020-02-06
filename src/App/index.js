@@ -243,6 +243,7 @@ class Layout extends React.Component {
   }
 
   render() {
+    console.log('Parent render')
     if (!this.props.sections.length) {
       return <h1>loading</h1>;
     }

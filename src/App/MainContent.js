@@ -10,8 +10,6 @@ import Table from '../components/Table';
 import Divider from '../components/Divider';
 import CollapsePanel from '../components/CollapsePanel';
 
-const { Fragment } = React;
-
 const Wrapper = styled.div`
   padding: 20px 64px;
 `
@@ -63,6 +61,8 @@ border-radius: 4px;
 `
 
 class MainContent extends React.Component {
+  prevPageId = '';
+
   tConfig = [
     { label: 'Key', value: 'key' },
     { label: 'Type', value: 'type' },
@@ -71,9 +71,7 @@ class MainContent extends React.Component {
   ]
 
   componentDidMount() {
-    if (!this.props.pages[this.pageId]) {
-      this.fetchPageInfo();
-    }
+    this.fetchPageInfo();
   }
 
   componentDidUpdate(prevProps) {
@@ -91,12 +89,15 @@ class MainContent extends React.Component {
   }
 
   fetchPageInfo = () => {
-    const info = {}
-    getPageInfo({ document_id: this.documentId, page_id: this.pageId }).then(resp => {
-      const { page_id } = resp.data.data
-      info[page_id] = resp.data.data
-      this.props.setPagesInfo(info)
-    }).catch(err => err)
+    if (!this.props.pages[this.pageId]) {
+      const info = {}
+      getPageInfo({ document_id: this.documentId, page_id: this.pageId }).then(resp => {
+        const { page_id } = resp.data.data
+        this.prevPageId = page_id;
+        info[page_id] = resp.data.data
+        this.props.setPagesInfo(info)
+      }).catch(err => err)
+    }
   }
 
   renderRequestHeaders = (headers) => {
@@ -215,10 +216,13 @@ class MainContent extends React.Component {
   }
 
   render() {
-    if (!this.props.pages[this.pageId]) {
-      return <h1>Content Not Available.</h1>
+    const prevPage = this.props.pages[this.prevPageId];
+    const currentPage = this.props.pages[this.pageId];
+    if (!prevPage && !currentPage) {
+      return <h1>Loading...</h1>
     }
-    const { content, api_content } = this.props.pages[this.pageId]
+    const content = currentPage ? currentPage.content : prevPage.content;
+    const api_content = currentPage ? currentPage.api_content : prevPage.api_content;
     if (content) {
       return (
         <Wrapper>

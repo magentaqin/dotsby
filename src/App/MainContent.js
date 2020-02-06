@@ -96,7 +96,9 @@ class MainContent extends React.Component {
         this.prevPageId = page_id;
         info[page_id] = resp.data.data
         this.props.setPagesInfo(info)
-      }).catch(err => err)
+      }).catch(err => {
+        console.log(err);
+      })
     }
   }
 
@@ -219,7 +221,11 @@ class MainContent extends React.Component {
     const prevPage = this.props.pages[this.prevPageId];
     const currentPage = this.props.pages[this.pageId];
     if (!prevPage && !currentPage) {
-      return <h1>Loading...</h1>
+      return (
+        <Wrapper>
+          <h1>Loading...</h1>
+        </Wrapper>
+      )
     }
     const content = currentPage ? currentPage.content : prevPage.content;
     const api_content = currentPage ? currentPage.api_content : prevPage.api_content;

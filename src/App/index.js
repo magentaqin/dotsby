@@ -135,14 +135,40 @@ const Input = styled.input`
   -webkit-appearance: none;
 `
 
+const PageLoading = styled.div`
+  position: absolute;
+  right: 8px;
+  visibility: ${props => (props.isLoading ? 'visibile' : 'hidden')};
+`
+
+const Spin = styled.img`
+  width: 40px;
+`
+
+
 class Layout extends React.Component {
   documentId = '';
+
+  state = {
+    isLoading: false,
+  }
 
   componentDidMount() {
     if (!this.props.document.id) {
       const { pathname } = this.props.location;
       this.documentId = pathname.split('/')[1];
       this.fetchDocumentInfo()
+    }
+  }
+
+  componentDidUpdate() {
+    const { pathname } = this.props.location;
+    const pageId = pathname.split('/')[3];
+    if (!this.props.pages[pageId] && !this.state.isLoading) {
+      this.setState({ isLoading: true })
+    }
+    if (this.props.pages[pageId] && this.state.isLoading) {
+      this.setState({ isLoading: false })
     }
   }
 
@@ -223,6 +249,9 @@ class Layout extends React.Component {
       <InputWrapper>
         <Input />
       </InputWrapper>
+      <PageLoading isLoading={this.state.isLoading}>
+        <Spin src={require('../assets/spin.svg')} />
+      </PageLoading>
     </MainHeader>
   )
 
@@ -243,7 +272,6 @@ class Layout extends React.Component {
   }
 
   render() {
-    console.log('Parent render')
     if (!this.props.sections.length) {
       return <h1>loading</h1>;
     }
@@ -262,6 +290,7 @@ const mapStateToProps = (store) => ({
   document: store.documentReducer.document,
   documentTitle: store.documentReducer.document.title,
   sections: Object.values(store.sectionsReducer.sections),
+  pages: store.pagesReducer.pages,
 })
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({

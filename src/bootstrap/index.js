@@ -149,13 +149,10 @@ export const bootstrap = () => {
 
 
   fs.readFile(htmlFilePath, 'utf8', (_err, htmlData) => {
-    // handle static resources.TODO.
-    app.use('/static', Express.static(path.resolve(buildFolderPath, 'static')));
-    app.use('/images', Express.static(path.resolve(buildFolderPath, 'images')));
-    app.use('/dotsby.ico', Express.static(path.resolve(buildFolderPath, 'dotsby.ico')));
-    app.use('/manifest.json', Express.static(path.resolve(buildFolderPath, 'manifest.json')));
+    // handle static resources.
+    app.use(Express.static(buildFolderPath));
 
-    app.use('*', async(req, res) => {
+    app.get('/*', async(req, res) => {
       console.log('RECEIVEORIGINALURL', req.originalUrl)
       if (req.originalUrl === '/') {
         return handleIndexPage(res)

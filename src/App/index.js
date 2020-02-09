@@ -18,6 +18,7 @@ import { getDocumentInfo } from '@src/server/request'
 import { setDocumentInfo } from '@src/store/reducerActions/document'
 import { setSectionsInfo } from '@src/store/reducerActions/sections'
 import { docRegx, pageRegx } from '@src/utils/regx';
+import SpinSrc from '@src/assets/spin.svg';
 import MainContent from './MainContent';
 
 const GlobalStyle = createGlobalStyle`
@@ -260,7 +261,7 @@ class Layout extends React.Component {
         <Input />
       </InputWrapper>
       <PageLoading isPageLoading={this.state.isPageLoading}>
-        {/* <Spin src={require('../assets/spin.svg')} /> */}
+        <Spin src={SpinSrc} />
       </PageLoading>
     </MainHeader>
   )

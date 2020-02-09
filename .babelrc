@@ -6,6 +6,7 @@
   "plugins": [
     "babel-plugin-styled-components",
     "@babel/plugin-proposal-class-properties",
+    ["import-static-files", {"baseDir": "/static/media", "hash": true, "outDir": "../../build" }],
     ["module-resolver", {
       "root": ["."],
       "alias": {

@@ -1,3 +1,4 @@
+/* eslint-disable prefer-destructuring */
 /* eslint-disable react/prop-types */
 /* eslint-disable import/first */
 /* eslint-disable import/prefer-default-export */
@@ -21,6 +22,7 @@ import { setDocumentInfo } from '@src/store/reducerActions/document';
 import { setSectionsInfo } from '@src/store/reducerActions/sections';
 import { setPagesInfo } from '@src/store/reducerActions/pages';
 import reducer from '@src/store/reducerActions';
+import { docRegx, pageRegx } from '@src/utils/regx';
 
 
 const port = config.port.ssrServer;
@@ -43,8 +45,10 @@ const dispatchDocInfo = (data, store) => {
   const { document_id, sections, ...rest } = data
   const sectionIds = []
   const sectionMap = {}
+
+  // set sections info
   sections.forEach(section => {
-    const { section_id, section_title, pages } = section;
+    const { section_id, title, pages } = section;
     const pagesInfo = []
     pages.forEach(page => {
       pagesInfo.push(page)
@@ -52,7 +56,7 @@ const dispatchDocInfo = (data, store) => {
     sectionIds.push(section_id)
     sectionMap[section_id] = {
       section_id,
-      section_title,
+      title,
       pagesInfo,
     }
   })
@@ -80,38 +84,27 @@ const getApp = (req, context, store) => {
   )
 }
 
-const fetchDocumentInfo = async (store) => {
-  let hasDocFetchErr = false;
-  console.log('--FETCH REQUEST--')
-  const resp = await getDocumentInfo({ document_id: 123123 }).catch(err => console.log(err));
-  if (!resp || !resp.data || !resp.data.data) {
-    hasDocFetchErr = true
-  } else {
+const fetchDocumentInfo = async (store, document_id, version) => {
+  console.log('FETCH DOC INFO')
+  let docFetchErrStatus;
+  const resp = await getDocumentInfo({ document_id, version }).catch(err => { docFetchErrStatus = err.status });
+  if (!docFetchErrStatus) {
     dispatchDocInfo(resp.data.data, store);
   }
-  return hasDocFetchErr;
+  return docFetchErrStatus;
 }
 
-const fetchPageInfo = async (pathname, store) => {
-  let hasPageFetchErr = false;
-  const sections = Object.values(store.getState().sectionsReducer.sections)
-  const routeIdMap = {}
-  sections.forEach(section => {
-    section.pagesInfo.forEach(item => {
-      routeIdMap[item.path] = item.page_id
-    })
-  })
-  const pageId = routeIdMap[pathname]
+const fetchPageInfo = async (store, document_id, page_id) => {
+  console.log('FETCH PAGE INFO');
+  let pageErrFetchStatus;
   const info = {}
-  const resp = await getPageInfo({ id: pageId }).catch(err => console.log(err))
-  if (!resp || !resp.data || !resp.data.data) {
-    hasPageFetchErr = true;
-  } else {
+  const resp = await getPageInfo({ document_id, page_id }).catch(err => { pageErrFetchStatus = err.status; })
+  if (!pageErrFetchStatus) {
     const { page_id } = resp.data.data
     info[page_id] = resp.data.data
     store.dispatch(setPagesInfo(info))
   }
-  return hasPageFetchErr;
+  return pageErrFetchStatus;
 }
 
 const handleSuccess = (store, content, htmlData, res) => {
@@ -144,12 +137,19 @@ const handlePageNotFound = (res) => {
   res.end();
 }
 
+const handleIndexPage = (res) => {
+  const html = '<h1>Welcome to Dotsby Api Docs Generator.</h1>'
+  res.status(200);
+  res.send(html);
+  res.end();
+}
+
 export const bootstrap = () => {
   const app = new Express();
 
 
   fs.readFile(htmlFilePath, 'utf8', (_err, htmlData) => {
-    // handle static resources.
+    // handle static resources.TODO.
     app.use('/static', Express.static(path.resolve(buildFolderPath, 'static')));
     app.use('/images', Express.static(path.resolve(buildFolderPath, 'images')));
     app.use('/dotsby.ico', Express.static(path.resolve(buildFolderPath, 'dotsby.ico')));
@@ -157,28 +157,44 @@ export const bootstrap = () => {
 
     app.use('*', async(req, res) => {
       console.log('RECEIVEORIGINALURL', req.originalUrl)
+      if (req.originalUrl === '/') {
+        return handleIndexPage(res)
+      }
+
+      if (!docRegx.test(req.originalUrl)) {
+        return handlePageNotFound(res);
+      }
       // create store on every request.
       const store = createStore(reducer);
       try {
-        const hasDocFetchErr = await fetchDocumentInfo(store); // server store.
-        if (hasDocFetchErr) {
-          handleServerError(res)
-          return;
+        let document_id;
+        let page_id;
+        const version = req.originalUrl.split('?')[1].split('=')[1];
+        if (pageRegx.test(req.originalUrl)) {
+          document_id = req.originalUrl.split('/')[1];
+          page_id = req.originalUrl.split('?')[0].split('/page/')[1];
+        } else {
+          document_id = req.originalUrl.split('?')[0].slice(1);
         }
 
-        // get page info
-        if (req.originalUrl !== '/') {
-          const hasPageFetchErr = await fetchPageInfo(req.originalUrl, store)
-          if (hasPageFetchErr) {
-            return handlePageNotFound(res);
+        // fetch document info and store it
+        const docFetchErrStatus = await fetchDocumentInfo(store, document_id, version); // server store.
+        if (docFetchErrStatus) {
+          return docFetchErrStatus >= 500 ? handleServerError(res) : handlePageNotFound(res);
+        }
+
+        // fetch page info and store
+        if (pageRegx.test(req.originalUrl)) {
+          const pageFetchErrStatus = await fetchPageInfo(store, document_id, page_id);
+          if (pageFetchErrStatus) {
+            return pageFetchErrStatus >= 500 ? handleServerError(res) : handlePageNotFound(res);
           }
         }
 
         const App = getApp(req, context, store)
         const content = ReactDOMServer.renderToString(App);
-
-        if (req.originalUrl === '/' && context.url) {
-          console.log('**REDIRECT**', context.url)
+        console.log('context.url', context.url)
+        if (context.url && !pageRegx.test(req.originalUrl)) {
           return res.redirect(301, context.url)
         }
 

@@ -12,12 +12,13 @@ import { connect } from 'react-redux'
 import reset from 'styled-reset'
 import qs from 'qs'
 
-import theme from '../theme/light'
-import { BigArrow } from '../components/Arrow';
+import theme from '@src/theme/light'
+import { BigArrow } from '@src/components/Arrow';
+import { getDocumentInfo } from '@src/server/request'
+import { setDocumentInfo } from '@src/store/reducerActions/document'
+import { setSectionsInfo } from '@src/store/reducerActions/sections'
+import { docRegx, pageRegx } from '@src/utils/regx';
 import MainContent from './MainContent';
-import { getDocumentInfo } from '../server/request'
-import { setDocumentInfo } from '../store/reducerActions/document'
-import { setSectionsInfo } from '../store/reducerActions/sections'
 
 const GlobalStyle = createGlobalStyle`
   ${reset}
@@ -138,7 +139,7 @@ const Input = styled.input`
 const PageLoading = styled.div`
   position: absolute;
   right: 8px;
-  visibility: ${props => (props.isLoading ? 'visibile' : 'hidden')};
+  visibility: ${props => (props.isPageLoading ? 'visibile' : 'hidden')};
 `
 
 const Spin = styled.img`
@@ -149,26 +150,35 @@ const Spin = styled.img`
 class Layout extends React.Component {
   documentId = '';
 
-  state = {
-    isLoading: false,
+  constructor(props) {
+    super(props);
+    this.state = {
+      isPageLoading: false,
+    }
+    const { pathname, search } = this.props.location;
+    const fullPath = pathname + search;
+    this.isValidPath = docRegx.test(fullPath);
+    if (this.isValidPath) {
+      this.documentId = pageRegx.test(fullPath) ? fullPath.split('/')[1] : fullPath.split('?')[0].slice(1);
+    }
   }
 
   componentDidMount() {
-    if (!this.props.document.id) {
-      const { pathname } = this.props.location;
-      this.documentId = pathname.split('/')[1];
-      this.fetchDocumentInfo()
+    if (this.isValidPath) {
+      if (!this.props.document.id) {
+        this.fetchDocumentInfo()
+      }
     }
   }
 
   componentDidUpdate() {
     const { pathname } = this.props.location;
     const pageId = pathname.split('/')[3];
-    if (!this.props.pages[pageId] && !this.state.isLoading) {
-      this.setState({ isLoading: true })
+    if (!this.props.pages[pageId] && !this.state.isPageLoading) {
+      this.setState({ isPageLoading: true })
     }
-    if (this.props.pages[pageId] && this.state.isLoading) {
-      this.setState({ isLoading: false })
+    if (this.props.pages[pageId] && this.state.isPageLoading) {
+      this.setState({ isPageLoading: false })
     }
   }
 
@@ -249,8 +259,8 @@ class Layout extends React.Component {
       <InputWrapper>
         <Input />
       </InputWrapper>
-      <PageLoading isLoading={this.state.isLoading}>
-        <Spin src={require('../assets/spin.svg')} />
+      <PageLoading isPageLoading={this.state.isPageLoading}>
+        {/* <Spin src={require('../assets/spin.svg')} /> */}
       </PageLoading>
     </MainHeader>
   )
@@ -272,8 +282,14 @@ class Layout extends React.Component {
   }
 
   render() {
+    if (!this.isValidPath) {
+      if (this.props.location.pathname === '/') {
+        return <h1>Welcome to Dotsby Api Docs Generator.</h1>
+      }
+      return <h1>Oops...Page Not Found.</h1>
+    }
     if (!this.props.sections.length) {
-      return <h1>loading</h1>;
+      return <h1>Oops...Page Not Found.</h1>;
     }
     return (
       <ThemeProvider theme={theme}>

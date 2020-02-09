@@ -4,8 +4,8 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import styled from 'styled-components';
 
-import { getPageInfo } from '../server/request';
-import { setPagesInfo } from '../store/reducerActions/pages';
+import { getPageInfo } from '@src/service/request';
+import { setPagesInfo } from '@src/store/reducerActions/pages';
 import Table from '../components/Table';
 import Divider from '../components/Divider';
 import CollapsePanel from '../components/CollapsePanel';

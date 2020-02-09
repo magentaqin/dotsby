@@ -13,12 +13,12 @@ import reset from 'styled-reset'
 import qs from 'qs'
 
 import theme from '@src/theme/light'
-import { BigArrow } from '@src/components/Arrow';
-import { getDocumentInfo } from '@src/server/request'
+import { BigArrow } from '@src/client/components/Arrow';
+import { getDocumentInfo } from '@src/service/request'
 import { setDocumentInfo } from '@src/store/reducerActions/document'
 import { setSectionsInfo } from '@src/store/reducerActions/sections'
 import { docRegx, pageRegx } from '@src/utils/regx';
-import SpinSrc from '@src/assets/spin.svg';
+import SpinSrc from '@src/client/assets/spin.svg';
 import MainContent from './MainContent';
 
 const GlobalStyle = createGlobalStyle`

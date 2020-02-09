@@ -12,7 +12,7 @@
 import fs from 'fs';
 import path from 'path';
 
-import { createDocument } from '@src/server/request';
+import { createDocument } from '@src/service/request';
 import { shallowOmit } from '@src/utils/obj';
 import { logError } from '@src/utils/log';
 import transformApis from './apisTransform';

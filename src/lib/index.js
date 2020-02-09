@@ -1,10 +1,10 @@
 
 import { transform } from './transform';
-import { bootstrap } from '../bootstrap';
+import { render } from '../server/render';
 
 transform().then((resp) => {
   if (resp.status < 300 && resp.status >= 200) {
     console.log('Successfully transformed files and stored document.')
-    bootstrap()
+    render()
   }
 }).catch(err => console.log(err));

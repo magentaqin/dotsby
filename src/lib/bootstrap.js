@@ -1,5 +1,5 @@
 /* eslint-disable import/first */
 
-import { bootstrap } from '../bootstrap';
+import { render } from '../server/render';
 
-bootstrap();
+render();

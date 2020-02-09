@@ -16,8 +16,8 @@ import { ServerStyleSheet, StyleSheetManager } from 'styled-components';
 
 import { logError } from '@src/utils/log';
 import config from '@src/config';
-import Layout from '@src/App';
-import { getDocumentInfo, getPageInfo } from '@src/server/request';
+import Layout from '@src/client/App';
+import { getDocumentInfo, getPageInfo } from '@src/service/request';
 import { setDocumentInfo } from '@src/store/reducerActions/document';
 import { setSectionsInfo } from '@src/store/reducerActions/sections';
 import { setPagesInfo } from '@src/store/reducerActions/pages';
@@ -144,7 +144,7 @@ const handleIndexPage = (res) => {
   res.end();
 }
 
-export const bootstrap = () => {
+export const render = () => {
   const app = new Express();
 
 

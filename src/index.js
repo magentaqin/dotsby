@@ -3,8 +3,8 @@ import ReactDOM, { hydrate } from 'react-dom';
 import { Provider } from 'react-redux';
 import { Router } from 'react-router-dom'
 import { createBrowserHistory } from 'history'
-import Layout from './App';
-import store from './store';
+import Layout from '@src/client/App';
+import store from '@src/store';
 
 const history = createBrowserHistory();
 

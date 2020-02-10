@@ -51,8 +51,8 @@ const http = {
   post: (url, data, headerData = {}) => request(url, 'POST', data, headerData),
 }
 
-export const createDocument = async(query) => {
-  const resp = await http.post('/document/create', query);
+export const publishDocument = async(query) => {
+  const resp = await http.post('/document/publish', query);
   return resp;
 }
 

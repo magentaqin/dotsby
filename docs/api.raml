@@ -1,6 +1,6 @@
 #%RAML 1.0
 ---
-title: "Dotsby API"
+title: "Dotsby API Doc"
 version: v1
 protocols: [HTTPS]
 mediaType: application/json
@@ -18,7 +18,7 @@ securitySchemes:
   token:
     description: |
       API request need carry valid token obtained from [CreateToken](/auth/auth.createToken) API
-    type: x-token
+    type: token
     describedBy:
       headers:
         Authorization:
@@ -85,15 +85,19 @@ traits:
                   type: integer
                   description: Total count of all data items
 
-## Document
-/document/token:
-  get:
-    displayName: Get Document Token
-    securedBy: ["token"]
+## User
+/user/signup:
+  post:
+    displayName: Sign Up
+    body:
+      type: object
+      properties:
+        data:
+          type: !include ../dotsby-schema/dist/apis/user_signup_params.json
     responses:
       200:
         body:
           type: object
           properties:
             data:
-              type:  !include ../schemas/dist/document/document_token.json
+              type:  !include ../dotsby-schema/dist/apis/user_signup_response.json

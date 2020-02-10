@@ -1,37 +1,29 @@
 const config = {
-  ramlFile: 'api.raml',
-  token: 'dfjakjdfkajdfkj123',
-  document_id: '1qazxsw2',
   title: 'Dotsby Api Doc',
-  version: 0.1,
+  version: '0.1.0',
+  document_id: 'e887b814b1f859cb67911dc00c54de4f31d28f4b',
+  token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEyLCJlbWFpbCI6ImFmYTFAZ21haWwuY29tIiwiaWF0IjoxNTc5MzU2Mzg2LCJleHAiOjE1ODE5NDgzODZ9._TusMMfMuFk_GxTEjHRCZXMviGdB7I_htm3SDOAq84o',
+  raml_file: 'api.raml',
   sections: [
     {
       section_title: 'Overview',
       dir: 'overview',
       root_file: 'index.md',
-      pages: [], // for customized md file
+      pages: [
+        { title: 'FAQ', file: 'faq.md' },
+      ],
+    },
+    {
+      section_title: 'User',
       apis: [
-        // path is the page route displayed on doc. Optional.
         {
-          method: 'get',
-          relativeUrl: '/document/token',
-          path: '/document-token',
+          method: 'post',
+          request_uri: '/user/signup',
+          path: '/user/signup/', // path is the page route displayed on doc. optional.
         },
       ],
-    },
-    {
-      section_title: 'User Api',
-      dir: 'user',
-      root_file: 'index.md',
-      pages: [
-        { title: 'Update Notices', file: 'update.md' },
-      ],
-    },
-    {
-      section_title: 'Account Api',
-      dir: 'account',
-    },
+    }
   ],
-}
+};
 
 export default config;

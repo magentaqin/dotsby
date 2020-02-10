@@ -12,14 +12,14 @@
 import fs from 'fs';
 import path from 'path';
 
-import { createDocument } from '@src/service/request';
+import { publishDocument } from '@src/service/request';
 import { shallowOmit } from '@src/utils/obj';
 import { logError } from '@src/utils/log';
 import transformApis from './apisTransform';
 import docConfig from '@docs';
 
 const docRootPath = path.resolve(__dirname, '../../../docs');
-const ramlFilePath = path.resolve(docRootPath, docConfig.ramlFile)
+const ramlFilePath = path.resolve(docRootPath, docConfig.raml_file)
 
 const getFileContent = async (path) => {
   const data = await fs.promises.readFile(path, 'utf-8').catch(err => {
@@ -55,7 +55,8 @@ const storeDocumentPromise = (sections) => {
     version,
     sections,
   }
-  return createDocument(params)
+  console.log('publish document params', params);
+  return publishDocument(params)
 }
 
 const loopSections = async () => {
@@ -152,7 +153,11 @@ export const transform = () => {
       reject(new Error('Fail to parse config file.'))
     }
     const resp = await storeDocumentPromise(sections).catch(err => {
-      errMsg = JSON.stringify(err.data);
+      if (err.status) {
+        errMsg = JSON.stringify(err.data);
+      } else {
+        errMsg = 'Server Error';
+      }
     })
     if (resp) {
       resolve(resp)

@@ -97,9 +97,9 @@ const formatRamlPage = (page, securitySchemes) => {
 
 const getApiContent = (apis, ramlPages, securitySchemes) => {
   return apis.map(api => {
-    const { method, relativeUrl } = api;
+    const { method, request_uri } = api;
     const matchedRamlPage = ramlPages.find(ramlPage => {
-      return ramlPage.resource.method === method && ramlPage.resource.relativeUri === relativeUrl;
+      return ramlPage.resource.method === method && ramlPage.resource.relativeUri === request_uri;
     })
     const formattedRamlPage = formatRamlPage(matchedRamlPage, securitySchemes)
     return formattedRamlPage;

@@ -6,9 +6,9 @@
 /* eslint-disable no-undef */
 /* eslint-disable no-empty */
 
-// import remark from 'remark';
-// import recommended from 'remark-preset-lint-recommended';
-// import html from 'remark-html';
+import remark from 'remark';
+import recommended from 'remark-preset-lint-recommended';
+import html from 'remark-html';
 import fs from 'fs';
 import path from 'path';
 
@@ -21,22 +21,41 @@ import docConfig from '@docs';
 const docRootPath = path.resolve(__dirname, '../../../docs');
 const ramlFilePath = path.resolve(docRootPath, docConfig.raml_file)
 
-const getFileContent = async (path) => {
-  const data = await fs.promises.readFile(path, 'utf-8').catch(err => {
-    const filePath = JSON.parse(JSON.stringify(err)).path
-    logError(new Error(`Fail to read file content: ${filePath}`))
+// const getFileContent = async (path) => {
+//   const data = await fs.promises.readFile(path, 'utf-8').catch(err => {
+//     const filePath = JSON.parse(JSON.stringify(err)).path
+//     logError(new Error(`Fail to read file content: ${filePath}`))
+//   })
+//   return data;
+// }
+// transform markdown to html.
+const transformMarkdownPromise = (filePath) => new Promise((resolve, reject) => {
+  fs.readFile(filePath, (err, data) => {
+    if (err) {
+      return reject(err);
+    }
+    remark()
+      .use(recommended)
+      .use(html)
+      .process(data, (err, file) => {
+        if (err) {
+          reject(err);
+        }
+        resolve(file.contents);
+      });
   })
-  return data;
-}
+})
 
 const getPageContents = async (pages, dir) => {
   const pageContents = []
   for (const page of pages) {
     const pagePath = path.resolve(docRootPath, `./${dir}/${page.file}`);
-    const content = await getFileContent(pagePath)
+    const content = await transformMarkdownPromise(pagePath).catch(err => {
+      console.log('Fail to transform markdown file to html: ', err);
+    })
     if (content) {
       pageContents.push({
-        page_title: page.title,
+        title: page.title,
         is_root_path: false,
         path: `/${dir}`,
         content,
@@ -48,10 +67,10 @@ const getPageContents = async (pages, dir) => {
 
 // store document to database.
 const storeDocumentPromise = (sections) => {
-  const { document_token, doc_title, version } = docConfig
+  const { document_id, title, version } = docConfig
   const params = {
-    document_token,
-    doc_title,
+    document_id,
+    title,
     version,
     sections,
   }
@@ -63,7 +82,6 @@ const loopSections = async () => {
   const sections = [];
   for (const sectionConfig of docConfig.sections) {
     const {
-      section_title,
       dir,
       pages,
       root_file,
@@ -71,7 +89,7 @@ const loopSections = async () => {
     } = sectionConfig;
 
     let sectionItem = {
-      section_title,
+      title: sectionConfig.title,
       pages: [],
     };
 
@@ -80,13 +98,15 @@ const loopSections = async () => {
      */
     if (root_file) {
       const rootPath = path.resolve(docRootPath, `./${dir}/${root_file}`);
-      const content = await getFileContent(rootPath)
-      if (content) {
+      const htmlContent = await transformMarkdownPromise(rootPath).catch(err => {
+        console.log('Fail to transform markdown file to html: ', err);
+      });
+      if (htmlContent) {
         sectionItem.pages.push({
-          page_title: dir,
+          title: dir,
           is_root_path: true,
           path: `/${dir}`,
-          content,
+          content: htmlContent,
         })
       }
     }
@@ -104,9 +124,9 @@ const loopSections = async () => {
         const { title, request_url } = apiContent;
         const childPath = apis[index].path || request_url;
         return {
-          page_title: title,
+          title,
           is_root_path: false,
-          path: `/${dir}${childPath}`,
+          path: dir ? `/${dir}${childPath}` : childPath,
           apiContent,
         }
       })
@@ -124,25 +144,6 @@ const loopSections = async () => {
   }
   return sections;
 }
-
-
-// TODO: transform markdown to html. MOVE THIS TO SERVER SIDE.
-// const transformMarkdownPromise = (filePath) => new Promise((resolve, reject) => {
-//   fs.readFile(filePath, (err, data) => {
-//     if (err) {
-//       return reject(err);
-//     }
-//     remark()
-//       .use(recommended)
-//       .use(html)
-//       .process(data, (err, file) => {
-//         if (err) {
-//           return reject(err);
-//         }
-//         resolve(file);
-//       });
-//   })
-// })
 
 
 export const transform = () => {

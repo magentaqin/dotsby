@@ -1,8 +1,5 @@
-import path from 'path'
 import ramlParser from '@src/lib/parse/ramlParser'
 import ramlFormatter from '@src/lib/parse/ramlFormatter'
-
-const ramlFilePath = path.resolve(__dirname, '../../../docs/api.raml')
 
 const formatRequestHeaders = (resource, securitySchemes) => {
   let requestHeaders = []
@@ -89,8 +86,6 @@ const formatRamlPage = (page, securitySchemes) => {
   })
 
   formattedPage.responses = [...formattedResponses, ...securityResponses];
-  // console.log(formattedPage.responses)
-  console.log(formattedPage.responses[1].data[0].properties[0].properties)
 
   return formattedPage;
 }

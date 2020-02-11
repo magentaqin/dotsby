@@ -6,7 +6,7 @@ const config = {
   raml_file: 'api.raml',
   sections: [
     {
-      section_title: 'Overview',
+      title: 'Overview',
       dir: 'overview',
       root_file: 'index.md',
       pages: [
@@ -14,15 +14,15 @@ const config = {
       ],
     },
     {
-      section_title: 'User',
+      title: 'User',
       apis: [
         {
           method: 'post',
           request_uri: '/user/signup',
-          path: '/user/signup/', // path is the page route displayed on doc. optional.
+          // path: '/user/signup/', // path is the page route displayed on doc. optional.
         },
       ],
-    }
+    },
   ],
 };
 

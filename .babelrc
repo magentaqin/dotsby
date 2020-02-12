@@ -11,7 +11,8 @@
       "root": ["."],
       "alias": {
         "@src": "./src",
-        "@docs": "./docs"
+        "@docs": "./docs",
+        "@schema": "./dotsby-schema"
       }
     }]
   ]

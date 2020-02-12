@@ -11,15 +11,18 @@ import recommended from 'remark-preset-lint-recommended';
 import html from 'remark-html';
 import fs from 'fs';
 import path from 'path';
+import { Validator } from 'jsonschema';
 
 import { publishDocument } from '@src/service/request';
 import { shallowOmit } from '@src/utils/obj';
 import { logError } from '@src/utils/log';
+import { schema } from '@schema/src/config/type_config';
+import { extractErrMsg } from '@src/utils/extract';
 import transformApis from './apisTransform';
 import docConfig from '@docs';
 
 const docRootPath = path.resolve(__dirname, '../../../docs');
-const ramlFilePath = path.resolve(docRootPath, docConfig.raml_file)
+const validator = new Validator();
 
 // const getFileContent = async (path) => {
 //   const data = await fs.promises.readFile(path, 'utf-8').catch(err => {
@@ -28,6 +31,7 @@ const ramlFilePath = path.resolve(docRootPath, docConfig.raml_file)
 //   })
 //   return data;
 // }
+
 // transform markdown to html.
 const transformMarkdownPromise = (filePath) => new Promise((resolve, reject) => {
   fs.readFile(filePath, (err, data) => {
@@ -118,7 +122,8 @@ const loopSections = async () => {
       ]
     }
 
-    if (apis && apis.length) {
+    if (apis && apis.length) {aa
+      const ramlFilePath = path.resolve(docRootPath, docConfig.raml_file);
       const apiContents = await transformApis(ramlFilePath, apis)
       const apiPages = apiContents.map((apiContent, index) => {
         const { title, request_url } = apiContent;
@@ -149,9 +154,15 @@ const loopSections = async () => {
 export const transform = () => {
   return new Promise(async(resolve, reject) => {
     let errMsg = '';
+    // validate config
+    const validationResult = validator.validate(docConfig, schema);
+    if (!validationResult.instance || validationResult.errors.length) {
+      return reject(new Error(`Config file format is not valid: ${extractErrMsg(validationResult)}`))
+    }
+
     const sections = await loopSections();
     if (!sections || !sections.length) {
-      reject(new Error('Fail to parse config file.'))
+      return reject(new Error('Fail to parse config file.'))
     }
     const resp = await storeDocumentPromise(sections).catch(err => {
       if (err.status) {

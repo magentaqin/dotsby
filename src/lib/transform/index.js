@@ -21,6 +21,7 @@ import { extractErrMsg } from '@src/utils/extract';
 import transformApis from './apisTransform';
 import docConfig from '@docs';
 
+// TODO. READ FROM CURRENT DIRECTORY.
 const docRootPath = path.resolve(__dirname, '../../../docs');
 const validator = new Validator();
 
@@ -79,7 +80,7 @@ const storeDocumentPromise = (sections) => {
     sections,
   }
   console.log('publish document params', params);
-  return publishDocument(params)
+  return publishDocument(params, docConfig.token)
 }
 
 const loopSections = async () => {
@@ -122,7 +123,7 @@ const loopSections = async () => {
       ]
     }
 
-    if (apis && apis.length) {aa
+    if (apis && apis.length) {
       const ramlFilePath = path.resolve(docRootPath, docConfig.raml_file);
       const apiContents = await transformApis(ramlFilePath, apis)
       const apiPages = apiContents.map((apiContent, index) => {

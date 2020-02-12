@@ -19,7 +19,6 @@ const config = {
         {
           method: 'post',
           request_uri: '/user/signup',
-          // path: '/user/signup/', // path is the page route displayed on doc. optional.
         },
       ],
     },

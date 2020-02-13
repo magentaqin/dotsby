@@ -1990,7 +1990,7 @@ babel-jest@^24.9.0:
     chalk "^2.4.2"
     slash "^2.0.0"
 
-babel-loader@8.0.6, babel-loader@^8.0.6:
+babel-loader@8.0.6:
   version "8.0.6"
   resolved "https://registry.npm.taobao.org/babel-loader/download/babel-loader-8.0.6.tgz#e33bdb6f362b03f4bb141a0c21ab87c501b70dfb"
   integrity sha1-4zvbbzYrA/S7FBoMIauHxQG3Dfs=
@@ -10816,14 +10816,6 @@ style-loader@1.0.0:
   dependencies:
     loader-utils "^1.2.3"
     schema-utils "^2.0.1"
-
-style-loader@^0.23.1:
-  version "0.23.1"
-  resolved "https://registry.npm.taobao.org/style-loader/download/style-loader-0.23.1.tgz#cb9154606f3e771ab6c4ab637026a1049174d925"
-  integrity sha1-y5FUYG8+dxq2xKtjcCahBJF02SU=
-  dependencies:
-    loader-utils "^1.1.0"
-    schema-utils "^1.0.0"
 
 styled-components@^4.3.2:
   version "4.4.1"

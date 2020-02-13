@@ -24,7 +24,15 @@ import MainContent from './MainContent';
 const GlobalStyle = createGlobalStyle`
   ${reset}
   body {
-    font-family: Source Sans Pro,sans-serif;
+    font-family: "Source Sans Pro", sans-serif;
+  }
+
+  a:link,
+  a:visited,
+  a:hover,
+  a:active {
+    text-decoration: none;
+    color: #2f353f;
   }
 `
 

@@ -15,6 +15,7 @@ const theme = {
   mainHeaderFont: '36px',
   mainSubtitleFont: '24px',
   headerFont: '20px',
+  paraFont: '18px',
   normalFont: '16px',
   textFont: '14px',
 }

@@ -14,6 +14,36 @@ const Wrapper = styled.div`
   padding: 20px 64px;
 `
 
+const CustomziedContent = styled.div`
+   h1, h2, h3, h4, h5,h6 {
+    color: ${props => props.theme.blackColor};
+    font-weight: bold;
+  }
+
+  h1 {
+    font-size: ${props => props.theme.mainHeaderFont};
+    margin-bottom: ${props => props.theme.mdPadding};
+    font-weight: bolder;
+  }
+
+  h2 {
+    margin-top: 56px;
+    margin-bottom: 20px;
+    font-size: ${props => props.theme.mainSubtitleFont};
+  }
+
+  p {
+    font-size: ${props => props.theme.paraFont};
+    color: ${props => props.theme.grayColor};
+    line-height: 1.7;
+  }
+
+  li {
+    list-style: initial;
+    margin-bottom: ${props => props.theme.mdPadding};
+  }
+`
+
 const CoreContent = styled.div`
   max-width: 800px;
 `
@@ -232,7 +262,7 @@ class MainContent extends React.Component {
     if (content) {
       return (
         <Wrapper>
-          <div dangerouslySetInnerHTML={{ __html: `${content}` }}></div>
+          <CustomziedContent dangerouslySetInnerHTML={{ __html: `${content}` }}></CustomziedContent>
         </Wrapper>
       )
     }

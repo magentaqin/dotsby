@@ -18,7 +18,9 @@ import { shallowOmit } from '@src/utils/obj';
 import { logError } from '@src/utils/log';
 import { schema } from '@schema/src/config/type_config';
 import { extractErrMsg } from '@src/utils/extract';
+import { formatTitle } from './formatTitle';
 import transformApis from './apisTransform';
+
 import docConfig from '@docs';
 
 // TODO. READ FROM CURRENT DIRECTORY.
@@ -63,7 +65,7 @@ const getPageContents = async (pages, dir) => {
         title: page.title,
         is_root_path: false,
         path: `/${dir}`,
-        content,
+        content: formatTitle(content),
       })
     }
   }
@@ -111,7 +113,7 @@ const loopSections = async () => {
           title: dir,
           is_root_path: true,
           path: `/${dir}`,
-          content: htmlContent,
+          content: formatTitle(htmlContent),
         })
       }
     }

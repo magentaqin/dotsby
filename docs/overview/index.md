@@ -2,7 +2,7 @@
 
 Dotsby is a document generator tailored for api docs.
 
-### Features
+## Features
 * Generate local files to document website.
 
 * Support both markdown files and standard raml files.
@@ -13,98 +13,21 @@ Dotsby is a document generator tailored for api docs.
 
 * Support management for published docs. Please visit: [Dotsby Dashboard]().
 
-### Usage
+## Usage
 
 Create React App is an officially supported way to create single-page React applications. It offers a modern build setup with no configuration.
 
-### Quick Start
+## Quick Start
 
 Create React App is an officially supported way to create single-page React applications. It offers a modern build setup with no configuration.
 
-Create React App is an officially supported way to create single-page React applications. It offers a modern build setup with no configuration.
-
-Create React App is an officially supported way to create single-page React applications. It offers a modern build setup with no configuration.
-
-Create React App is an officially supported way to create single-page React applications. It offers a modern build setup with no configuration.
+## Get Started Immediately
 
 Create React App is an officially supported way to create single-page React applications. It offers a modern build setup with no configuration.
 
 Create React App is an officially supported way to create single-page React applications. It offers a modern build setup with no configuration.
 
-Create React App is an officially supported way to create single-page React applications. It offers a modern build setup with no configuration.
-
-Create React App is an officially supported way to create single-page React applications. It offers a modern build setup with no configuration.
-
-### Get Started Immediately
-
-Create React App is an officially supported way to create single-page React applications. It offers a modern build setup with no configuration.
-
-Create React App is an officially supported way to create single-page React applications. It offers a modern build setup with no configuration.
-
-Create React App is an officially supported way to create single-page React applications. It offers a modern build setup with no configuration.
-
-Create React App is an officially supported way to create single-page React applications. It offers a modern build setup with no configuration.
-
-Create React App is an officially supported way to create single-page React applications. It offers a modern build setup with no configuration.
-
-Create React App is an officially supported way to create single-page React applications. It offers a modern build setup with no configuration.
-
-Create React App is an officially supported way to create single-page React applications. It offers a modern build setup with no configuration.
-
-Create React App is an officially supported way to create single-page React applications. It offers a modern build setup with no configuration.
-
-Create React App is an officially supported way to create single-page React applications. It offers a modern build setup with no configuration.
-
-Create React App is an officially supported way to create single-page React applications. It offers a modern build setup with no configuration.
-
-Create React App is an officially supported way to create single-page React applications. It offers a modern build setup with no configuration.
-
-Create React App is an officially supported way to create single-page React applications. It offers a modern build setup with no configuration.
-
-Create React App is an officially supported way to create single-page React applications. It offers a modern build setup with no configuration.
-
-Create React App is an officially supported way to create single-page React applications. It offers a modern build setup with no configuration.
-
-Create React App is an officially supported way to create single-page React applications. It offers a modern build setup with no configuration.
-
-Create React App is an officially supported way to create single-page React applications. It offers a modern build setup with no configuration.
-
-Create React App is an officially supported way to create single-page React applications. It offers a modern build setup with no configuration.
-
-Create React App is an officially supported way to create single-page React applications. It offers a modern build setup with no configuration.
-
-Create React App is an officially supported way to create single-page React applications. It offers a modern build setup with no configuration.
-
-Create React App is an officially supported way to create single-page React applications. It offers a modern build setup with no configuration.
-
-Create React App is an officially supported way to create single-page React applications. It offers a modern build setup with no configuration.
-Create React App is an officially supported way to create single-page React applications. It offers a modern build setup with no configuration.
-
-Create React App is an officially supported way to create single-page React applications. It offers a modern build setup with no configuration.
-
-Create React App is an officially supported way to create single-page React applications. It offers a modern build setup with no configuration.
-
-Create React App is an officially supported way to create single-page React applications. It offers a modern build setup with no configuration.
-
-Create React App is an officially supported way to create single-page React applications. It offers a modern build setup with no configuration.
-
-Create React App is an officially supported way to create single-page React applications. It offers a modern build setup with no configuration.
-
-Create React App is an officially supported way to create single-page React applications. It offers a modern build setup with no configuration.
-
-Create React App is an officially supported way to create single-page React applications. It offers a modern build setup with no configuration.
-
-### Select a template
-
-Create React App is an officially supported way to create single-page React applications. It offers a modern build setup with no configuration.
-
-Create React App is an officially supported way to create single-page React applications. It offers a modern build setup with no configuration.
-
-Create React App is an officially supported way to create single-page React applications. It offers a modern build setup with no configuration.
-
-Create React App is an officially supported way to create single-page React applications. It offers a modern build setup with no configuration.
-
-Create React App is an officially supported way to create single-page React applications. It offers a modern build setup with no configuration.
+## Select a template
 
 If you don't select a template, we'll create your project with our base template.
 

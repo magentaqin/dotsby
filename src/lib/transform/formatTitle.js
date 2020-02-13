@@ -2,11 +2,10 @@
 const replacer = (match) => {
   let left = match.slice(0, 4);
   const right = match.slice(-5);
-  let text = match.slice(4, -5);
+  const text = match.slice(4, -5);
   const id = text.toLowerCase().split(' ').join('-');
   left = left.replace('>', ` id="${id}">`)
-  text = `<a href="#${id}">${text}</a>`
-  return left + text + right;
+  return `<a href="#${id}">${left}${text}${right}</a>`;
 }
 
 export const formatTitle = (htmlContent) => {

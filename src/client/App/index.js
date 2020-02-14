@@ -236,13 +236,27 @@ class Layout extends React.Component {
 
   renderSections = () => {
     return this.props.sections.map(item => {
+      let rootPage;
+      let path;
+      const pages = item.pagesInfo.filter(item => {
+        if (item.is_root_path) {
+          rootPage = item;
+          path = `/${this.documentId}/page/${rootPage.page_id}${this.props.location.search}`;
+        }
+        return !item.is_root_path
+      })
       return (
         <AsideSection key={item.section_id}>
           <CollapseButton>
-            <AsideSubtitle>{item.title}</AsideSubtitle>
+            {rootPage ? (
+              <Link to={path}><AsideSubtitle>{item.title}</AsideSubtitle></Link>
+            ) : (
+              <AsideSubtitle>{item.title}</AsideSubtitle>
+            )
+            }
             <BigArrow />
           </CollapseButton>
-          <AsideNav>{this.renderPages(item.pagesInfo)}</AsideNav>
+          <AsideNav>{this.renderPages(pages)}</AsideNav>
         </AsideSection>
       )
     })

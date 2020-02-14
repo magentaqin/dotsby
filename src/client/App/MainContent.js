@@ -50,7 +50,7 @@ const CustomziedContent = styled.div`
     color: ${props => props.theme.blackColor};
     font-size: ${props => props.theme.mainHeaderFont};
     margin-bottom: ${props => props.theme.mdPadding};
-    font-weight: bold;
+    font-weight: 500;
   }
 
   h2 {

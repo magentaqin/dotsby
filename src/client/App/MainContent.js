@@ -15,15 +15,42 @@ const Wrapper = styled.div`
 `
 
 const CustomziedContent = styled.div`
-   h1, h2, h3, h4, h5,h6 {
+  h2, h3, h4, h5,h6 {
     color: ${props => props.theme.blackColor};
-    font-weight: bold;
+    font-weight: 500;
+    position: relative;
+
+    .anchor {
+      position: absolute;
+      top: -80px;
+    }
+
+    .hash-link {
+      position: absolute;
+      left: -20px;
+      width: 20px;
+      color: ${props => props.theme.primaryColor};
+      visibility: hidden;
+
+      &:hover {
+        visibility: visible;
+      }
+    }
+
+    &:hover {
+      color: ${props => props.theme.primaryColor};
+      .hash-link {
+        cursor: pointer;
+        visibility: visible;
+      }
+    }
   }
 
   h1 {
+    color: ${props => props.theme.blackColor};
     font-size: ${props => props.theme.mainHeaderFont};
     margin-bottom: ${props => props.theme.mdPadding};
-    font-weight: bolder;
+    font-weight: bold;
   }
 
   h2 {

@@ -1,11 +1,11 @@
 /* eslint-disable import/prefer-default-export */
 const replacer = (match) => {
-  let left = match.slice(0, 4);
+  const left = match.slice(0, 4);
   const right = match.slice(-5);
   const text = match.slice(4, -5);
   const id = text.toLowerCase().split(' ').join('-');
-  left = left.replace('>', ` id="${id}">`)
-  return `<a href="#${id}">${left}${text}${right}</a>`;
+  const hashLink = `<a href="#${id}" class="hash-link">#</a>`;
+  return `${left + text}<a class="anchor" id="${id}"></a>${hashLink}${right}`;
 }
 
 export const formatTitle = (htmlContent) => {

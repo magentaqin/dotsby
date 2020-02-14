@@ -37,19 +37,16 @@ const GlobalStyle = createGlobalStyle`
 `
 
 const AppWrapper = styled.div`
-  position: absolute;
-  top: 0;
-  right: 0;
-  left: 0;
-  bottom: 0;
   display: flex;
 `;
 
 const Aside = styled.aside`
-  width: 305px;
+  min-width: 305px;
   border-right: 1px solid ${props => props.theme.dividerColor};
   height: 100vh;
   overflow-y: auto;
+  position: sticky;
+  top: 0;
 `;
 
 const AsideHeader = styled.header`
@@ -111,7 +108,6 @@ const AsideItem = styled.li`
 `
 
 const Main = styled.main`
-  overflow-y: auto;
   flex-grow: 1;
   max-width: 1200px;
 `

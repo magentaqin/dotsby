@@ -6,7 +6,7 @@ import React from 'react';
 import styled, { ThemeProvider, createGlobalStyle } from 'styled-components';
 import { bindActionCreators } from 'redux';
 import {
-  withRouter, Link, Switch, Route, Redirect,
+  withRouter, NavLink, Switch, Route, Redirect,
 } from 'react-router-dom'
 import { connect } from 'react-redux'
 import reset from 'styled-reset'
@@ -68,6 +68,17 @@ const AsideContent = styled.div`
 `
 
 const AsideSection = styled.div`
+  a {
+    text-decoration: none;
+    &:hover {
+      opacity: 0.8;
+      background-color: opacity;
+    }
+  }
+  .active-nav-link {
+    color: ${props => props.theme.primaryColor};
+    text-decoration: none;
+  }
 `;
 
 const CollapseButton = styled.button`
@@ -228,7 +239,7 @@ class Layout extends React.Component {
       const path = `/${this.documentId}/page/${item.page_id}${this.props.location.search}`
       return (
         <AsideItem key={item.page_id}>
-          <Link to={path}>{item.title}</Link>
+          <NavLink to={path} activeClassName="active-nav-link">{item.title}</NavLink>
         </AsideItem>
       )
     })
@@ -249,7 +260,7 @@ class Layout extends React.Component {
         <AsideSection key={item.section_id}>
           <CollapseButton>
             {rootPage ? (
-              <Link to={path}><AsideSubtitle>{item.title}</AsideSubtitle></Link>
+              <NavLink to={path} activeClassName="active-nav-link"><AsideSubtitle>{item.title}</AsideSubtitle></NavLink>
             ) : (
               <AsideSubtitle>{item.title}</AsideSubtitle>
             )

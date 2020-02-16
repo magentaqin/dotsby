@@ -61,11 +61,13 @@ const getPageContents = async (pages, dir) => {
       console.log('Fail to transform markdown file to html: ', err);
     })
     if (content) {
+      const subtitles = []
       pageContents.push({
         title: page.title,
         is_root_path: false,
         path: `/${dir}`,
-        content: formatTitle(content),
+        content: formatTitle(content, subtitles),
+        subtitles,
       })
     }
   }
@@ -109,11 +111,13 @@ const loopSections = async () => {
         console.log('Fail to transform markdown file to html: ', err);
       });
       if (htmlContent) {
+        const subtitles = [];
         sectionItem.pages.push({
           title: dir,
           is_root_path: true,
           path: `/${dir}`,
-          content: formatTitle(htmlContent),
+          content: formatTitle(htmlContent, subtitles),
+          subtitles,
         })
       }
     }

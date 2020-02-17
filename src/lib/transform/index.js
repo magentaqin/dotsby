@@ -27,13 +27,15 @@ import docConfig from '@docs';
 const docRootPath = path.resolve(__dirname, '../../../docs');
 const validator = new Validator();
 
-// const getFileContent = async (path) => {
-//   const data = await fs.promises.readFile(path, 'utf-8').catch(err => {
-//     const filePath = JSON.parse(JSON.stringify(err)).path
-//     logError(new Error(`Fail to read file content: ${filePath}`))
-//   })
-//   return data;
-// }
+const isPublishMode = true;
+
+const getFileContent = async (path) => {
+  const data = await fs.promises.readFile(path, 'utf-8').catch(err => {
+    const filePath = JSON.parse(JSON.stringify(err)).path
+    logError(new Error(`Fail to read file content: ${filePath}`))
+  })
+  return data;
+}
 
 // transform markdown to html.
 const transformMarkdownPromise = (filePath) => new Promise((resolve, reject) => {
@@ -57,15 +59,21 @@ const getPageContents = async (pages, dir) => {
   const pageContents = []
   for (const page of pages) {
     const pagePath = path.resolve(docRootPath, `./${dir}/${page.file}`);
-    const content = await transformMarkdownPromise(pagePath).catch(err => {
-      console.log('Fail to transform markdown file to html: ', err);
-    })
+    let content;
+    if (isPublishMode) {
+      content = await getFileContent(pagePath);
+    } else {
+      content = await transformMarkdownPromise(pagePath).catch(err => {
+        console.log('Fail to transform markdown file to html: ', err);
+      })
+      content = formatTitle(content);
+    }
     if (content) {
       pageContents.push({
         title: page.title,
         is_root_path: false,
         path: `/${dir}`,
-        content: formatTitle(content),
+        content,
       })
     }
   }
@@ -105,15 +113,21 @@ const loopSections = async () => {
      */
     if (root_file) {
       const rootPath = path.resolve(docRootPath, `./${dir}/${root_file}`);
-      const htmlContent = await transformMarkdownPromise(rootPath).catch(err => {
-        console.log('Fail to transform markdown file to html: ', err);
-      });
-      if (htmlContent) {
+      let content;
+      if (isPublishMode) {
+        content = await getFileContent(rootPath);
+      } else {
+        content = await transformMarkdownPromise(rootPath).catch(err => {
+          console.log('Fail to transform markdown file to html: ', err);
+        })
+        content = formatTitle(content);
+      }
+      if (content) {
         sectionItem.pages.push({
           title: dir,
           is_root_path: true,
           path: `/${dir}`,
-          content: formatTitle(htmlContent),
+          content,
         })
       }
     }

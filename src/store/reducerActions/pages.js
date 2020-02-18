@@ -16,7 +16,6 @@ export const pagesReducer = (state = initialState, action) => {
       return {
         ...state,
         pages: {
-          ...state.pages,
           ...action.payload,
         }
       }

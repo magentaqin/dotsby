@@ -146,17 +146,15 @@ class MainContent extends React.Component {
   }
 
   fetchPageInfo = () => {
-    if (!this.props.pages[this.pageId]) {
-      const info = {}
-      getPageInfo({ document_id: this.documentId, page_id: this.pageId }).then(resp => {
-        const { page_id } = resp.data.data
-        this.prevPageId = page_id;
-        info[page_id] = resp.data.data
-        this.props.setPagesInfo(info)
-      }).catch(err => {
-        console.log(err);
-      })
-    }
+    const info = {}
+    getPageInfo({ document_id: this.documentId, page_id: this.pageId }).then(resp => {
+      const { page_id } = resp.data.data
+      this.prevPageId = page_id;
+      info[page_id] = resp.data.data
+      this.props.setPagesInfo(info)
+    }).catch(err => {
+      console.log(err);
+    })
   }
 
   renderRequestHeaders = (headers) => {

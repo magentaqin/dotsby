@@ -8,8 +8,8 @@ const config = {
     {
       title: 'Overview',
       dir: 'overview',
-      root_file: 'index.md',
       pages: [
+        { title: 'Overview', file: 'index.md', is_root_path: true },
         { title: 'FAQ', file: 'faq.md' },
       ],
     },

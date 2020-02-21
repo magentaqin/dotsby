@@ -71,7 +71,7 @@ const getPageContents = async (pages, dir) => {
     if (content) {
       pageContents.push({
         title: page.title,
-        is_root_path: false,
+        is_root_path: !!page.is_root_path,
         path: `/${dir}`,
         content,
       })
@@ -99,7 +99,6 @@ const loopSections = async () => {
     const {
       dir,
       pages,
-      root_file,
       apis,
     } = sectionConfig;
 
@@ -111,26 +110,6 @@ const loopSections = async () => {
     /**
      * format customized pages
      */
-    if (root_file) {
-      const rootPath = path.resolve(docRootPath, `./${dir}/${root_file}`);
-      let content;
-      if (isPublishMode) {
-        content = await getFileContent(rootPath);
-      } else {
-        content = await transformMarkdownPromise(rootPath).catch(err => {
-          console.log('Fail to transform markdown file to html: ', err);
-        })
-        content = formatTitle(content);
-      }
-      if (content) {
-        sectionItem.pages.push({
-          title: dir,
-          is_root_path: true,
-          path: `/${dir}`,
-          content,
-        })
-      }
-    }
     if (pages && pages.length) {
       const pageContents = await getPageContents(pages, dir)
       sectionItem.pages = [

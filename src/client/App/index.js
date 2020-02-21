@@ -14,11 +14,14 @@ import qs from 'qs'
 
 import theme from '@src/theme/light'
 import { BigArrow } from '@src/client/components/Arrow';
-import { getDocumentInfo } from '@src/service/request'
+import { getDocumentInfo, queryKeyword } from '@src/service/request'
 import { setDocumentInfo } from '@src/store/reducerActions/document'
 import { setSectionsInfo } from '@src/store/reducerActions/sections'
 import { docRegx, pageRegx } from '@src/utils/regx';
 import SpinSrc from '@src/client/assets/spin.svg';
+import SearchIconSrc from '@src/client/assets/search.svg';
+import debounce from '@src/utils/debounce';
+
 import MainContent from './MainContent';
 
 const GlobalStyle = createGlobalStyle`
@@ -129,13 +132,16 @@ const MainHeader = styled.header`
   position: sticky;
   align-items: center;
   top: 0;
-  background-color: ${props => props.theme.whiteColor};
+  background-color: ${props => (props.isFocus ? 'initial' : props.theme.whiteColor)}
+  z-index: 99;
 `
 
 const InputWrapper = styled.div`
   margin-left: 40px;
   max-width: 480px;
   flex-grow: 1;
+  margin-top: 20px;
+  position: relative;
 `
 
 const Input = styled.input`
@@ -146,10 +152,34 @@ const Input = styled.input`
   border: 1px solid #959DAA;
   border-radius: 5px;
   box-shadow: none;
-  font-size: 14px;
+  font-size: 16px;
   background: white;
   outline: none;
   -webkit-appearance: none;
+`
+
+const SearchIcon = styled.img`
+  width: 30px;
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  right: 0;
+`
+
+const ModalWrapper = styled.div`
+  position: ${props => (props.isFocus ? 'fixed' : 'relative')};
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  background-color: rgba(90,98,112,0.5);
+  z-index: 1;
+`
+
+const SearchList = styled.div`
+  width: 100%;
+  background-color: red;
+  height: 400px;
 `
 
 const PageLoading = styled.div`
@@ -162,14 +192,18 @@ const Spin = styled.img`
   width: 40px;
 `
 
-
 class Layout extends React.Component {
   documentId = '';
+
+  version = '';
+
+  token = '';
 
   constructor(props) {
     super(props);
     this.state = {
       isPageLoading: false,
+      isInputFocus: false,
     }
     const { pathname, search } = this.props.location;
     const fullPath = pathname + search;
@@ -177,6 +211,10 @@ class Layout extends React.Component {
     if (this.isValidPath) {
       this.documentId = pageRegx.test(fullPath) ? fullPath.split('/')[1] : fullPath.split('?')[0].slice(1);
     }
+    this.delaySearch = debounce(this.querySearchList, 500);
+    const parsedSearch = qs.parse(search, { ignoreQueryPrefix: true });
+    this.version = parsedSearch.version;
+    this.token = parsedSearch.token;
   }
 
   componentDidMount() {
@@ -199,9 +237,7 @@ class Layout extends React.Component {
   }
 
   fetchDocumentInfo = () => {
-    const { search } = this.props.location;
-    const { version, token } = qs.parse(search, { ignoreQueryPrefix: true });
-    getDocumentInfo({ document_id: this.documentId, version, token }).then(resp => {
+    getDocumentInfo({ document_id: this.documentId, version: this.version, token: this.token }).then(resp => {
       const { data } = resp.data;
       const { document_id, sections, ...rest } = data
       const sectionIds = []
@@ -232,6 +268,27 @@ class Layout extends React.Component {
       }
       this.props.setDocumentInfo(documentInfo)
     }).catch(err => console.log(err))
+  }
+
+  onInputChange = (e) => {
+    // remove the synthetic event from the pool.allow access to the event properties in an asynchronous way.
+    e.persist()
+    this.delaySearch(e.target.value)
+  }
+
+  querySearchList = (value) => {
+    const data = {
+      query_type: 'TEXT',
+      search_string: value,
+      limit: 5,
+      document_id: this.documentId,
+      version: this.version,
+    }
+    if (value.length) {
+      queryKeyword(data).then(resp => {
+        console.log(resp.data)
+      }).catch(err => console.log(err))
+    }
   }
 
   renderPages = (pages) => {
@@ -284,11 +341,26 @@ class Layout extends React.Component {
     </Aside>
   )
 
+  onInputFocus = () => {
+    this.setState({ isInputFocus: true })
+  }
+
+  onInputBlur = () => {
+    this.setState({ isInputFocus: false })
+  }
+
   renderMainHeader = () => (
-    <MainHeader>
+    <MainHeader isFocus={this.state.isInputFocus}>
       <InputWrapper>
-        <Input />
+        <Input
+          onChange={this.onInputChange}
+          onFocus={this.onInputFocus}
+          onBlur={this.onInputBlur}
+          placeholder="Search Docs"
+        />
+        <SearchIcon src={SearchIconSrc}/>
       </InputWrapper>
+      {/* <SearchList /> */}
       <PageLoading isPageLoading={this.state.isPageLoading}>
         <Spin src={SpinSrc} />
       </PageLoading>
@@ -326,6 +398,7 @@ class Layout extends React.Component {
         <AppWrapper>
           {this.renderAside()}
           {this.renderMain()}
+          <ModalWrapper isFocus={this.state.isInputFocus}/>
         </AppWrapper>
       </ThemeProvider>
     )

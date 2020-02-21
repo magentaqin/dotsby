@@ -65,3 +65,8 @@ export const getPageInfo = async(query) => {
   const resp = await http.get('/page', query)
   return resp;
 }
+
+export const queryKeyword = async(query) => {
+  const resp = await http.get('/query', query)
+  return resp;
+}

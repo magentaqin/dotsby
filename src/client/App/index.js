@@ -132,30 +132,28 @@ const MainHeader = styled.header`
   position: sticky;
   align-items: center;
   top: 0;
-  background-color: ${props => (props.isFocus ? 'initial' : props.theme.whiteColor)}
+  background-color: ${props => (props.isFocus ? 'initial' : props.theme.whiteColor)};
   z-index: 99;
 `
 
 const InputWrapper = styled.div`
   margin-left: 40px;
-  max-width: 480px;
   flex-grow: 1;
   margin-top: 20px;
   position: relative;
 `
 
 const Input = styled.input`
-  width: 100%;
   height: 40px;
   padding: 0;
-  padding-left: 16px;
+  padding-left: 45px;
   border: 1px solid #959DAA;
   border-radius: 5px;
   box-shadow: none;
   font-size: 16px;
-  background: white;
   outline: none;
   -webkit-appearance: none;
+  width: 480px;
 `
 
 const SearchIcon = styled.img`
@@ -163,7 +161,7 @@ const SearchIcon = styled.img`
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
-  right: 0;
+  left: 8px;
 `
 
 const ModalWrapper = styled.div`
@@ -176,10 +174,12 @@ const ModalWrapper = styled.div`
   z-index: 1;
 `
 
-const SearchList = styled.div`
-  width: 100%;
-  background-color: red;
-  height: 400px;
+const SearchListWrapper = styled.div`
+  width: 527px;
+  background-color: #fff;
+  position: fixed;
+  border-radius: 5px;
+  top: 75px;
 `
 
 const PageLoading = styled.div`
@@ -190,6 +190,48 @@ const PageLoading = styled.div`
 
 const Spin = styled.img`
   width: 40px;
+`
+
+const SearchSection = styled.div`
+  border-bottom: 1px solid #ddd;
+  .section-top {
+    background-color: ${props => props.theme.blackColor};
+    padding: 4px 8px;
+    p {
+      font-size: ${props => props.theme.textFont};
+      color: #fff;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+    }
+  }
+
+  .section-bottom {
+    padding: 8px;
+    display: flex;
+    font-size: ${props => props.theme.normalFont};
+    line-height: ${props => props.theme.normalFont};
+    color: ${props => props.theme.blackColor};
+
+    .page-title {
+      padding-right: 16px;
+      border-right: 1px solid #ddd;
+      p {
+        color: ${props => props.theme.grayColor};
+      }
+    }
+
+    .main-content {
+      padding-left: 16px;
+      p {
+        font-weight: bold;
+      }
+
+      .main-bottom {
+        margin-top: 8px;
+        font-weight: 300;
+      }
+    }
+  }
 `
 
 class Layout extends React.Component {
@@ -204,6 +246,8 @@ class Layout extends React.Component {
     this.state = {
       isPageLoading: false,
       isInputFocus: false,
+      shouldListShow: false,
+      data: [],
     }
     const { pathname, search } = this.props.location;
     const fullPath = pathname + search;
@@ -233,6 +277,10 @@ class Layout extends React.Component {
     }
     if (this.props.pages[pageId] && this.state.isPageLoading) {
       this.setState({ isPageLoading: false })
+      if (window.location.hash) {
+        const id = window.location.hash.slice(1);
+        document.getElementById(id) && document.getElementById(id).scrollIntoView();
+      }
     }
   }
 
@@ -286,8 +334,20 @@ class Layout extends React.Component {
     }
     if (value.length) {
       queryKeyword(data).then(resp => {
-        console.log(resp.data)
-      }).catch(err => console.log(err))
+        this.setState({
+          shouldListShow: true,
+          data: resp.data.data.items,
+        })
+      }).catch(err => {
+        this.setState({
+          shouldListShow: true,
+        })
+      })
+    } else {
+      this.setState({
+        data: [],
+        shouldListShow: false,
+      })
     }
   }
 
@@ -349,6 +409,46 @@ class Layout extends React.Component {
     this.setState({ isInputFocus: false })
   }
 
+  navToMatchedPage = (path, anchor) => {
+    this.setState({
+      data: [],
+      isInputFocus: false,
+      shouldListShow: false,
+    })
+    window.location.replace(path)
+  }
+
+  renderSearchList = () => {
+    if (!this.state.data.length) {
+      return <h3>No results found.</h3>
+    }
+    return this.state.data.map((item, index) => {
+      const key = item.section_id + item.page_id + index;
+      const displayAnchor = item.anchor || item.page_title;
+      let path = `/${this.documentId}/page/${item.page_id}${this.props.location.search}`;
+      if (item.anchor) {
+        const anchor = item.anchor.toLowerCase().split(' ').join('-');
+        path += `#${anchor}`
+      }
+      return (
+        <a onClick={() => this.navToMatchedPage(path)} key={key}>
+          <SearchSection>
+            <div className="section-top"><p>{item.section_title}</p></div>
+            <div className="section-bottom">
+              <div className="page-title"><p>{item.page_title}</p></div>
+              <div className="main-content">
+                <p>{displayAnchor}</p>
+                {item.content ? (
+                  <p className="main-bottom">{item.content}</p>
+                ) : null}
+              </div>
+            </div>
+          </SearchSection>
+        </a>
+      )
+    })
+  }
+
   renderMainHeader = () => (
     <MainHeader isFocus={this.state.isInputFocus}>
       <InputWrapper>
@@ -359,8 +459,12 @@ class Layout extends React.Component {
           placeholder="Search Docs"
         />
         <SearchIcon src={SearchIconSrc}/>
+        { this.state.shouldListShow ? (
+          <SearchListWrapper>
+            {this.renderSearchList()}
+          </SearchListWrapper>
+        ) : null }
       </InputWrapper>
-      {/* <SearchList /> */}
       <PageLoading isPageLoading={this.state.isPageLoading}>
         <Spin src={SpinSrc} />
       </PageLoading>

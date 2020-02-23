@@ -215,6 +215,7 @@ const SearchSection = styled.div`
     .page-title {
       padding-right: 16px;
       border-right: 1px solid #ddd;
+      min-width: 90px;
       p {
         color: ${props => props.theme.grayColor};
       }
@@ -228,10 +229,26 @@ const SearchSection = styled.div`
 
       .main-bottom {
         margin-top: 8px;
-        font-weight: 300;
+        p {
+          font-weight: 300;
+        }
       }
     }
   }
+`
+
+const NotFoundWrapper = styled.div`
+  height: 400px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`
+
+const MatchedString = styled.code`
+  font-size: ${props => props.theme.normalFont};
+  color: ${props => props.theme.pinkColor};
+  background-color: ${props => props.theme.lightGrayColor};
+  padding: 0 2px;
 `
 
 class Layout extends React.Component {
@@ -285,7 +302,11 @@ class Layout extends React.Component {
   }
 
   fetchDocumentInfo = () => {
-    getDocumentInfo({ document_id: this.documentId, version: this.version, token: this.token }).then(resp => {
+    getDocumentInfo({
+      document_id: this.documentId,
+      version: this.version,
+      token: this.token,
+    }).then(resp => {
       const { data } = resp.data;
       const { document_id, sections, ...rest } = data
       const sectionIds = []
@@ -319,7 +340,8 @@ class Layout extends React.Component {
   }
 
   onInputChange = (e) => {
-    // remove the synthetic event from the pool.allow access to the event properties in an asynchronous way.
+    // remove the synthetic event from the pool.
+    // allow access to the event properties in an asynchronous way.
     e.persist()
     this.delaySearch(e.target.value)
   }
@@ -377,7 +399,9 @@ class Layout extends React.Component {
         <AsideSection key={item.section_id}>
           <CollapseButton>
             {rootPage ? (
-              <NavLink to={path} activeClassName="active-nav-link"><AsideSubtitle>{item.title}</AsideSubtitle></NavLink>
+              <NavLink to={path} activeClassName="active-nav-link">
+                <AsideSubtitle>{item.title}</AsideSubtitle>
+              </NavLink>
             ) : (
               <AsideSubtitle>{item.title}</AsideSubtitle>
             )
@@ -406,6 +430,7 @@ class Layout extends React.Component {
   }
 
   onInputBlur = () => {
+    // this.setState({ isInputFocus: false, shouldListShow: false })
     this.setState({ isInputFocus: false })
   }
 
@@ -418,9 +443,29 @@ class Layout extends React.Component {
     window.location.replace(path)
   }
 
+  renderStyledItem = (displayText, search_string) => {
+    const regx = new RegExp(search_string, 'i')
+    const matchResult = displayText.match(regx)
+    if (matchResult && matchResult.length) {
+      const splitAnchors = displayText.split(matchResult[0])
+      return (
+        <p>
+          {splitAnchors[0]}
+          <MatchedString>{matchResult[0]}</MatchedString>
+          {splitAnchors[1]}
+        </p>
+      )
+    }
+    return <p>{displayText}</p>
+  }
+
   renderSearchList = () => {
     if (!this.state.data.length) {
-      return <h3>No results found.</h3>
+      return (
+        <NotFoundWrapper>
+          <h3>No Results Found.</h3>
+        </NotFoundWrapper>
+      )
     }
     return this.state.data.map((item, index) => {
       const key = item.section_id + item.page_id + index;
@@ -430,6 +475,8 @@ class Layout extends React.Component {
         const anchor = item.anchor.toLowerCase().split(' ').join('-');
         path += `#${anchor}`
       }
+
+
       return (
         <a onClick={() => this.navToMatchedPage(path)} key={key}>
           <SearchSection>
@@ -437,9 +484,9 @@ class Layout extends React.Component {
             <div className="section-bottom">
               <div className="page-title"><p>{item.page_title}</p></div>
               <div className="main-content">
-                <p>{displayAnchor}</p>
+                {this.renderStyledItem(displayAnchor, item.search_string)}
                 {item.content ? (
-                  <p className="main-bottom">{item.content}</p>
+                  <div className="main-bottom">{this.renderStyledItem(item.content, item.search_string)}</div>
                 ) : null}
               </div>
             </div>

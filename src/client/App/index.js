@@ -180,6 +180,7 @@ const SearchListWrapper = styled.div`
   position: fixed;
   border-radius: 5px;
   top: 75px;
+  visibility: ${props => (props.shouldShow ? 'visible' : 'hidden')};
 `
 
 const PageLoading = styled.div`
@@ -192,8 +193,13 @@ const Spin = styled.img`
   width: 40px;
 `
 
-const SearchSection = styled.div`
+const SearchSection = styled.a`
+  display: block;
   border-bottom: 1px solid #ddd;
+
+  &:hover {
+    cursor: pointer;
+  }
   .section-top {
     background-color: ${props => props.theme.blackColor};
     padding: 4px 8px;
@@ -265,6 +271,7 @@ class Layout extends React.Component {
       isInputFocus: false,
       shouldListShow: false,
       data: [],
+      value: '',
     }
     const { pathname, search } = this.props.location;
     const fullPath = pathname + search;
@@ -342,11 +349,13 @@ class Layout extends React.Component {
   onInputChange = (e) => {
     // remove the synthetic event from the pool.
     // allow access to the event properties in an asynchronous way.
-    e.persist()
-    this.delaySearch(e.target.value)
+    // e.persist()
+    this.setState({ value: e.target.value })
+    this.delaySearch()
   }
 
-  querySearchList = (value) => {
+  querySearchList = () => {
+    const { value } = this.state;
     const data = {
       query_type: 'TEXT',
       search_string: value,
@@ -366,10 +375,7 @@ class Layout extends React.Component {
         })
       })
     } else {
-      this.setState({
-        data: [],
-        shouldListShow: false,
-      })
+      this.setState({data: []})
     }
   }
 
@@ -429,16 +435,16 @@ class Layout extends React.Component {
     this.setState({ isInputFocus: true })
   }
 
-  onInputBlur = () => {
-    // this.setState({ isInputFocus: false, shouldListShow: false })
-    this.setState({ isInputFocus: false })
+  onSearchBlur = () => {
+    this.setState({ isInputFocus: false, value: '', shouldListShow: false })
   }
 
-  navToMatchedPage = (path, anchor) => {
+  navToMatchedPage = (path) => {
     this.setState({
       data: [],
       isInputFocus: false,
       shouldListShow: false,
+      value: '',
     })
     window.location.replace(path)
   }
@@ -475,23 +481,23 @@ class Layout extends React.Component {
         const anchor = item.anchor.toLowerCase().split(' ').join('-');
         path += `#${anchor}`
       }
-
-
       return (
-        <a onClick={() => this.navToMatchedPage(path)} key={key}>
-          <SearchSection>
+        <SearchSection onClick={() => this.navToMatchedPage(path)} key={key}>
+          <div>
             <div className="section-top"><p>{item.section_title}</p></div>
             <div className="section-bottom">
               <div className="page-title"><p>{item.page_title}</p></div>
               <div className="main-content">
                 {this.renderStyledItem(displayAnchor, item.search_string)}
                 {item.content ? (
-                  <div className="main-bottom">{this.renderStyledItem(item.content, item.search_string)}</div>
+                  <div className="main-bottom">
+                    {this.renderStyledItem(item.content, item.search_string)}
+                  </div>
                 ) : null}
               </div>
             </div>
-          </SearchSection>
-        </a>
+          </div>
+        </SearchSection>
       )
     })
   }
@@ -500,17 +506,15 @@ class Layout extends React.Component {
     <MainHeader isFocus={this.state.isInputFocus}>
       <InputWrapper>
         <Input
+          value={this.state.value}
           onChange={this.onInputChange}
           onFocus={this.onInputFocus}
-          onBlur={this.onInputBlur}
           placeholder="Search Docs"
         />
         <SearchIcon src={SearchIconSrc}/>
-        { this.state.shouldListShow ? (
-          <SearchListWrapper>
-            {this.renderSearchList()}
-          </SearchListWrapper>
-        ) : null }
+        <SearchListWrapper shouldShow={this.state.shouldListShow}>
+          {this.renderSearchList()}
+        </SearchListWrapper>
       </InputWrapper>
       <PageLoading isPageLoading={this.state.isPageLoading}>
         <Spin src={SpinSrc} />
@@ -549,7 +553,7 @@ class Layout extends React.Component {
         <AppWrapper>
           {this.renderAside()}
           {this.renderMain()}
-          <ModalWrapper isFocus={this.state.isInputFocus}/>
+          <ModalWrapper isFocus={this.state.isInputFocus} onClick={this.onSearchBlur}/>
         </AppWrapper>
       </ThemeProvider>
     )

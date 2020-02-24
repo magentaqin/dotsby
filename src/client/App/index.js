@@ -13,13 +13,14 @@ import reset from 'styled-reset'
 import qs from 'qs'
 
 import theme from '@src/theme/light'
-import { BigArrow } from '@src/client/components/Arrow';
 import { getDocumentInfo, queryKeyword } from '@src/service/request'
 import { setDocumentInfo } from '@src/store/reducerActions/document'
 import { setSectionsInfo } from '@src/store/reducerActions/sections'
 import { docRegx, pageRegx } from '@src/utils/regx';
 import SpinSrc from '@src/client/assets/spin.svg';
 import SearchIconSrc from '@src/client/assets/search.svg';
+import BigArrowSrc from '@src/client/assets/big-arrow.svg';
+import BigArrowActiveSrc from '@src/client/assets/big-arrow-active.svg';
 import debounce from '@src/utils/debounce';
 
 import MainContent from './MainContent';
@@ -81,6 +82,11 @@ const AsideSection = styled.div`
   .active-nav-link {
     color: ${props => props.theme.primaryColor};
     text-decoration: none;
+    font-weight: bold;
+
+    h6 {
+      color: ${props => props.theme.primaryColor};
+    }
   }
 `;
 
@@ -108,15 +114,17 @@ const AsideSubtitle = styled.h6`
   letter-spacing: 2px;
   font-weight: 500;
   text-align: left;
+  color: ${props => (props.active ? props.theme.primaryColor : props.theme.blackColor)};
 `
 
 const AsideNav = styled.ul`
   margin-left: 0;
   list-style: none;
+  display: ${props => (props.shouldShow ? 'inherit' : 'none')};
 `
 
 const AsideItem = styled.li`
-  font-size: ${props => props.theme.normalFont};
+  font-size: ${props => props.theme.textFont};
   margin-bottom: 0.725rem;
   color: ${props => props.theme.grayColor};
 `
@@ -191,6 +199,11 @@ const PageLoading = styled.div`
 
 const Spin = styled.img`
   width: 40px;
+`
+
+const BigArrow = styled.img`
+  transform: ${props => (props.isUpper ? 'rotate(180deg)' : '')};
+  display: ${props => (props.shouldShow ? 'inherit' : 'none')};
 `
 
 const SearchSection = styled.a`
@@ -272,6 +285,7 @@ class Layout extends React.Component {
       shouldListShow: false,
       data: [],
       value: '',
+      unfoldedSections: [],
     }
     const { pathname, search } = this.props.location;
     const fullPath = pathname + search;
@@ -293,7 +307,7 @@ class Layout extends React.Component {
     }
   }
 
-  componentDidUpdate() {
+  componentDidUpdate(prevProps) {
     const { pathname } = this.props.location;
     const pageId = pathname.split('/')[3];
     if (!this.props.pages[pageId] && !this.state.isPageLoading) {
@@ -305,6 +319,22 @@ class Layout extends React.Component {
         const id = window.location.hash.slice(1);
         document.getElementById(id) && document.getElementById(id).scrollIntoView();
       }
+    }
+    if (!prevProps.sections.length && this.props.sections.length) {
+      let activeSectionId = '';
+      this.props.sections.some(section => {
+        const isSectionActive = section.pagesInfo.some(page => {
+          if (page.page_id === pageId) {
+            return true;
+          }
+        });
+        if (isSectionActive) {
+          activeSectionId = section.section_id
+          return true;
+        }
+        return false;
+      })
+      this.setState({ unfoldedSections: [...this.state.unfoldedSections, activeSectionId]})
     }
   }
 
@@ -347,9 +377,6 @@ class Layout extends React.Component {
   }
 
   onInputChange = (e) => {
-    // remove the synthetic event from the pool.
-    // allow access to the event properties in an asynchronous way.
-    // e.persist()
     this.setState({ value: e.target.value })
     this.delaySearch()
   }
@@ -390,6 +417,21 @@ class Layout extends React.Component {
     })
   }
 
+  toggleAsideSection = (id) => {
+    const { unfoldedSections } = this.state;
+    if (unfoldedSections.includes(id)) {
+      const index = unfoldedSections.indexOf(id)
+      unfoldedSections.splice(index, 1)
+      this.setState({
+        unfoldedSections,
+      })
+    } else {
+      this.setState({
+        unfoldedSections: [...unfoldedSections, id],
+      })
+    }
+  }
+
   renderSections = () => {
     return this.props.sections.map(item => {
       let rootPage;
@@ -401,20 +443,29 @@ class Layout extends React.Component {
         }
         return !item.is_root_path
       })
+
+      // check if current section is active
+      const { pathname } = this.props.location;
+      const pageId = pathname.split('/')[3];
+      const isMatched = item.pagesInfo.some(item => item.page_id === pageId)
+
+      const shouldShow = this.state.unfoldedSections.includes(item.section_id);
+
       return (
         <AsideSection key={item.section_id}>
-          <CollapseButton>
+          <CollapseButton onClick={() => this.toggleAsideSection(item.section_id)} >
             {rootPage ? (
               <NavLink to={path} activeClassName="active-nav-link">
-                <AsideSubtitle>{item.title}</AsideSubtitle>
+                <AsideSubtitle active={isMatched}>{item.title}</AsideSubtitle>
               </NavLink>
             ) : (
-              <AsideSubtitle>{item.title}</AsideSubtitle>
+              <AsideSubtitle active={isMatched}>{item.title}</AsideSubtitle>
             )
             }
-            <BigArrow />
+            <BigArrow src={BigArrowSrc} shouldShow={!isMatched} isUpper={!shouldShow}/>
+            <BigArrow src={BigArrowActiveSrc} shouldShow={isMatched} isUpper={!shouldShow} />
           </CollapseButton>
-          <AsideNav>{this.renderPages(pages)}</AsideNav>
+          <AsideNav shouldShow={shouldShow}>{this.renderPages(pages)}</AsideNav>
         </AsideSection>
       )
     })

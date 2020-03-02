@@ -7,8 +7,19 @@ const Wrapper = styled.div`
 `
 
 export default class Tree extends React.Component {
-  toggleExpand = () => {
+  state = {
+    expandedIds: ['0'],
+  }
 
+  toggleExpand = (id) => {
+    let expandedIds = []
+    if (this.state.expandedIds.includes(id)) {
+      expandedIds = this.state.expandedIds.filter(item => item !== id)
+    } else {
+      expandedIds = [...this.state.expandedIds]
+      expandedIds.push(id)
+    }
+    this.setState({ expandedIds })
   }
 
   getTreeChildrenData = (properties, baseKey) => {
@@ -51,7 +62,11 @@ export default class Tree extends React.Component {
       return (
         <TreeNode
           key={item.id}
+          id={item.id}
+          parentId={this.getParentId(item.id)}
           data={item.data}
+          toggleExpand={this.toggleExpand}
+          expandedIds={this.state.expandedIds}
         >
           {this.renderChildren(item.childrenData)}
         </TreeNode>
@@ -59,18 +74,27 @@ export default class Tree extends React.Component {
     })
   }
 
+  getParentId = (id) => {
+    const arr = id.split('-')
+    arr.pop()
+    return arr.join('-');
+  }
+
   renderTree() {
     return this.props.data.map((outerNode, outerIndex) => {
       let childrenData = null;
-      const key = `0-${outerIndex}`;
+      const id = `0-${outerIndex}`;
       if (outerNode.properties && outerNode.properties.length) {
-        childrenData = this.getTreeChildrenData(outerNode.properties, key)
+        childrenData = this.getTreeChildrenData(outerNode.properties, id)
       }
       return (
         <TreeNode
-          key={key}
-          id={key}
+          key={id}
+          id={id}
+          parentId={this.getParentId(id)}
           data={outerNode}
+          toggleExpand={this.toggleExpand}
+          expandedIds={this.state.expandedIds}
         >
           {this.renderChildren(childrenData)}
         </TreeNode>

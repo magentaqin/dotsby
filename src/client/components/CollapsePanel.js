@@ -28,7 +28,7 @@ const LeftItem = styled.div`
   display: flex;
   flex-direction: column;
   padding: 8px 0;
-  padding-left: ${props => props.nestedLevel * 16 + 32}px;
+  padding-left: ${props => props.nestedLevel * 16 + 16}px;
   flex: 1;
 `
 const RightItem = styled.div`
@@ -77,6 +77,7 @@ class CollapsePanel extends React.Component {
   nestedLevel = 0;
 
   toggleExpand = (count) => () => {
+    console.log('called')
     let expandedItems = []
     if (this.state.expandedItems.includes(count)) {
       expandedItems = this.state.expandedItems.filter(item => item !== count);
@@ -132,7 +133,6 @@ class CollapsePanel extends React.Component {
       // this count is current count
       this.count += 1;
       const shouldExpand = this.state.expandedItems.includes(this.count);
-
       return (
         <div key={index}>
           <PanelWrapper count={this.count}>
@@ -194,7 +194,7 @@ class CollapsePanel extends React.Component {
 
       const isNested = !!((properties && properties.length));
       const shouldExpand = this.state.expandedItems.includes(this.count);
-
+      console.log('count', this.count)
       return (
         <div key={index}>
           <PanelWrapper count={this.count}>

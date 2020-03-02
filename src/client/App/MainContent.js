@@ -9,6 +9,7 @@ import { setPagesInfo } from '@src/store/reducerActions/pages';
 import Table from '../components/Table';
 import Divider from '../components/Divider';
 import CollapsePanel from '../components/CollapsePanel';
+import Tree from '../components/Tree';
 
 const Wrapper = styled.div`
   padding: 20px 64px;
@@ -215,10 +216,12 @@ class MainContent extends React.Component {
   }
 
   renderResponseBody = (data) => {
+    // console.log(data)
     return (
       <Li>
         <H6>Response Body</H6>
-        <CollapsePanel data={data} />
+        {/* <CollapsePanel data={data} /> */}
+        <Tree data={data} />
       </Li>
     );
   }

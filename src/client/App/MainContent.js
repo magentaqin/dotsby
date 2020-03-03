@@ -182,7 +182,6 @@ class MainContent extends React.Component {
   }
 
   renderRequestBody = (body) => {
-    console.log(body)
     if (body && body.length) {
       return (
         <Li>

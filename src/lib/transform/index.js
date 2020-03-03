@@ -89,7 +89,7 @@ const storeDocumentPromise = (sections) => {
     version,
     sections,
   }
-  console.log('publish document params', params);
+  console.log('publish document params', params.sections[4].pages[0].apiContent.query_params);
   return publishDocument(params, docConfig.token)
 }
 

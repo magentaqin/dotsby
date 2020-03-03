@@ -90,10 +90,7 @@ traits:
   post:
     displayName: Sign Up
     body:
-      type: object
-      properties:
-        data:
-          type: !include ../dotsby-schema/dist/apis/user_signup_params.json
+      type: !include ../dotsby-schema/dist/apis/user_signup_params.json
     responses:
       200:
         body:
@@ -105,10 +102,7 @@ traits:
   post:
     displayName: Login
     body:
-      type: object
-      properties:
-        data:
-          type: !include ../dotsby-schema/dist/apis/user_login_params.json
+      type: !include ../dotsby-schema/dist/apis/user_login_params.json
     responses:
       200:
         body:
@@ -138,3 +132,81 @@ traits:
           properties:
             data:
               type:  !include ../dotsby-schema/dist/apis/user_info_response.json
+
+## Document
+/document/create:
+  post:
+    displayName: Create Document
+    body:
+      type: !include ../dotsby-schema/dist/apis/document_create_params.json
+    responses:
+      200:
+        body:
+          type: object
+          properties:
+            data:
+              type:  !include ../dotsby-schema/dist/apis/document_create_response.json
+/document/publish:
+  post:
+    displayName: Publish Documentaa
+    securedBy: ["token"]
+    body:
+      type: !include ../dotsby-schema/dist/apis/document_publish_params.json
+    responses:
+      200:
+        body:
+          type: object
+          properties:
+            data:
+              type:  !include ../dotsby-schema/dist/apis/document_publish_response.json
+/document/list:
+  get:
+    displayName: List Document
+    securedBy: ["token"]
+    responses:
+      200:
+        body:
+          type: object
+          properties:
+            data:
+              type:  !include ../dotsby-schema/dist/apis/document_list_response.json
+/document:
+  get:
+    displayName: Get Document Info
+    queryParameters:
+      type: !include ../dotsby-schema/dist/apis/document_info_params.json
+    responses:
+      200:
+        body:
+          type: object
+          properties:
+            data:
+              type:  !include ../dotsby-schema/dist/apis/document_info_response.json
+
+## Page
+/page:
+  get:
+    displayName: Get Page Info
+    queryParameters:
+      type: !include ../dotsby-schema/dist/apis/page_info_params.json
+    responses:
+      200:
+        body:
+          type: object
+          properties:
+            data:
+              type:  !include ../dotsby-schema/dist/apis/page_info_response.json
+
+## Query
+/query:
+  get:
+    displayName: Keyword Query
+    queryParameters:
+      type: !include ../dotsby-schema/dist/apis/query_params.json
+    responses:
+      200:
+        body:
+          type: object
+          properties:
+            data:
+              type:  !include ../dotsby-schema/dist/apis/query_response.json

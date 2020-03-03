@@ -22,6 +22,27 @@ const config = {
         { method: 'get', request_uri: '/user/info' },
       ],
     },
+    {
+      title: 'Document',
+      apis: [
+        { method: 'post', request_uri: '/document/create' },
+        { method: 'get', request_uri: '/document/list' },
+        { method: 'post', request_uri: '/document/publish' },
+        { method: 'get', request_uri: '/document' },
+      ],
+    },
+    {
+      title: 'Page',
+      apis: [
+        { method: 'get', request_uri: '/page' },
+      ],
+    },
+    {
+      title: 'query',
+      apis: [
+        { method: 'get', request_uri: '/query' },
+      ],
+    },
   ],
 };
 

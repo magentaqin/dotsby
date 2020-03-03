@@ -76,13 +76,11 @@ const TreeNode = (props) => {
   }
   let shouldShow = true;
   let shouldRotate = true;
-  console.log(displayName, id, expandedIds)
   if (expandedIds.includes(parentId)) {
     shouldShow = true;
   } else {
     shouldShow = false;
   }
-  console.log(shouldRotate)
   const firstChildId = parentId + '-0';
   if (expandedIds.includes(firstChildId)) {
     shouldRotate = false

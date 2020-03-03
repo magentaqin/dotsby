@@ -101,3 +101,40 @@ traits:
           properties:
             data:
               type:  !include ../dotsby-schema/dist/apis/user_signup_response.json
+/user/login:
+  post:
+    displayName: Login
+    body:
+      type: object
+      properties:
+        data:
+          type: !include ../dotsby-schema/dist/apis/user_login_params.json
+    responses:
+      200:
+        body:
+          type: object
+          properties:
+            data:
+              type:  !include ../dotsby-schema/dist/apis/user_login_response.json
+/user/logout:
+  post:
+    displayName: Logout
+    securedBy: ["token"]
+    responses:
+      200:
+        body:
+          type: object
+          properties:
+            data:
+              type:  !include ../dotsby-schema/dist/apis/user_logout_response.json
+/user/info:
+  get:
+    displayName: Get User Info
+    securedBy: ["token"]
+    responses:
+      200:
+        body:
+          type: object
+          properties:
+            data:
+              type:  !include ../dotsby-schema/dist/apis/user_info_response.json

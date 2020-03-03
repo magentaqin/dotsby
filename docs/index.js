@@ -16,10 +16,10 @@ const config = {
     {
       title: 'User',
       apis: [
-        {
-          method: 'post',
-          request_uri: '/user/signup',
-        },
+        { method: 'post', request_uri: '/user/signup' },
+        { method: 'post', request_uri: '/user/login' },
+        { method: 'post', request_uri: '/user/logout' },
+        { method: 'get', request_uri: '/user/info' },
       ],
     },
   ],

@@ -8,7 +8,6 @@ import { getPageInfo } from '@src/service/request';
 import { setPagesInfo } from '@src/store/reducerActions/pages';
 import Table from '../components/Table';
 import Divider from '../components/Divider';
-import CollapsePanel from '../components/CollapsePanel';
 import Tree from '../components/Tree';
 
 const Wrapper = styled.div`
@@ -220,7 +219,6 @@ class MainContent extends React.Component {
     return (
       <Li>
         <H6>Response Body</H6>
-        {/* <CollapsePanel data={data} /> */}
         <Tree data={data} />
       </Li>
     );

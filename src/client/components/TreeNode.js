@@ -1,7 +1,7 @@
 /* eslint-disable react/prop-types */
 import React from 'react';
 import styled from 'styled-components';
-import { SmallArrow } from './Arrow';
+import ArrowSrc from '../assets/small-arrow.svg'
 
 const PanelWrapper = styled.div`
   display: flex;
@@ -53,6 +53,11 @@ const RequiredText = styled.p`
   font-weight: bolder;
 `
 
+const SmallArrow = styled.img`
+  transform: ${props => (props.shouldRotate ? 'rotate(-90deg)' : '')};
+  margin-right: 4px;
+`
+
 const TreeNode = (props) => {
   const { id, data, parentId, expandedIds } = props;
   const { displayName, type, description, required, example } = data
@@ -70,17 +75,25 @@ const TreeNode = (props) => {
     }
   }
   let shouldShow = true;
+  let shouldRotate = true;
   console.log(displayName, id, expandedIds)
   if (expandedIds.includes(parentId)) {
     shouldShow = true;
   } else {
-    shouldShow = false
+    shouldShow = false;
+  }
+  console.log(shouldRotate)
+  const firstChildId = parentId + '-0';
+  if (expandedIds.includes(firstChildId)) {
+    shouldRotate = false
   }
   return (
     <PanelWrapper key={id} onClick={toggleExpand(id, props.children)}>
       <LeftItem nestedLevel={nestedLevel} shouldShow={shouldShow}>
         <FlexRow>
-          <div style={style}><SmallArrow /></div>
+          <div style={style}>
+            <SmallArrow src={ArrowSrc} shouldRotate={shouldRotate}/>
+          </div>
           <p>{displayName}</p>
           <TypeText>{type}</TypeText>
         </FlexRow>

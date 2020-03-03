@@ -124,7 +124,7 @@ const AsideNav = styled.ul`
 `
 
 const AsideItem = styled.li`
-  font-size: ${props => props.theme.textFont};
+  font-size: ${props => props.theme.normalFont};
   margin-bottom: 0.725rem;
   color: ${props => props.theme.grayColor};
 `

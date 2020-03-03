@@ -174,7 +174,7 @@ class MainContent extends React.Component {
       return (
         <Li>
           <H6>Query Params</H6>
-          <Table tConfig={this.tConfig} tData={queryParams} />
+          <Tree data={queryParams} />
         </Li>
       )
     }
@@ -182,11 +182,12 @@ class MainContent extends React.Component {
   }
 
   renderRequestBody = (body) => {
+    console.log(body)
     if (body && body.length) {
       return (
         <Li>
           <H6>Request Body</H6>
-          <Table tConfig={this.tConfig} tData={body} />
+          <Tree data={body}/>
         </Li>
       )
     }

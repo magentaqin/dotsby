@@ -37,13 +37,26 @@ export default class Tree extends React.Component {
         const schemaItem = JSON.parse(item.type);
         data.type = schemaItem.type;
         const schemaProperties = []
-        Object.keys(schemaItem.properties).forEach(prop => {
+        Object.keys(schemaItem.properties).forEach((prop) => {
+          let propType = schemaItem.properties[prop].type;
+          const propProperties = [];
+          if (schemaItem.properties[prop].type === 'array' && schemaItem.properties[prop].items.type === 'object') {
+            propType = 'array<object>';
+            const arrProperties = schemaItem.properties[prop].items.properties;
+            Object.keys(arrProperties).forEach(ap => {
+              const newAp = {...arrProperties[ap]}
+              newAp.displayName = ap;
+              newAp.required = schemaItem.properties[prop].items.required.includes(ap)
+              propProperties.push(newAp)
+            })
+          }
           schemaProperties.push({
-            type: schemaItem.properties[prop].type,
+            type: propType,
             description: schemaItem.properties[prop].description,
             displayName: prop,
             key: prop,
             required: schemaItem.required.includes(prop),
+            properties: propProperties,
           })
         })
         children = this.getTreeChildrenData(schemaProperties, key)
@@ -87,6 +100,7 @@ export default class Tree extends React.Component {
       if (outerNode.properties && outerNode.properties.length) {
         childrenData = this.getTreeChildrenData(outerNode.properties, id)
       }
+      console.log('FINAL', childrenData)
       return (
         <TreeNode
           key={id}

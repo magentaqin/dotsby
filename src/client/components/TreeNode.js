@@ -59,13 +59,17 @@ const SmallArrow = styled.img`
 `
 
 const TreeNode = (props) => {
-  const { id, data, parentId, expandedIds } = props;
-  const { displayName, type, description, required, example } = data
+  const {
+    id, data, parentId, expandedIds,
+  } = props;
+  const {
+    displayName, type, description, required, example,
+  } = data
   const enumText = data.enum;
   const nestedLevel = id.split('-').length - 1;
-  let style = { cursor: 'pointer'};
+  let style = { cursor: 'pointer' };
   if (!props.children) {
-    style = { display: 'none'}
+    style = { display: 'none' }
   }
 
   const toggleExpand = (id, children) => (e) => {
@@ -76,14 +80,13 @@ const TreeNode = (props) => {
   }
   let shouldShow = true;
   let shouldRotate = true;
-  if (expandedIds.includes(parentId)) {
-    shouldShow = true;
-  } else {
+  if (!expandedIds.includes(parentId)) {
     shouldShow = false;
   }
-  const firstChildId = parentId + '-0';
-  if (expandedIds.includes(firstChildId)) {
-    shouldRotate = false
+
+  const slicedExpandedIds = expandedIds.slice(0, expandedIds.length - 1)
+  if (slicedExpandedIds.includes(parentId)) {
+    shouldRotate = false;
   }
   return (
     <PanelWrapper key={id} onClick={toggleExpand(id, props.children)}>

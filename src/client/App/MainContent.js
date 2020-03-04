@@ -227,6 +227,9 @@ class MainContent extends React.Component {
   renderResponses = (responses) => {
     return responses.map(response => {
       const { status, headers, data } = response;
+      if (status === "401") {
+        return null;
+      }
       return (
         <ul key={response.key}>
           <Li>

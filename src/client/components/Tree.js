@@ -36,8 +36,14 @@ export default class Tree extends React.Component {
       const hasJsonSchema = item.type && item.type.includes('type')
       if (hasJsonSchema) {
         const schemaItem = JSON.parse(item.type);
-        data.type = schemaItem.type;
-        const schemaProperties = getSchemaProperties(schemaItem)
+        let schemaProperties = []
+        if (schemaItem.type === 'array' && schemaItem.items.type === 'object') {
+          data.type = 'array<object>'
+          schemaProperties = getSchemaProperties(schemaItem.items)
+        } else {
+          data.type = schemaItem.type;
+          schemaProperties = getSchemaProperties(schemaItem)
+        }
         children = this.getTreeChildrenData(schemaProperties, key)
       }
       return {

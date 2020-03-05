@@ -45,6 +45,7 @@ const TypeText = styled.code`
 const NoteText = styled.p`
   font-size: ${props => props.theme.textFont};
   color: ${props => props.theme.grayColor};
+  padding-top: 4px;
 `
 
 const RequiredText = styled.p`
@@ -63,7 +64,7 @@ const TreeNode = (props) => {
     id, data, parentId, expandedIds,
   } = props;
   const {
-    displayName, type, description, required, example,
+    displayName, type, description, required, example, pattern,
   } = data
   const enumText = data.enum;
   const nestedLevel = id.split('-').length - 1;
@@ -103,6 +104,7 @@ const TreeNode = (props) => {
       <RightItem shouldShow={shouldShow}>
         <RequiredText>{required ? 'Required' : 'Optional'}</RequiredText>
         <NoteText>{enumText}</NoteText>
+        <NoteText>{pattern}</NoteText>
         <NoteText>{example}</NoteText>
       </RightItem>
       {props.children}

@@ -95,7 +95,7 @@ const TreeNode = (props) => {
           <div style={style}>
             <SmallArrow src={ArrowSrc} shouldRotate={shouldRotate}/>
           </div>
-          <p>{displayName}</p>
+          <p>{displayName === 'application/json' ? '' : displayName}</p>
           <TypeText>{type}</TypeText>
         </FlexRow>
         <NoteText>{description}</NoteText>

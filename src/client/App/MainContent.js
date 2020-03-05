@@ -227,9 +227,6 @@ class MainContent extends React.Component {
   renderResponses = (responses) => {
     return responses.map(response => {
       const { status, headers, data } = response;
-      if (status === "401") {
-        return null;
-      }
       return (
         <ul key={response.key}>
           <Li>
@@ -291,7 +288,9 @@ class MainContent extends React.Component {
     if (content) {
       return (
         <Wrapper>
-          <CustomziedContent dangerouslySetInnerHTML={{ __html: `${content}` }}></CustomziedContent>
+          <CustomziedContent
+            dangerouslySetInnerHTML={{ __html: `${content}` }}
+          />
         </Wrapper>
       )
     }

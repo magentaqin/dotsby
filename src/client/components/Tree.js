@@ -1,5 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
+import { getSchemaProperties } from '@src/utils/parseSchema';
 import TreeNode from './TreeNode';
 
 const Wrapper = styled.div`
@@ -32,33 +33,11 @@ export default class Tree extends React.Component {
         children = this.getTreeChildrenData(item.properties, key);
       }
 
-      const hasJsonSchema = item.type.includes('type')
+      const hasJsonSchema = item.type && item.type.includes('type')
       if (hasJsonSchema) {
         const schemaItem = JSON.parse(item.type);
         data.type = schemaItem.type;
-        const schemaProperties = []
-        Object.keys(schemaItem.properties).forEach((prop) => {
-          let propType = schemaItem.properties[prop].type;
-          const propProperties = [];
-          if (schemaItem.properties[prop].type === 'array' && schemaItem.properties[prop].items.type === 'object') {
-            propType = 'array<object>';
-            const arrProperties = schemaItem.properties[prop].items.properties;
-            Object.keys(arrProperties).forEach(ap => {
-              const newAp = {...arrProperties[ap]}
-              newAp.displayName = ap;
-              newAp.required = schemaItem.properties[prop].items.required.includes(ap)
-              propProperties.push(newAp)
-            })
-          }
-          schemaProperties.push({
-            type: propType,
-            description: schemaItem.properties[prop].description,
-            displayName: prop,
-            key: prop,
-            required: schemaItem.required.includes(prop),
-            properties: propProperties,
-          })
-        })
+        const schemaProperties = getSchemaProperties(schemaItem)
         children = this.getTreeChildrenData(schemaProperties, key)
       }
       return {
@@ -96,17 +75,25 @@ export default class Tree extends React.Component {
   renderTree() {
     return this.props.data.map((outerNode, outerIndex) => {
       let childrenData = null;
+      const data = { ...outerNode }
       const id = `0-${outerIndex}`;
       if (outerNode.properties && outerNode.properties.length) {
         childrenData = this.getTreeChildrenData(outerNode.properties, id)
       }
-      console.log('FINAL', childrenData)
+      const hasJsonSchema = outerNode.type && outerNode.type.includes('type')
+      if (hasJsonSchema) {
+        const schemaItem = JSON.parse(outerNode.type)
+        const schemaProperties = getSchemaProperties(schemaItem)
+        childrenData = this.getTreeChildrenData(schemaProperties, id);
+        data.type = 'object';
+        data.displayName = 'application/json';
+      }
       return (
         <TreeNode
           key={id}
           id={id}
           parentId={this.getParentId(id)}
-          data={outerNode}
+          data={data}
           toggleExpand={this.toggleExpand}
           expandedIds={this.state.expandedIds}
         >

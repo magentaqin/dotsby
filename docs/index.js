@@ -9,7 +9,7 @@ const config = {
       title: 'Overview',
       dir: 'overview',
       pages: [
-        { title: 'Overview', file: 'index.md', is_root_path: true },
+        { title: 'Introduction', file: 'introduction.md' }
         { title: 'FAQ', file: 'faq.md' },
       ],
     },

@@ -2,7 +2,7 @@
   "scripts": {
     "build": "react-app-rewired build",
     "start": "react-app-rewired start",
-    "bootstrap": "babel-node ./src/lib/bootstrap.js",
+    "bootstrap": "PORT=8080 babel-node ./src/lib/bootstrap.js",
     "hot-preview": "nodemon --watch . --exec 'yarn build-app && yarn runbuild' --ignore build/",
     "build-docs": "PORT=8080 babel-node ./src/lib/index.js",
     "lint": "eslint ./src/App --fix",

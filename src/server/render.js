@@ -25,7 +25,7 @@ import reducer from '@src/store/reducerActions';
 import { docRegx, pageRegx } from '@src/utils/regx';
 
 
-const port = config.port;
+const { host, port } = config;
 const buildFolderPath = path.resolve(__dirname, '..', '..', './build');
 const htmlFilePath = path.resolve(buildFolderPath, './index.html');
 
@@ -207,6 +207,6 @@ export const render = () => {
 
 
   app.listen(port, () => console.log( // eslint-disable-line no-console
-    `app Server is now running on http://localhost:${port}`,
+    `app Server is now running on http://${host}:${port}`,
   ));
 }

@@ -1,10 +1,10 @@
 const config = {
-  localhost: '127.0.0.1',
+  host: process.env.HOST || 'localhost',
+  port: process.env.PORT || '3001',
   apiPrefix: '/api/v1',
-  port: {
-    app: 3001,
-    dbServer: 4000,
-    ssrServer: 8080,
+  api: {
+    host: process.env.API_HOST || 'localhost',
+    port: process.env.API_PORT || 4000,
   },
 }
 

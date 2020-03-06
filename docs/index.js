@@ -9,8 +9,8 @@ const config = {
       title: 'Overview',
       dir: 'overview',
       pages: [
-        { title: 'Introduction', file: 'introduction.md' }
-        { title: 'FAQ', file: 'faq.md' },
+        { title: 'Introduction', file: 'introduction.md' },
+        // { title: 'FAQ', file: 'faq.md' },
       ],
     },
     {

@@ -1,10 +1,12 @@
 /* eslint-disable arrow-body-style */
 import axios from 'axios'
 import qs from 'qs'
-import config from '../config'
+import config from '../config';
+
+const { api } = config
 
 const client = axios.create({
-  baseURL: `http://localhost:${config.port.dbServer}/api/v1`,
+  baseURL: `http://${api.host}:${api.port}/api/v1`,
   headers: { 'X-Requested-With': 'XMLHttpRequest', 'Content-Type': 'application/json' },
   responseType: 'json',
   timeout: 20000,

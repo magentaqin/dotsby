@@ -25,7 +25,7 @@ import reducer from '@src/store/reducerActions';
 import { docRegx, pageRegx } from '@src/utils/regx';
 
 
-const port = config.port.ssrServer;
+const port = config.port;
 const buildFolderPath = path.resolve(__dirname, '..', '..', './build');
 const htmlFilePath = path.resolve(buildFolderPath, './index.html');
 

@@ -2,9 +2,9 @@
   "scripts": {
     "build": "react-app-rewired build",
     "start": "react-app-rewired start",
-    "preview": "babel-node ./src/lib/bootstrap.js",
+    "bootstrap": "babel-node ./src/lib/bootstrap.js",
     "hot-preview": "nodemon --watch . --exec 'yarn build-app && yarn runbuild' --ignore build/",
-    "publish": "babel-node ./src/lib/index.js",
+    "build-docs": "PORT=8080 babel-node ./src/lib/index.js",
     "lint": "eslint ./src/App --fix",
     "convert": "schema convert ./schemas/src -o ./schemas/dist"
   },

@@ -1,9 +1,12 @@
 /* eslint-disable arrow-body-style */
 import axios from 'axios'
 import qs from 'qs'
+import config from '../config';
+
+const { api } = config
 
 const client = axios.create({
-  baseURL: '/api/v1',
+  baseURL: `http://${api.host}:${api.port}/api/v1`,
   headers: { 'X-Requested-With': 'XMLHttpRequest', 'Content-Type': 'application/json' },
   responseType: 'json',
   timeout: 20000,
@@ -50,10 +53,6 @@ const http = {
   post: (url, data, headerData = {}) => request(url, 'POST', data, headerData),
 }
 
-export const publishDocument = async(query, token) => {
-  const resp = await http.post('/document/publish', query, { Authorization: token });
-  return resp;
-}
 
 export const getDocumentInfo = async(query) => {
   const resp = await http.get('/document', query)
@@ -62,10 +61,5 @@ export const getDocumentInfo = async(query) => {
 
 export const getPageInfo = async(query) => {
   const resp = await http.get('/page', query)
-  return resp;
-}
-
-export const queryKeyword = async(query) => {
-  const resp = await http.get('/query', query)
   return resp;
 }

@@ -18,13 +18,13 @@ import { ServerStyleSheet, StyleSheetManager } from 'styled-components';
 import { logError } from '@src/utils/log';
 import config from '@src/config';
 import Layout from '@src/client/App';
-import { getDocumentInfo, getPageInfo } from '@src/service/request';
 import { setDocumentInfo } from '@src/store/reducerActions/document';
 import { setSectionsInfo } from '@src/store/reducerActions/sections';
 import { setPagesInfo } from '@src/store/reducerActions/pages';
 import reducer from '@src/store/reducerActions';
 import { docRegx, pageRegx } from '@src/utils/regx';
 
+import { getDocumentInfo, getPageInfo } from './request';
 
 const { host, port } = config;
 const buildFolderPath = path.resolve(__dirname, '..', '..', './build');
@@ -96,7 +96,7 @@ const fetchDocumentInfo = async (store, document_id, version) => {
   console.log('FETCH DOC INFO')
   let docFetchErrStatus;
   const resp = await getDocumentInfo({ document_id, version }).catch(err => { docFetchErrStatus = err.status });
-  if (!docFetchErrStatus) {
+  if (resp && resp.data) {
     dispatchDocInfo(resp.data.data, store);
   }
   return docFetchErrStatus;
@@ -107,7 +107,7 @@ const fetchPageInfo = async (store, document_id, page_id) => {
   let pageErrFetchStatus;
   const info = {}
   const resp = await getPageInfo({ document_id, page_id }).catch(err => { pageErrFetchStatus = err.status; })
-  if (!pageErrFetchStatus) {
+  if (resp && resp.data) {
     const { page_id } = resp.data.data
     info[page_id] = resp.data.data
     store.dispatch(setPagesInfo(info))

@@ -2019,12 +2019,14 @@ babel-plugin-dynamic-import-node@2.3.0, babel-plugin-dynamic-import-node@^2.3.0:
   dependencies:
     object.assign "^4.1.0"
 
-babel-plugin-import-static-files@^1.0.4:
-  version "1.0.4"
-  resolved "https://registry.npm.taobao.org/babel-plugin-import-static-files/download/babel-plugin-import-static-files-1.0.4.tgz#2b9c36d55be1f25f8db39b9c625df005563049e0"
-  integrity sha1-K5w21Vvh8l+Ns5ucYl3wBVYwSeA=
+babel-plugin-file-loader@^2.0.0:
+  version "2.0.0"
+  resolved "https://registry.npm.taobao.org/babel-plugin-file-loader/download/babel-plugin-file-loader-2.0.0.tgz#e9f7ecbd0f1131483f6f06a2a4cbc1574c00534f"
+  integrity sha1-6ffsvQ8RMUg/bwaipMvBV0wAU08=
   dependencies:
-    fs-extra "^4.0.2"
+    big.js "^5.2.2"
+    fs-extra "^8.1.0"
+    mime "^2.4.4"
 
 babel-plugin-import@^1.12.0:
   version "1.12.2"

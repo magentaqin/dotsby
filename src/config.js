@@ -1,10 +1,10 @@
 const config = {
-  host: process.env.HOST || 'localhost',
-  port: process.env.PORT || '3001',
+  host: process.env.REACT_APP_HOST || 'localhost',
+  port: process.env.REACT_APP_PORT || '3001',
   apiPrefix: '/api/v1',
   api: {
-    host: process.env.API_HOST || 'localhost',
-    port: process.env.API_PORT || 4000,
+    host: process.env.REACT_APP_API_HOST || 'localhost',
+    port: process.env.REACT_APP_API_PORT || 4000,
   },
 }
 

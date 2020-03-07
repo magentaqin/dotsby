@@ -6,7 +6,17 @@
   "plugins": [
     "babel-plugin-styled-components",
     "@babel/plugin-proposal-class-properties",
-    ["import-static-files", {"baseDir": "/static/media", "hash": true, "outDir": "../../../build" }],
+    [
+      "file-loader",
+      {
+        "name": "[hash].[ext]",
+        "extensions": ["png", "jpg", "jpeg", "gif", "svg"],
+        "publicPath": "/static/media",
+        "outputPath": "../../../build/static/media",
+        "context": "",
+        "limit": 0
+      }
+    ],
     ["module-resolver", {
       "root": ["."],
       "alias": {
@@ -15,5 +25,5 @@
         "@schema": "./dotsby-schema"
       }
     }]
-  ]
+  ],
 }

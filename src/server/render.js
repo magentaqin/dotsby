@@ -11,6 +11,7 @@ import { Provider as ReduxProvider } from 'react-redux'
 import React from 'react';
 import path from 'path';
 import fs from 'fs';
+import { createProxyMiddleware } from 'http-proxy-middleware';
 import ReactDOMServer from 'react-dom/server';
 import { ServerStyleSheet, StyleSheetManager } from 'styled-components';
 
@@ -31,6 +32,13 @@ const htmlFilePath = path.resolve(buildFolderPath, './index.html');
 
 const context = {};
 const sheet = new ServerStyleSheet();
+
+const proxyOptions = {
+  target: `http://${config.api.host}:${config.api.port}`,
+  changeOrigin: true,
+}
+
+const appProxy = createProxyMiddleware('/api/v1', proxyOptions);
 
 const Html = ({ content, state }) => (
   <React.Fragment>
@@ -146,13 +154,17 @@ const handleIndexPage = (res) => {
 
 export const render = () => {
   const app = new Express();
-
+  // add proxy middleware
+  app.use('/api/v1', appProxy);
 
   fs.readFile(htmlFilePath, 'utf8', (_err, htmlData) => {
     // handle static resources.
     app.use(Express.static(buildFolderPath));
 
     app.get('/*', async(req, res) => {
+      if (_err) {
+        return handleServerError(res);
+      }
       console.log('RECEIVEORIGINALURL', req.originalUrl)
       if (req.originalUrl === '/') {
         return handleIndexPage(res)

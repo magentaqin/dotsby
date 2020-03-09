@@ -4,7 +4,7 @@
   "description": "Dotsby Api Doc Generator",
   "main": "index.js",
   "bin": {
-    "dotsby": "babel-node ./bin/dotsby.js"
+    "dotsby": "./bin/dotsby.js"
   },
   "scripts": {
     "build": "react-app-rewired build",

@@ -13,7 +13,7 @@ import fs from 'fs';
 import path from 'path';
 import { Validator } from 'jsonschema';
 
-import { publishDocument } from '@src/service/request';
+import { publishDocument } from '@src/server/request';
 import { shallowOmit } from '@src/utils/obj';
 import { logError } from '@src/utils/log';
 import { schema } from '@schema/src/config/type_config';

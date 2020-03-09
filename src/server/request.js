@@ -63,3 +63,8 @@ export const getPageInfo = async(query) => {
   const resp = await http.get('/page', query)
   return resp;
 }
+
+export const publishDocument = async(query, token) => {
+  const resp = await http.post('/document/publish', query, { Authorization: token });
+  return resp;
+}

@@ -12,7 +12,8 @@
     "bootstrap": "REACT_APP_PORT=8080 babel-node ./src/server/bootstrap.js",
     "build-docs": "REACT_APP_PORT=8080 babel-node ./src/lib/index.js",
     "lint": "eslint ./src/App --fix",
-    "convert": "schema convert ./schemas/src -o ./schemas/dist"
+    "convert": "schema convert ./schemas/src -o ./schemas/dist",
+    "postinstall": "./install.sh"
   },
   "dependencies": {
     "commander": "^4.1.1",

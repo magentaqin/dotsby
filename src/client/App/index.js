@@ -13,7 +13,7 @@ import reset from 'styled-reset'
 import qs from 'qs'
 
 import theme from '@src/theme/light'
-import { getDocumentInfo, queryKeyword } from '@src/service/request'
+import { getDocumentInfo, queryKeyword } from '@src/client/service/request'
 import { setDocumentInfo } from '@src/store/reducerActions/document'
 import { setSectionsInfo } from '@src/store/reducerActions/sections'
 import { docRegx, pageRegx } from '@src/utils/regx';

@@ -1,17 +1,43 @@
 {
+  "name": "dotsby",
+  "version": "0.1.0",
+  "description": "Dotsby Api Doc Generator",
+  "main": "index.js",
+  "bin": {
+    "dotsby": "./bin/cli.js"
+  },
   "scripts": {
     "build": "react-app-rewired build",
     "start": "react-app-rewired start",
-    "bootstrap": "REACT_APP_PORT=8080 babel-node ./src/lib/bootstrap.js",
-    "hot-preview": "nodemon --watch . --exec 'yarn build-app && yarn runbuild' --ignore build/",
+    "bootstrap": "REACT_APP_PORT=8080 babel-node ./src/server/bootstrap.js",
     "build-docs": "REACT_APP_PORT=8080 babel-node ./src/lib/index.js",
-    "lint": "eslint ./src/App --fix",
-    "convert": "schema convert ./schemas/src -o ./schemas/dist"
+    "lint": "eslint ./src/App --fix"
   },
+  "dependencies": {
+    "axios": "^0.19.0",
+    "chalk": "^3.0.0",
+    "commander": "^4.1.1",
+    "datatype-expansion": "^0.3.8",
+    "jsonschema": "^1.2.5",
+    "qs": "^6.9.1",
+    "raml-1-parser": "1.1.9",
+    "remark": "^11.0.2",
+    "remark-html": "^10.0.0",
+    "remark-preset-lint-recommended": "^3.0.3"
+  },
+  "author": "Mu Qin",
+  "license": "MIT",
+  "proxy": "http://localhost:4000",
   "devDependencies": {
+    "@babel/core": "^7.5.5",
+    "@babel/node": "^7.5.5",
     "@babel/plugin-proposal-class-properties": "^7.5.5",
+    "@babel/preset-env": "^7.8.7",
     "babel-plugin-file-loader": "^2.0.0",
+    "babel-plugin-import": "^1.12.0",
+    "babel-plugin-lodash": "^3.3.2",
     "babel-plugin-module-resolver": "^3.2.0",
+    "babel-plugin-react-transform": "^3.0.0",
     "babel-plugin-styled-components": "^1.10.6",
     "customize-cra": "^0.9.1",
     "eslint": "^6.6.0",
@@ -19,47 +45,18 @@
     "eslint-import-resolver-alias": "^1.1.2",
     "eslint-plugin-import": "^2.18.2",
     "eslint-plugin-react": "^7.16.0",
-    "react-app-rewired": "^2.1.5",
-    "react-scripts": "^3.1.1"
-  },
-  "dependencies": {
-    "@babel/core": "^7.5.5",
-    "@babel/node": "^7.5.5",
-    "@babel/preset-env": "^7.5.5",
-    "@babel/preset-react": "^7.0.0",
-    "@babel/preset-typescript": "^7.3.3",
-    "axios": "^0.19.0",
-    "babel-plugin-import": "^1.12.0",
-    "datatype-expansion": "^0.3.8",
     "history": "^4.10.1",
     "http-proxy-middleware": "^1.0.1",
-    "jsonschema": "^1.2.5",
     "nodemon": "^1.19.1",
-    "qs": "^6.9.1",
-    "raml-1-parser": "1.1.9",
     "react": "^16.8.6",
+    "react-app-rewired": "^2.1.5",
     "react-dom": "^16.8.6",
     "react-redux": "^7.1.1",
     "react-router": "^5.1.0",
     "react-router-dom": "^5.1.0",
+    "react-scripts": "^3.1.1",
     "redux": "^4.0.4",
-    "remark": "^11.0.2",
-    "remark-html": "^10.0.0",
-    "remark-preset-lint-recommended": "^3.0.3",
     "styled-components": "^4.3.2",
     "styled-reset": "^4.0.1"
-  },
-  "browserslist": {
-    "production": [
-      ">0.2%",
-      "not dead",
-      "not op_mini all"
-    ],
-    "development": [
-      "last 1 chrome version",
-      "last 1 firefox version",
-      "last 1 safari version"
-    ]
-  },
-  "proxy": "http://localhost:4000"
+  }
 }

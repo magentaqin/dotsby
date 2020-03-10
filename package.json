@@ -11,8 +11,7 @@
     "start": "react-app-rewired start",
     "bootstrap": "REACT_APP_PORT=8080 babel-node ./src/server/bootstrap.js",
     "build-docs": "REACT_APP_PORT=8080 babel-node ./src/lib/index.js",
-    "lint": "eslint ./src/App --fix",
-    "postinstall": "./install.sh"
+    "lint": "eslint ./src/App --fix"
   },
   "dependencies": {
     "commander": "^4.1.1",

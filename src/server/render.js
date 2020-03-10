@@ -15,7 +15,6 @@ import { createProxyMiddleware } from 'http-proxy-middleware';
 import ReactDOMServer from 'react-dom/server';
 import { ServerStyleSheet, StyleSheetManager } from 'styled-components';
 
-import { logError } from '@src/utils/log';
 import config from '@src/config';
 import Layout from '@src/client/App';
 import { setDocumentInfo } from '@src/store/reducerActions/document';

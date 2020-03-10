@@ -9,5 +9,5 @@ Dotsby is an API doc generator. It helps you deploy your API docs in seconds.
 #### Usage
 
 ```
-yarn global install https://github.com/magentaqin/dotsby.git
+yarn global add https://github.com/magentaqin/dotsby.git
 ```

@@ -2,7 +2,6 @@ const config = {
   title: 'Dotsby Api Doc',
   version: '0.1.0',
   document_id: '3d0a78c6627ad4ff18775a462712ab375c5a7e38',
-  token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjMsImVtYWlsIjoidGVzdEBnbWFpbC5jb20iLCJpYXQiOjE1ODM0ODUxODcsImV4cCI6MTU4NjA3NzE4N30.D6AJMaZi-bhwj6kEP20Bn4BlGssDI0jb-nWqio5RU3Y',
   raml_file: 'api.raml',
   sections: [
     {

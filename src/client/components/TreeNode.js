@@ -1,7 +1,7 @@
 /* eslint-disable react/prop-types */
 import React from 'react';
 import styled from 'styled-components';
-import ArrowSrc from '../assets/small-arrow.svg'
+import SmallArrow from './Icon/SmallArrow'
 
 const PanelWrapper = styled.div`
   display: flex;
@@ -54,10 +54,6 @@ const RequiredText = styled.p`
   font-weight: bolder;
 `
 
-const SmallArrow = styled.img`
-  transform: ${props => (props.shouldRotate ? 'rotate(-90deg)' : '')};
-  margin-right: 4px;
-`
 
 const TreeNode = (props) => {
   const {
@@ -80,21 +76,21 @@ const TreeNode = (props) => {
     }
   }
   let shouldShow = true;
-  let shouldRotate = true;
+  let shouldRotate = false;
   if (!expandedIds.includes(parentId)) {
     shouldShow = false;
   }
 
   const slicedExpandedIds = expandedIds.slice(0, expandedIds.length - 1)
-  if (slicedExpandedIds.includes(parentId)) {
-    shouldRotate = false;
+  if (!slicedExpandedIds.includes(parentId)) {
+    shouldRotate = true;
   }
   return (
     <PanelWrapper key={id} onClick={toggleExpand(id, props.children)}>
       <LeftItem nestedLevel={nestedLevel} shouldShow={shouldShow}>
         <FlexRow>
           <div style={style}>
-            <SmallArrow src={ArrowSrc} shouldRotate={shouldRotate}/>
+            <SmallArrow shouldRotate={shouldRotate}/>
           </div>
           <p>{displayName === 'application/json' ? '' : displayName}</p>
           <TypeText>{type}</TypeText>

@@ -18,9 +18,8 @@ import { setDocumentInfo } from '@src/store/reducerActions/document'
 import { setSectionsInfo } from '@src/store/reducerActions/sections'
 import { docRegx, pageRegx } from '@src/utils/regx';
 import SpinSrc from '@src/client/assets/spin.svg';
-import SearchIconSrc from '@src/client/assets/search.svg';
-import BigArrowSrc from '@src/client/assets/big-arrow.svg';
-import BigArrowActiveSrc from '@src/client/assets/big-arrow-active.svg';
+import { BigArrow, BigArrowActive } from '@src/client/components/Icon/BigArrow';
+import SearchIcon from '@src/client/components/Icon/SearchIcon';
 import debounce from '@src/utils/debounce';
 
 import MainContent from './MainContent';
@@ -164,14 +163,6 @@ const Input = styled.input`
   width: 480px;
 `
 
-const SearchIcon = styled.img`
-  width: 30px;
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  left: 8px;
-`
-
 const ModalWrapper = styled.div`
   position: ${props => (props.isFocus ? 'fixed' : 'relative')};
   top: 0;
@@ -199,11 +190,6 @@ const PageLoading = styled.div`
 
 const Spin = styled.img`
   width: 40px;
-`
-
-const BigArrow = styled.img`
-  transform: ${props => (props.isUpper ? 'rotate(180deg)' : '')};
-  display: ${props => (props.shouldShow ? 'inherit' : 'none')};
 `
 
 const SearchSection = styled.a`
@@ -462,8 +448,8 @@ class Layout extends React.Component {
               <AsideSubtitle active={isMatched}>{item.title}</AsideSubtitle>
             )
             }
-            <BigArrow src={BigArrowSrc} shouldShow={!isMatched} isUpper={!shouldShow}/>
-            <BigArrow src={BigArrowActiveSrc} shouldShow={isMatched} isUpper={!shouldShow} />
+            <BigArrow isMatched={isMatched} shouldShow={shouldShow} />
+            <BigArrowActive isMatched={isMatched} shouldShow={shouldShow} />
           </CollapseButton>
           <AsideNav shouldShow={shouldShow}>{this.renderPages(pages)}</AsideNav>
         </AsideSection>
@@ -562,7 +548,7 @@ class Layout extends React.Component {
           onFocus={this.onInputFocus}
           placeholder="Search Docs"
         />
-        <SearchIcon src={SearchIconSrc}/>
+        <SearchIcon />
         <SearchListWrapper shouldShow={this.state.shouldListShow}>
           {this.renderSearchList()}
         </SearchListWrapper>

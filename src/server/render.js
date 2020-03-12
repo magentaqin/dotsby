@@ -92,7 +92,6 @@ const getApp = (req, context, store) => {
 }
 
 const fetchDocumentInfo = async (store, document_id, version) => {
-  console.log('FETCH DOC INFO')
   let docFetchErrStatus;
   const resp = await getDocumentInfo({ document_id, version }).catch(err => { docFetchErrStatus = err.status });
   if (resp && resp.data) {
@@ -102,7 +101,6 @@ const fetchDocumentInfo = async (store, document_id, version) => {
 }
 
 const fetchPageInfo = async (store, document_id, page_id) => {
-  console.log('FETCH PAGE INFO');
   let pageErrFetchStatus;
   const info = {}
   const resp = await getPageInfo({ document_id, page_id }).catch(err => { pageErrFetchStatus = err.status; })
@@ -164,7 +162,6 @@ export const render = () => {
       if (_err) {
         return handleServerError(res);
       }
-      console.log('RECEIVEORIGINALURL', req.originalUrl)
       if (req.originalUrl === '/') {
         return handleIndexPage(res)
       }
@@ -201,7 +198,6 @@ export const render = () => {
 
         const App = getApp(req, context, store)
         const content = ReactDOMServer.renderToString(App);
-        console.log('context.url', context.url)
         if (context.url && !pageRegx.test(req.originalUrl)) {
           return res.redirect(301, context.url)
         }

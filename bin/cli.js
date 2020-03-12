@@ -47,9 +47,9 @@ program
         logError(err);
       })
       if (result) {
-        console.log(result.data.data)
+        const { document_id, version } = result.data.data;
         logSuccess('Successfully Published.👏')
-        logSuccess('Please visit: ')
+        logSuccess(`Please visit: http://dotsby.cn/${document_id}?version=${version}`)
       }
     }
   })

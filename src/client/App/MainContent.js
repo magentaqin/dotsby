@@ -47,29 +47,29 @@ const CustomziedContent = styled.div`
     }
   }
 
-  h1 {
-    color: ${props => props.theme.blackColor};
-    font-size: 40px;
-    line-height: 2;
-    font-weight: 500;
+  h1, h2 {
     &::after {
       content: '';
       width: 100%;
       display: block;
       height: 2px;
       background-color: ${props => props.theme.lightGrayColor};
+      margin-bottom: 16px;
     }
+  }
+
+  h1 {
+    color: ${props => props.theme.blackColor};
+    font-size: 40px;
+    line-height: 2;
+    font-weight: 500;
   }
 
   h2 {
     margin-top: 16px;
     font-size: 26px;
     &::after {
-      content: '';
-      width: 100%;
-      display: block;
       height: 3px;
-      background-color: ${props => props.theme.lightGrayColor};
     }
   }
 
@@ -103,7 +103,7 @@ const CustomziedContent = styled.div`
   code {
     background-color: ${props => props.theme.lightGrayColor};
     font-size: ${props => props.theme.normalFont};
-    color: #032f62;
+    color: ${props => props.theme.pinkColor};
     border-radius: 4px;
     line-height: 1.5;
     padding: 6px;
@@ -112,11 +112,12 @@ const CustomziedContent = styled.div`
   pre {
     background-color: #f6f8fa;
     padding: 10px 16px;
-    margin-top: 16px;
+    margin: 16px 0;
 
     code {
       padding: 0;
       background-color: #f6f8fa;
+      color: #032f62;
     }
   }
 

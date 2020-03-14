@@ -19,6 +19,7 @@ const CustomziedContent = styled.div`
     color: ${props => props.theme.blackColor};
     font-weight: 500;
     position: relative;
+    line-height: 2;
 
     .anchor {
       position: absolute;
@@ -48,26 +49,95 @@ const CustomziedContent = styled.div`
 
   h1 {
     color: ${props => props.theme.blackColor};
-    font-size: ${props => props.theme.mainHeaderFont};
-    margin-bottom: ${props => props.theme.mdPadding};
+    font-size: 40px;
+    line-height: 2;
     font-weight: 500;
+    &::after {
+      content: '';
+      width: 100%;
+      display: block;
+      height: 2px;
+      background-color: ${props => props.theme.lightGrayColor};
+    }
   }
 
   h2 {
-    margin-top: 56px;
-    margin-bottom: 20px;
-    font-size: ${props => props.theme.mainSubtitleFont};
+    margin-top: 16px;
+    font-size: 26px;
+    &::after {
+      content: '';
+      width: 100%;
+      display: block;
+      height: 3px;
+      background-color: ${props => props.theme.lightGrayColor};
+    }
   }
 
-  p {
-    font-size: ${props => props.theme.paraFont};
+  h3 {
+    font-size: 24px;
+  }
+
+  h4 {
+    font-size: 22px;
+  }
+
+  h5 {
+    font-size: 20px;
+  }
+
+  h6 {
+    font-size: 18px;
+  }
+
+  p, li{
+    font-size: ${props => props.theme.normalFont};
     color: ${props => props.theme.grayColor};
-    line-height: 1.7;
+    line-height: 2;
   }
 
   li {
     list-style: initial;
-    margin-bottom: ${props => props.theme.mdPadding};
+    margin-top: 16px;
+  }
+
+  code {
+    background-color: ${props => props.theme.lightGrayColor};
+    font-size: ${props => props.theme.normalFont};
+    color: #032f62;
+    border-radius: 4px;
+    line-height: 1.5;
+    padding: 6px;
+  }
+
+  pre {
+    background-color: #f6f8fa;
+    padding: 10px 16px;
+    margin-top: 16px;
+
+    code {
+      padding: 0;
+      background-color: #f6f8fa;
+    }
+  }
+
+  a {
+    font-weight: bold;
+    &:link, &:visited, &:active {
+      color: ${props => props.theme.primaryColor};
+    }
+
+    &:hover {
+      cursor: pointer;
+    }
+  }
+
+  img {
+    width: 75%;
+    margin-top: 16px;
+  }
+
+  strong {
+    font-weight: bold;
   }
 `
 

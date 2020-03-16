@@ -49,7 +49,7 @@ program
       if (result) {
         const { document_id, version } = result.data.data;
         logSuccess('Successfully Published.👏')
-        logSuccess(`Please visit: http://dotsby.cn/${document_id}?version=${version}`)
+        logSuccess(`Please visit: http://docs.dotsby.cn/${document_id}?version=${version}`)
         process.exit(0);
       }
     }

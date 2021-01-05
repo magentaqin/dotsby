@@ -14,7 +14,7 @@
     "lint": "eslint ./src/App --fix"
   },
   "dependencies": {
-    "axios": "^0.19.0",
+    "axios": "^0.21.1",
     "chalk": "^3.0.0",
     "commander": "^4.1.1",
     "datatype-expansion": "^0.3.8",
